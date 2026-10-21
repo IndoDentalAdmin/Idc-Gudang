@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IDC Gudang</title>
+<style>
+:root{--bg:#f4f6f5;--card:#fff;--ink:#14201b;--mut:#5d6b65;--line:#dde4e0;--pri:#0d7a5f;--pri2:#e3f3ed;--warn:#b45309;--warn2:#fdf1e2;--bad:#b42318;--bad2:#fdecea;--blue:#1d4ed8;--blue2:#e8eefc;--sh:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1513;--card:#17201c;--ink:#e6eeea;--mut:#98a69f;--line:#2a3631;--pri:#34c08f;--pri2:#16352a;--warn:#f0a44b;--warn2:#3a2a14;--bad:#f2786d;--bad2:#3b1b18;--blue:#7ea2ff;--blue2:#1b2540;--sh:none}}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:600;background:var(--pri);color:#fff}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}button.soft{background:var(--pri2);color:var(--pri)}
+button.bad{background:var(--bad2);color:var(--bad)}button.sm{padding:7px 11px;font-size:13px;border-radius:10px}button:disabled{opacity:.5;cursor:default}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--card)}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.row{display:flex;gap:10px;align-items:center}.grow{flex:1;min-width:0}.mut{color:var(--mut)}.small{font-size:13px}
+.hide{display:none!important}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--pri2);color:var(--pri)}
+.chip.warn{background:var(--warn2);color:var(--warn)}.chip.bad{background:var(--bad2);color:var(--bad)}.chip.blue{background:var(--blue2);color:var(--blue)}.chip.gray{background:var(--bg);color:var(--mut);border:1px solid var(--line)}
+/* gate */
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+#gate .card{width:100%;max-width:420px;text-align:center;padding:24px 20px}
+.brand{font-weight:800;font-size:22px;letter-spacing:-.02em}.brand b{color:var(--pri)}
+.faceBox{position:relative;width:240px;height:240px;margin:18px auto 12px;border-radius:50%;overflow:hidden;background:#0b1210;border:4px solid var(--line)}
+.faceBox video,.faceBox img{width:100%;height:100%;object-fit:cover}.faceBox video{transform:scaleX(-1)}
+.faceBox.scan{border-color:var(--pri);animation:pulse 1.4s infinite}.faceBox.ok{border-color:var(--pri)}.faceBox.no{border-color:var(--bad)}
+@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(13,122,95,.12)}}
+.faceIcon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6f8a80;font-size:13px;flex-direction:column;gap:8px}
+#gMsg{min-height:44px;margin:6px 0 12px}
+.steps{display:flex;justify-content:center;gap:6px;margin-top:4px;font-size:12px;color:var(--mut)}.steps span{padding:3px 8px;border-radius:99px;border:1px solid var(--line)}.steps span.on{background:var(--pri);border-color:var(--pri);color:#fff}
+/* app */
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:10px;height:58px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mut)}.live i{width:8px;height:8px;border-radius:50%;background:var(--pri);box-shadow:0 0 0 3px var(--pri2)}
+.live.off i{background:var(--warn);box-shadow:0 0 0 3px var(--warn2)}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+nav.tabs button{background:transparent;color:var(--mut);border:1px solid var(--line);white-space:nowrap;padding:8px 13px;font-size:14px}
+nav.tabs button.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+main{padding-bottom:110px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:6px 0 14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}.tile b{display:block;font-size:24px;line-height:1.1}.tile span{font-size:12px;color:var(--mut)}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;gap:12px;align-items:center;transition:background .6s}
+.item.low{border-color:var(--warn)}.item.zero{border-color:var(--bad)}.item.flash{background:var(--pri2)}
+.qty{text-align:right;min-width:64px}.qty b{font-size:26px;display:block;line-height:1}.qty span{font-size:11px;color:var(--mut)}
+.bar{height:5px;border-radius:9px;background:var(--line);margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+.item.low .bar i{background:var(--warn)}.item.zero .bar i{background:var(--bad)}
+.nm{font-weight:650;line-height:1.25}.meta{font-size:12px;color:var(--mut);margin-top:2px}
+/* scan */
+.scanBig{display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 16px;text-align:center}
+.scanBtn{width:100%;max-width:420px;padding:22px;font-size:19px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:12px}
+.result{width:100%;max-width:420px;border-radius:18px;padding:18px;text-align:left;border:2px solid var(--pri);background:var(--pri2)}
+.result.err{border-color:var(--bad);background:var(--bad2)}
+.result .big{font-size:34px;font-weight:800;letter-spacing:-.02em}
+.list{display:flex;flex-direction:column}.li{display:flex;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}.li:last-child{border:0}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(5,10,8,.62);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+@media (min-width:700px){.modal{align-items:center}.sheet{border-radius:20px}}
+.cam{position:relative;width:100%;aspect-ratio:1;background:#000;border-radius:14px;overflow:hidden}
+.cam video{width:100%;height:100%;object-fit:cover}.cam .frame{position:absolute;inset:16%;border:3px solid rgba(255,255,255,.85);border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
+.cam .laser{position:absolute;left:16%;right:16%;top:50%;height:2px;background:#34c08f;animation:las 1.6s ease-in-out infinite}
+@keyframes las{0%,100%{top:20%}50%{top:80%}}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{font-size:12px;color:var(--mut);font-weight:600}
+td input{padding:8px;width:84px;text-align:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:12px 18px;border-radius:12px;z-index:30;max-width:92vw;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.toast.err{background:var(--bad)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+/* label */
+.lbl{width:300px;border:1.5px dashed #9aa;border-radius:10px;padding:10px;display:flex;gap:10px;background:#fff;color:#000;break-inside:avoid;margin:6px}
+.lbl .q{width:112px;height:112px;flex:none}.lbl .q img,.lbl .q canvas{width:112px!important;height:112px!important}
+.lbl .t{font-size:12px;line-height:1.3}.lbl .t b{font-size:13px;display:block;margin-bottom:3px}.lbl .k{font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:12px;margin-top:4px}
+.lbl .cold{display:inline-block;margin-top:4px;background:#0b4ea2;color:#fff;font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px}
+#printArea{display:none}
+@media print{body>*:not(#printArea){display:none!important}#printArea{display:flex!important;flex-wrap:wrap}}
+@media (max-width:640px){.tiles{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}header .who{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ========== GERBANG WAJAH ========== -->
+<section id="gate">
+  <div class="card">
+    <div class="brand">IDC <b>Gudang</b></div>
+    <div class="mut small">Klinik Utama Indo Dental Center</div>
+    <div class="steps"><span class="on" id="st1">1 · Pindai wajah</span><span id="st2">2 · Pindai QR barang</span></div>
+    <div class="faceBox" id="faceBox">
+      <video id="gVideo" playsinline muted class="hide"></video><img id="gImg" class="hide" alt="">
+      <div class="faceIcon" id="faceIcon"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><circle cx="12" cy="10" r="3.2"/><path d="M6.5 18c1.2-2.4 3.2-3.6 5.5-3.6s4.3 1.2 5.5 3.6"/></svg>Wajib pindai wajah sebelum masuk</div>
+    </div>
+    <div id="gMsg" class="mut">Hadapkan wajah lurus ke kamera, lepas masker.</div>
+    <button id="gStart" class="scanBtn" style="margin:0 auto">Mulai pindai wajah</button>
+    <div id="gPhotoWrap" class="hide" style="margin-top:10px">
+      <button class="ghost sm" id="gPhotoBtn">📸 Kamera tidak jalan? Ambil foto selfie</button>
+      <input type="file" id="gPhoto" accept="image/*" capture="user" class="hide">
+    </div>
+    <div id="gPin" class="hide" style="text-align:left;margin-top:12px">
+      <div class="chip" id="gPinWho"></div>
+      <label>PIN 6 angka (lapis kedua)</label>
+      <input id="gPinIn" type="password" inputmode="numeric" maxlength="6" autocomplete="off">
+      <button id="gPinGo" style="width:100%;margin-top:10px">Masuk</button>
+    </div>
+    <div id="srvBox" class="hide" style="text-align:left;margin-top:14px;padding:12px;border:1px solid var(--warn);border-radius:12px;background:var(--warn2)">
+      <b>Sambungkan ke server (sekali saja per HP)</b>
+      <label>URL web app Apps Script (berakhiran /exec)</label><input id="srvIn" placeholder="https://script.google.com/macros/s/…/exec">
+      <button id="srvGo" style="width:100%;margin-top:10px">Simpan</button>
+    </div>
+    <details style="margin-top:18px;text-align:left" id="setupBox">
+      <summary class="small mut">Setup awal Manajer/Purchase (wajah belum terdaftar)</summary>
+      <label>Email</label><input id="sEmail" type="email" autocomplete="username">
+      <label>PIN</label><input id="sPin" type="password" inputmode="numeric" maxlength="6">
+      <button class="ghost" id="sGo" style="width:100%;margin-top:10px">Masuk dengan PIN → daftarkan wajah</button>
+      <div class="small mut" style="margin-top:6px">Hanya berlaku sekali, sampai wajah akun itu didaftarkan.</div>
+    </details>
+  </div>
+</section>
+
+<!-- ========== APLIKASI ========== -->
+<section id="app" class="hide">
+  <header><div class="wrap">
+    <div class="brand" style="font-size:18px">IDC <b>Gudang</b></div>
+    <span class="live" id="live"><i></i><span id="liveTxt">Live</span></span>
+    <div class="grow"></div>
+    <div class="who small" style="text-align:right"><div id="whoName" style="font-weight:650"></div><div class="mut" id="whoRole"></div></div>
+    <button class="ghost sm" id="logout">Keluar</button>
+  </div></header>
+  <div class="wrap"><nav class="tabs" id="tabs"></nav></div>
+  <main class="wrap" id="view"></main>
+</section>
+
+<div id="printArea"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ================= KONFIGURASI KLIEN ================= */
+/* Dipasang di GitHub Pages? Tempel URL web app Apps Script (berakhiran /exec) di antara tanda kutip: */
+const API_URL = '';
+const FACE_LIB = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/';
+const POLL_MS = 10000;
+const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {} };
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtT = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
+const today = iso => new Date(iso).toDateString() === new Date().toDateString();
+
+function call(fn, data) {
+  data = Object.assign({ fn, token: S.token }, data || {});
+  return new Promise((res, rej) => {
+    if (window.google && google.script && google.script.run) google.script.run.withSuccessHandler(res).withFailureHandler(e => rej(e instanceof Error ? e : new Error(e && e.message || e))).api(data);
+    else if (apiUrl()) fetch(apiUrl(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) })
+      .then(r => r.json()).then(j => j.ok ? res(j.data) : rej(new Error(j.error))).catch(e => rej(/Failed to fetch|NetworkError|Load failed/.test(e.message) ? new Error('Tidak bisa menghubungi server — cek internet / URL server.') : e));
+    else if (window.DEMO_API) setTimeout(() => { try { res(JSON.parse(JSON.stringify(window.DEMO_API(data)))); } catch (e) { rej(e); } }, 120);
+    else rej(new Error('Tidak terhubung ke server.'));
+  });
+}
+function apiUrl() { if (API_URL) return API_URL; try { const q = new URLSearchParams(location.search).get('server'); if (q) localStorage.setItem('idcg-server', q); return localStorage.getItem('idcg-server') || ''; } catch (e) { return ''; } }
+const standalone = () => !(window.google && google.script && google.script.run) && !window.DEMO_API;
+function toast(msg, err) { const t = document.createElement('div'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), err ? 4200 : 2600); }
+function beep(ok) { try { const a = new (window.AudioContext || window.webkitAudioContext)(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = ok ? 880 : 220; o.connect(g); g.connect(a.destination); g.gain.value = .08; o.start(); setTimeout(() => { o.stop(); a.close(); }, ok ? 120 : 300); } catch (e) {} if (navigator.vibrate) navigator.vibrate(ok ? 60 : [80, 60, 80]); }
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('Gagal memuat ' + src)); document.head.appendChild(s); }); }
+
+/* ================= PENGENALAN WAJAH (face-api, berjalan di perangkat) ================= */
+let faceReady = null;
+function loadFace() {
+  if (faceReady) return faceReady;
+  faceReady = (async () => {
+    if (!window.faceapi) await loadScript(FACE_LIB + 'dist/face-api.js');
+    const tf = faceapi.tf; let ok = false;
+    try { ok = await tf.setBackend('webgl'); } catch (e) {}
+    if (!ok) await tf.setBackend('cpu');
+    await tf.ready();
+    const M = FACE_LIB + 'model/';
+    await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri(M), faceapi.nets.faceLandmark68Net.loadFromUri(M), faceapi.nets.faceRecognitionNet.loadFromUri(M)]);
+  })();
+  faceReady.catch(() => { faceReady = null; });
+  return faceReady;
+}
+/** Hitung sidik wajah (128 angka) dari video/gambar. Foto tidak dikirim ke server. */
+async function faceDesc(el) {
+  await loadFace();
+  const all = await faceapi.detectAllFaces(el, new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 })).withFaceLandmarks().withFaceDescriptors();
+  if (!all.length) throw new Error('Wajah tidak terdeteksi.');
+  if (all.length > 1) throw new Error('Terlihat lebih dari satu wajah — pastikan hanya satu orang di depan kamera.');
+  return Array.from(all[0].descriptor);
+}
+function fileToImg(file) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Foto tidak bisa dibaca.')); i.src = URL.createObjectURL(file); }); }
+async function camStart(video, facing) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('Kamera tidak tersedia di browser ini.');
+  const st = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 960 }, height: { ideal: 960 } }, audio: false });
+  video.srcObject = st; video.setAttribute('playsinline', ''); await video.play(); return st;
+}
+const camStop = st => { if (st) st.getTracks().forEach(t => t.stop()); };
+
+/* ================= GERBANG ================= */
+let gStream = null, gBusy = false, gPending = null;
+function gMsg(t, cls) { const m = $('#gMsg'); m.textContent = t; m.style.color = cls === 'bad' ? 'var(--bad)' : cls === 'ok' ? 'var(--pri)' : ''; }
+function gBox(c) { $('#faceBox').className = 'faceBox ' + (c || ''); }
+async function gateStart() {
+  $('#gStart').disabled = true; gMsg('Memuat pengenal wajah…');
+  const lib = loadFace();
+  try {
+    gStream = await camStart($('#gVideo'), 'user');
+    $('#gVideo').classList.remove('hide'); $('#gImg').classList.add('hide'); $('#faceIcon').classList.add('hide');
+  } catch (e) {
+    gMsg('Kamera tidak bisa dibuka (' + (e.message || e.name) + '). Gunakan foto selfie di bawah.', 'bad'); $('#gStart').disabled = false; $('#gPhotoWrap').classList.remove('hide'); return;
+  }
+  try { await lib; } catch (e) { gMsg('Pengenal wajah gagal dimuat — cek internet lalu coba lagi.', 'bad'); $('#gStart').disabled = false; return; }
+  gBox('scan'); gMsg('Memindai… tahan sebentar');
+  let tries = 0;
+  const loop = async () => {
+    if (!gStream || gPending) return;
+    tries++;
+    try { const d = await faceDesc($('#gVideo')); await gateLogin(d, false); return; }
+    catch (e) { if (e.server) { gBox('no'); gMsg(e.message, 'bad'); beep(false); } else gMsg(e.message + ' Mendekat & cari cahaya.'); }
+    if (tries >= 12) { gateStop(); gBox('no'); gMsg('Belum berhasil. Tekan "Mulai pindai wajah" untuk coba lagi.', 'bad'); $('#gStart').disabled = false; $('#gPhotoWrap').classList.remove('hide'); return; }
+    setTimeout(loop, 700);
+  };
+  loop();
+}
+function gateStop() { camStop(gStream); gStream = null; }
+async function gateLogin(desc, fromPhoto) {
+  let r;
+  try { r = await call('faceLogin', { desc, fromPhoto }); } catch (e) { e.server = true; throw e; }
+  if (r.needPin) {
+    gPending = { desc, fromPhoto }; gateStop(); gBox('ok'); beep(true);
+    gMsg('Wajah dikenali: ' + r.nama + '. Masukkan PIN.', 'ok');
+    $('#gPinWho').textContent = r.nama + ' · ' + r.peran; $('#gPin').classList.remove('hide'); $('#gStart').classList.add('hide'); $('#gPinIn').focus();
+    return;
+  }
+  gateStop(); gBox('ok'); beep(true); enter(r);
+}
+async function photoLogin(file) {
+  if (!file) return;
+  gMsg('Membaca foto…'); const img = await fileToImg(file);
+  $('#gImg').src = img.src; $('#gImg').classList.remove('hide'); $('#gVideo').classList.add('hide'); $('#faceIcon').classList.add('hide'); gBox('scan');
+  try { const d = await faceDesc(img); await gateLogin(d, true); }
+  catch (e) { gBox('no'); gMsg(e.message, 'bad'); beep(false); }
+}
+$('#gStart').onclick = gateStart;
+$('#gPhotoBtn').onclick = () => $('#gPhoto').click();
+$('#gPhoto').onchange = e => photoLogin(e.target.files[0]).finally(() => { e.target.value = ''; });
+$('#gPinGo').onclick = async () => {
+  try { const r = await call('faceLogin', Object.assign({ pin: $('#gPinIn').value }, gPending)); enter(r); }
+  catch (e) { gMsg(e.message, 'bad'); beep(false); }
+};
+$('#gPinIn').onkeydown = e => { if (e.key === 'Enter') $('#gPinGo').click(); };
+$('#sGo').onclick = async () => { try { enter(await call('pinLogin', { email: $('#sEmail').value, pin: $('#sPin').value })); } catch (e) { toast(e.message, true); } };
+
+function resetGate() {
+  gPending = null; gateStop(); gBox(''); $('#gPin').classList.add('hide'); $('#gPinIn').value = ''; $('#gStart').classList.remove('hide'); $('#gStart').disabled = false;
+  $('#gVideo').classList.add('hide'); $('#gImg').classList.add('hide'); $('#faceIcon').classList.remove('hide'); gMsg('Hadapkan wajah lurus ke kamera, lepas masker.');
+  if (standalone() && !apiUrl()) { $('#srvBox').classList.remove('hide'); return; }
+  call('status').then(s => { if (s.allowPhoto) $('#gPhotoWrap').classList.remove('hide'); }).catch(e => gMsg(e.message, 'bad'));
+  // izin kamera sudah pernah diberikan → langsung mulai memindai tanpa menekan tombol
+  try { navigator.permissions.query({ name: 'camera' }).then(p => { if (p.state === 'granted' && !S.token && !gStream) gateStart(); }).catch(() => {}); } catch (e) {}
+}
+$('#srvGo').onclick = () => { const v = $('#srvIn').value.trim(); if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(v)) return toast('URL harus seperti https://script.google.com/macros/s/…/exec', true); try { localStorage.setItem('idcg-server', v); } catch (e) {} $('#srvBox').classList.add('hide'); resetGate(); };
+
+/* ================= SESI & REAL-TIME ================= */
+let pollT = null;
+async function enter(r) {
+  S.token = r.token; S.me = r.user;
+  try { sessionStorage.setItem('idcg', S.token); } catch (e) {}
+  $('#gate').classList.add('hide'); $('#app').classList.remove('hide');
+  $('#whoName').textContent = S.me.nama; $('#whoRole').textContent = S.me.peran + (r.cara === 'wajah' ? ' · wajah ✓' : '');
+  apply(await call('bootstrap'), true);
+  S.tab = S.me.peran === 'Perawat' ? 'scan' : 'stok';
+  if (r.mustEnroll) S.tab = 'self';
+  render();
+  clearInterval(pollT); pollT = setInterval(poll, POLL_MS);
+}
+function apply(d, first) {
+  if (!d || d.same) return false;
+  const old = {}; S.items.forEach(i => old[i.kode] = i.stok);
+  S.items = d.items; S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver; if (d.me) S.me = Object.assign(S.me, d.me);
+  S.changed = first ? [] : S.items.filter(i => old[i.kode] !== undefined && old[i.kode] !== i.stok).map(i => i.kode);
+  return true;
+}
+async function poll() {
+  if (!S.token || document.hidden) return;
+  try { const d = await call('poll', { ver: S.ver }); $('#live').classList.remove('off'); $('#liveTxt').textContent = 'Live · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    if (apply(d) && !document.querySelector('.modal') && !(document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))) render(); }
+  catch (e) { $('#live').classList.add('off'); $('#liveTxt').textContent = 'Offline'; if (/Sesi/.test(e.message)) logout(); }
+}
+async function refresh() { apply(await call('bootstrap')); render(); }
+function logout() { S.token = null; S.me = null; clearInterval(pollT); try { sessionStorage.removeItem('idcg'); } catch (e) {} closeModal(); $('#app').classList.add('hide'); $('#gate').classList.remove('hide'); resetGate(); }
+$('#logout').onclick = logout;
+document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+
+/* ================= TAB ================= */
+const TABS = {
+  Perawat: [['scan', '📷 Scan ambil'], ['stok', 'Stok'], ['mine', 'Ambilan saya']],
+  Purchase: [['stok', 'Stok'], ['masuk', 'Barang masuk'], ['opname', 'Stock opname'], ['barang', 'Barang & QR'], ['riwayat', 'Riwayat'], ['self', 'Wajah saya']],
+  Manajer: [['stok', 'Stok'], ['scan', '📷 Scan ambil'], ['masuk', 'Barang masuk'], ['opname', 'Stock opname'], ['barang', 'Barang & QR'], ['riwayat', 'Riwayat'], ['users', 'Pengguna & wajah']]
+};
+function render() {
+  const tabs = TABS[S.me.peran] || TABS.Perawat;
+  if (S.tab === 'self' && !tabs.some(t => t[0] === 'self')) tabs.push(['self', 'Wajah saya']);
+  $('#tabs').innerHTML = tabs.map(t => '<button data-t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
+  $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); });
+  const V = { scan: vScan, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, barang: vBarang, riwayat: vRiwayat, users: vUsers, self: vSelf }[S.tab] || vStok;
+  $('#view').innerHTML = ''; V($('#view'));
+  (S.changed || []).forEach(k => { const el = document.querySelector('[data-item="' + k + '"]'); if (el) { el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); } });
+  S.changed = [];
+}
+const itemBy = k => S.items.find(i => i.kode === k);
+const stCls = i => i.stok <= 0 ? 'zero' : i.rendah ? 'low' : '';
+const stChip = i => i.stok <= 0 ? '<span class="chip bad">Habis</span>' : i.rendah ? '<span class="chip warn">Menipis</span>' : '';
+const cold = i => /2\s*[–-]\s*10|kulkas|refriger/i.test((i.suhu || '') + (i.lokasi || ''));
+function itemCard(i) {
+  const pct = Math.min(100, Math.round(i.stok / Math.max(1, i.minStok * 3) * 100));
+  return '<div class="item ' + stCls(i) + '" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div>' +
+    '<div class="meta">' + esc(i.kode) + ' · ' + esc(i.lokasi) + (cold(i) ? ' · ❄ ' + esc(i.suhu) : '') + '</div>' +
+    '<div class="bar"><i style="width:' + pct + '%"></i></div><div class="meta">min. ' + i.minStok + ' ' + stChip(i) + '</div></div>' +
+    '<div class="qty"><b>' + i.stok + '</b><span>' + esc(i.satuan) + '</span></div></div>';
+}
+
+/* ---- Perawat: SCAN ---- */
+let lastResult = null;
+function vScan(el) {
+  el.innerHTML = '<div class="card scanBig">' +
+    '<div class="small mut">Langkah 2 dari 2 · arahkan kamera ke QR pada barang</div>' +
+    '<button class="scanBtn" id="bScan"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>Scan QR barang</button>' +
+    '<div class="small mut">Stok langsung berkurang otomatis — tidak perlu mengetik apa pun.</div>' +
+    '<div id="res" style="width:100%;display:flex;justify-content:center"></div></div>' +
+    '<h3 style="margin:18px 0 8px">Ambilan saya hari ini</h3><div class="card list" id="todayList"></div>';
+  $('#bScan').onclick = () => openScanner('Scan QR barang yang diambil', takeItem);
+  showResult(); mineList($('#todayList'), true);
+}
+async function takeItem(qr, qty) {
+  try {
+    const r = await call('scanOut', { qr, qty: qty || 1 }); beep(true);
+    lastResult = r; const it = itemBy(r.kode); if (it) { it.stok = r.after; it.rendah = r.rendah; } S.ver = 0;
+    S.recent.unshift({ id: r.id, at: new Date().toISOString(), kode: r.kode, nama: r.nama, jenis: 'KELUAR', qty: r.qty, stokSebelum: r.before, stokSesudah: r.after, user: S.me.nama, userId: S.me.id });
+  } catch (e) { beep(false); lastResult = { err: e.message }; }
+  if (S.tab !== 'scan') S.tab = 'scan';
+  render();
+}
+function showResult() {
+  const box = $('#res'); if (!box || !lastResult) return;
+  const r = lastResult;
+  if (r.err) { box.innerHTML = '<div class="result err"><b>✕ Tidak tercatat</b><div style="margin-top:6px">' + esc(r.err) + '</div></div>'; return; }
+  box.innerHTML = '<div class="result"><div class="small mut">✓ Tercatat atas nama ' + esc(S.me.nama) + ' · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + '</div>' +
+    '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diambil ' + r.qty + ' ' + esc(r.satuan) + '</div>' +
+    '<div class="big" style="margin:6px 0">Stok ' + r.before + ' → ' + r.after + '</div>' +
+    (r.rendah ? '<div class="chip warn" style="margin-bottom:6px">Stok menipis — Purchase otomatis diberi tahu</div>' : '') +
+    (cold(r) ? '<div class="small">❄ ' + esc(r.suhu) + (r.catatan ? ' · ' + esc(r.catatan) : '') + '</div>' : (r.catatan ? '<div class="small">' + esc(r.catatan) + '</div>' : '')) +
+    '<div class="row" style="margin-top:12px"><button class="soft sm" id="bMore">+1 lagi barang ini</button><button class="bad sm" id="bUndo">Batal (salah scan)</button></div></div>';
+  $('#bMore').onclick = () => takeItem('IDCG:' + r.kode, 1);
+  $('#bUndo').onclick = async () => { try { const u = await call('undoOut', { id: r.id }); toast('Dibatalkan · stok kembali ' + u.after); lastResult = null; await refresh(); } catch (e) { toast(e.message, true); } };
+}
+function mineList(el, onlyToday) {
+  const rows = S.recent.filter(m => m.userId === S.me.id && (!onlyToday || today(m.at)));
+  el.innerHTML = rows.length ? rows.map(m => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + '</div><div class="meta">' + fmtT(m.at) + ' · ' + m.jenis + (m.batal ? ' · dibatalkan' : '') + '</div></div><b>' + (m.jenis === 'KELUAR' ? '−' : '+') + m.qty + '</b></div>').join('') : '<div class="mut small">Belum ada.</div>';
+}
+function vMine(el) { el.innerHTML = '<h3 style="margin:8px 0">Ambilan saya</h3><div class="card list" id="ml"></div>'; mineList($('#ml'), false); }
+
+/* ---- STOK real-time ---- */
+let stokQ = '', stokF = 'all';
+function vStok(el) {
+  const it = S.items, low = it.filter(i => i.rendah).length;
+  const outT = S.recent.filter(m => m.jenis === 'KELUAR' && !m.batal && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
+  const inT = S.recent.filter(m => m.jenis === 'MASUK' && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
+  el.innerHTML = '<div class="tiles"><div class="tile"><b>' + it.length + '</b><span>Jenis barang</span></div><div class="tile"><b style="color:' + (low ? 'var(--warn)' : 'inherit') + '">' + low + '</b><span>Menipis / habis</span></div>' +
+    '<div class="tile"><b>' + outT + '</b><span>Keluar hari ini</span></div><div class="tile"><b>' + inT + '</b><span>Masuk hari ini</span></div></div>' +
+    '<div class="row" style="margin-bottom:10px"><input id="q" placeholder="Cari nama / kode / lokasi…" value="' + esc(stokQ) + '" class="grow">' +
+    '<select id="f" style="width:auto"><option value="all">Semua</option><option value="low"' + (stokF === 'low' ? ' selected' : '') + '>Menipis</option></select></div><div class="items" id="il"></div>';
+  const draw = () => { const q = stokQ.toLowerCase(); $('#il').innerHTML = it.filter(i => (stokF !== 'low' || i.rendah) && (!q || (i.nama + i.kode + i.lokasi + i.kategori).toLowerCase().includes(q))).map(itemCard).join('') || '<div class="mut">Tidak ada.</div>'; };
+  $('#q').oninput = e => { stokQ = e.target.value; draw(); }; $('#f').onchange = e => { stokF = e.target.value; draw(); }; draw();
+}
+
+/* ---- Purchase: BARANG MASUK ---- */
+function vMasuk(el) {
+  const f = S.inForm;
+  el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Barang masuk</h3><div class="small mut">Scan QR di kemasan atau pilih barang, isi jumlah, simpan. Stok bertambah otomatis.</div>' +
+    '<div class="row" style="margin-top:12px"><select id="iK" class="grow"><option value="">— pilih barang —</option>' + S.items.map(i => '<option value="' + esc(i.kode) + '"' + (f.kode === i.kode ? ' selected' : '') + '>' + esc(i.nama) + ' (stok ' + i.stok + ')</option>').join('') + '</select><button class="soft" id="iScan">📷 Scan</button></div>' +
+    '<div class="grid2"><div><label>Jumlah masuk</label><input id="iQ" type="number" min="1" inputmode="numeric" value="' + esc(f.qty || '') + '"></div><div><label>Supplier</label><input id="iS" value="' + esc(f.supplier || '') + '"></div>' +
+    '<div><label>No. faktur</label><input id="iF"></div><div><label>Batch / LOT</label><input id="iB"></div><div><label>Kedaluwarsa</label><input id="iE" type="date"></div><div><label>Catatan</label><input id="iC"></div></div>' +
+    '<button id="iGo" style="width:100%;margin-top:14px">Simpan barang masuk</button></div>' +
+    '<h3 style="margin:18px 0 8px">Masuk terakhir</h3><div class="card list" id="inl"></div>';
+  $('#iScan').onclick = () => openScanner('Scan QR barang yang datang', qr => { const k = qr.replace(/^IDCG:/i, '').toUpperCase(); if (!itemBy(k)) return toast('QR tidak dikenal: ' + k, true); S.inForm.kode = k; render(); setTimeout(() => $('#iQ').focus(), 50); });
+  $('#iK').onchange = e => S.inForm.kode = e.target.value;
+  $('#iGo').onclick = async () => {
+    try { const r = await call('goodsIn', { kode: $('#iK').value, qty: $('#iQ').value, supplier: $('#iS').value, faktur: $('#iF').value, batch: $('#iB').value, expired: $('#iE').value, catatan: $('#iC').value });
+      toast('✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after); beep(true); S.inForm = {}; await refresh(); } catch (e) { toast(e.message, true); beep(false); }
+  };
+  const rows = S.recent.filter(m => m.jenis === 'MASUK').slice(0, 10);
+  $('#inl').innerHTML = rows.map(m => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + '</div><div class="meta">' + fmtT(m.at) + ' · ' + esc(m.user) + (m.supplier ? ' · ' + esc(m.supplier) : '') + (m.batch ? ' · LOT ' + esc(m.batch) : '') + (m.expired ? ' · ED ' + esc(String(m.expired).slice(0, 10)) : '') + '</div></div><b style="color:var(--pri)">+' + m.qty + '</b></div>').join('') || '<div class="mut small">Belum ada.</div>';
+}
+
+/* ---- Purchase: STOCK OPNAME ---- */
+function vOpname(el) {
+  const C = S.opCounts;
+  el.innerHTML = '<div class="card"><div class="row"><div class="grow"><h3 style="margin:0">Stock opname</h3><div class="small mut">Hitung fisik di rak. Isi angkanya, atau <b>scan QR tiap barang</b> (1 scan = +1). Sistem menyamakan stok & mencatat selisih.</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
+    '<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Barang</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>' +
+    S.items.map(i => '<tr data-k="' + esc(i.kode) + '"><td><div class="nm" style="font-size:14px">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + ' · ' + esc(i.lokasi) + '</div></td><td><b>' + i.stok + '</b></td><td><input type="number" min="0" inputmode="numeric" data-c="' + esc(i.kode) + '" value="' + (C[i.kode] ?? '') + '"></td><td class="sel"></td></tr>').join('') +
+    '</tbody></table></div><label>Catatan opname</label><input id="oN" placeholder="mis. opname akhir bulan Oktober"><button id="oGo" style="width:100%;margin-top:12px">Simpan opname</button><div id="oRes"></div></div>';
+  const upd = () => el.querySelectorAll('tr[data-k]').forEach(tr => { const k = tr.dataset.k, v = C[k], i = itemBy(k), c = tr.querySelector('.sel');
+    if (v === undefined || v === '') { c.innerHTML = '<span class="mut">–</span>'; return; } const d = Number(v) - i.stok;
+    c.innerHTML = d === 0 ? '<span class="chip">cocok</span>' : '<span class="chip ' + (d < 0 ? 'bad' : 'blue') + '">' + (d > 0 ? '+' : '') + d + '</span>'; });
+  el.querySelectorAll('input[data-c]').forEach(inp => inp.oninput = () => { C[inp.dataset.c] = inp.value; upd(); });
+  upd();
+  $('#oScan').onclick = () => openScanner('Scan tiap barang di rak (1 scan = 1 unit)', qr => { const k = qr.replace(/^IDCG:/i, '').toUpperCase(); if (!itemBy(k)) return toast('QR tidak dikenal', true);
+    C[k] = String((Number(C[k]) || 0) + 1); const inp = el.querySelector('input[data-c="' + k + '"]'); if (inp) inp.value = C[k]; upd(); toast(itemBy(k).nama + ' · fisik ' + C[k]); return 'keep'; });
+  $('#oGo').onclick = async () => {
+    const counts = {}; Object.keys(C).forEach(k => { if (C[k] !== '' && C[k] !== undefined) counts[k] = Number(C[k]); });
+    try { const r = await call('opname', { counts, catatan: $('#oN').value }); S.opCounts = {};
+      await refresh();
+      $('#view').insertAdjacentHTML('afterbegin', '<div class="card" style="margin-bottom:12px;border-color:var(--pri)"><b>Opname tersimpan</b> · ' + r.cocok + ' cocok, ' + r.beda + ' selisih' + (r.beda ? ' (Manajer diberi tahu lewat email)' : '') +
+        '<div class="list" style="margin-top:6px">' + r.rows.map(x => '<div class="li"><div class="grow">' + esc(x.nama) + '</div><span class="small mut">sistem ' + x.sistem + ' → fisik ' + x.fisik + '</span> ' + (x.selisih ? '<span class="chip ' + (x.selisih < 0 ? 'bad' : 'blue') + '">' + (x.selisih > 0 ? '+' : '') + x.selisih + '</span>' : '<span class="chip">cocok</span>') + '</div>').join('') + '</div></div>');
+    } catch (e) { toast(e.message, true); }
+  };
+}
+
+/* ---- BARANG & QR ---- */
+function vBarang(el) {
+  el.innerHTML = '<div class="row" style="margin-bottom:10px"><div class="grow"><h3 style="margin:0">Barang & label QR</h3><div class="small mut">Tempel label QR di kemasan / rak. Isi QR: <code>IDCG:KODE</code></div></div><button class="ghost sm" id="pAll">🖨 Cetak semua label</button><button class="sm" id="nItem">+ Barang</button></div>' +
+    '<div class="items">' + S.items.map(i => '<div class="item" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + ' · ' + esc(i.satuan) + ' · stok ' + i.stok + '</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="soft sm" data-qr="' + esc(i.kode) + '">QR</button><button class="ghost sm" data-ed="' + esc(i.kode) + '">Ubah</button></div></div>').join('') + '</div>';
+  el.querySelectorAll('[data-qr]').forEach(b => b.onclick = () => labelModal([itemBy(b.dataset.qr)]));
+  el.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => itemModal(itemBy(b.dataset.ed)));
+  $('#pAll').onclick = () => labelModal(S.items);
+  $('#nItem').onclick = () => itemModal(null);
+}
+function labelHtml(i) {
+  return '<div class="lbl"><div class="q" data-q="IDCG:' + esc(i.kode) + '"></div><div class="t"><b>' + esc(i.nama) + '</b>' + esc(i.satuan) + (i.lokasi ? '<br>' + esc(i.lokasi) : '') +
+    (i.catatan ? '<br>' + esc(i.catatan) : '') + '<div class="k">IDCG:' + esc(i.kode) + '</div>' + (cold(i) ? '<span class="cold">❄ SIMPAN ' + esc(i.suhu) + '</span>' : (i.suhu ? '<div>' + esc(i.suhu) + '</div>' : '')) + '</div></div>';
+}
+function drawQrs(root) { root.querySelectorAll('[data-q]').forEach(d => { d.innerHTML = ''; if (window.QRCode) new QRCode(d, { text: d.dataset.q, width: 224, height: 224, correctLevel: QRCode.CorrectLevel.M }); else d.textContent = d.dataset.q; }); }
+function labelModal(list) {
+  const m = modal('<div class="row"><h3 class="grow" style="margin:0">Label QR (' + list.length + ')</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Cetak di kertas stiker, potong, tempel di kemasan. Satu label untuk satu jenis barang.</div>' +
+    '<div id="lbls" style="display:flex;flex-wrap:wrap;justify-content:center">' + list.map(labelHtml).join('') + '</div><button id="lPrint" style="width:100%;margin-top:12px">🖨 Cetak</button>');
+  drawQrs(m);
+  m.querySelector('#lPrint').onclick = () => { const p = $('#printArea'); p.innerHTML = list.map(labelHtml).join(''); drawQrs(p); setTimeout(() => window.print(), 300); };
+}
+function itemModal(i) {
+  const n = !i; i = i || { kode: '', nama: '', kategori: '', satuan: '', stok: 0, minStok: 1, lokasi: '', suhu: '', catatan: '' };
+  const f = (k, l, t) => '<div><label>' + l + '</label><input id="m_' + k + '" ' + (t || '') + ' value="' + esc(i[k]) + '"></div>';
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah barang' : 'Ubah barang') + '</h3><div class="grid2">' + f('kode', 'Kode (jadi isi QR)', n ? '' : 'disabled') + f('nama', 'Nama barang') + f('kategori', 'Kategori') + f('satuan', 'Satuan (mis. syringe 4,6 g)') +
+    (n ? f('stok', 'Stok awal', 'type=number min=0') : '') + f('minStok', 'Batas minimum (peringatan)', 'type=number min=0') + f('lokasi', 'Lokasi simpan') + f('suhu', 'Suhu simpan') + '</div>' + f('catatan', 'Catatan (mis. Rx, umur setelah dibuka)') +
+    '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="mSave">Simpan</button></div>');
+  m.querySelector('#mSave').onclick = async () => {
+    const it = {}; ['kode', 'nama', 'kategori', 'satuan', 'stok', 'minStok', 'lokasi', 'suhu', 'catatan'].forEach(k => { const e = m.querySelector('#m_' + k); if (e) it[k] = e.value; });
+    try { const r = await call('saveItem', { item: it }); closeModal(); toast(r.baru ? 'Barang ditambahkan · QR ' + r.qr : 'Tersimpan'); await refresh(); if (r.baru) labelModal([itemBy(r.kode)]); } catch (e) { toast(e.message, true); }
+  };
+}
+
+/* ---- RIWAYAT ---- */
+let rwF = '';
+async function vRiwayat(el) {
+  el.innerHTML = '<div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">Riwayat mutasi</h3><select id="rF" style="width:auto"><option value="">Semua</option><option>KELUAR</option><option>MASUK</option><option>OPNAME</option><option>BATAL</option></select><button class="ghost sm" id="xls">⬇ Excel</button></div><div class="card" style="overflow-x:auto"><table id="rt"><tr><td class="mut">Memuat…</td></tr></table></div>';
+  $('#rF').value = rwF; $('#rF').onchange = e => { rwF = e.target.value; vRiwayat(el); };
+  $('#xls').onclick = async () => { try { const r = await call('exportXlsx'); if (!r.b64) return toast('Ekspor hanya tersedia di aplikasi asli', true); const a = document.createElement('a'); a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + r.b64; a.download = r.name; a.click(); } catch (e) { toast(e.message, true); } };
+  let rows; try { rows = await call('history', {}); } catch (e) { $('#rt').innerHTML = '<tr><td>' + esc(e.message) + '</td></tr>'; return; }
+  if (rwF) rows = rows.filter(r => r.jenis === rwF);
+  const col = { KELUAR: 'warn', MASUK: '', OPNAME: 'blue', BATAL: 'gray' };
+  $('#rt').innerHTML = '<thead><tr><th>Waktu</th><th>Barang</th><th>Jenis</th><th>Jml</th><th>Stok</th><th>Oleh</th><th>Ket.</th></tr></thead><tbody>' + rows.map(r => '<tr><td class="small">' + fmtT(r.at) + '</td><td>' + esc(r.nama) + '</td><td><span class="chip ' + col[r.jenis] + '">' + r.jenis + '</span></td><td>' + r.qty + '</td><td class="small">' + r.stokSebelum + ' → ' + r.stokSesudah + '</td><td class="small">' + esc(r.user) + '</td><td class="small mut">' + esc([r.catatan, r.supplier, r.batch && 'LOT ' + r.batch, r.batal && 'dibatalkan'].filter(Boolean).join(' · ')) + '</td></tr>').join('') + '</tbody>';
+}
+
+/* ---- PENGGUNA & WAJAH (Manajer) ---- */
+function vUsers(el) {
+  el.innerHTML = '<div class="row" style="margin-bottom:10px"><div class="grow"><h3 style="margin:0">Pengguna & wajah</h3><div class="small mut">Yang disimpan hanya sidik wajah (128 angka), bukan foto. Minta persetujuan tertulis karyawan sebelum mendaftarkan wajahnya.</div></div><button class="sm" id="nU">+ Pengguna</button></div>' +
+    '<div class="card list">' + S.users.map(u => '<div class="li"><div class="grow"><div class="nm">' + esc(u.nama) + ' <span class="chip gray">' + esc(u.peran) + '</span>' + (u.aktif !== 'ya' ? ' <span class="chip bad">nonaktif</span>' : '') + '</div>' +
+      '<div class="meta">' + (u.faces ? '✓ wajah terdaftar (' + u.faces + ' sampel) · ' + esc(u.faceAt) : '<span style="color:var(--warn)">Wajah belum terdaftar — belum bisa masuk</span>') + (u.email ? ' · ' + esc(u.email) : '') + '</div></div>' +
+      '<div class="row" style="flex-wrap:wrap;justify-content:flex-end;gap:6px"><button class="soft sm" data-en="' + u.id + '">📷 ' + (u.faces ? 'Tambah sampel' : 'Daftarkan wajah') + '</button>' + (u.faces ? '<button class="bad sm" data-cl="' + u.id + '">Hapus wajah</button>' : '') + '<button class="ghost sm" data-ue="' + u.id + '">Ubah</button></div></div>').join('') + '</div>';
+  el.querySelectorAll('[data-en]').forEach(b => b.onclick = () => enrollModal(S.users.find(u => u.id === b.dataset.en)));
+  el.querySelectorAll('[data-cl]').forEach(b => b.onclick = async () => { const u = S.users.find(x => x.id === b.dataset.cl); if (!confirmBox('Hapus semua data wajah ' + u.nama + '? Ia tidak bisa masuk sampai didaftarkan ulang.')) return; try { await call('clearFace', { userId: u.id }); toast('Data wajah dihapus'); await refresh(); } catch (e) { toast(e.message, true); } });
+  el.querySelectorAll('[data-ue]').forEach(b => b.onclick = () => userModal(S.users.find(u => u.id === b.dataset.ue)));
+  $('#nU').onclick = () => userModal(null);
+}
+function confirmBox(msg) { return window.DEMO_API ? true : confirm(msg); }
+function userModal(u) {
+  const n = !u; u = u || { nama: '', email: '', peran: 'Perawat', aktif: 'ya' };
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah pengguna' : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '"><label>Peran</label><select id="uR">' + ['Perawat', 'Purchase', 'Manajer'].map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
+    '<label>Email (untuk notifikasi; Purchase/Manajer)</label><input id="uE" type="email" value="' + esc(u.email) + '"><label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Manajer)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
+    '<label>Status</label><select id="uA"><option value="ya">Aktif</option><option value="tidak"' + (u.aktif === 'tidak' ? ' selected' : '') + '>Nonaktif</option></select>' +
+    '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="uS">Simpan</button></div>');
+  m.querySelector('#uS').onclick = async () => { try { await call('saveUser', { user: { id: u.id, nama: $('#uN').value, peran: $('#uR').value, email: $('#uE').value, pin: $('#uP').value, aktif: $('#uA').value } }); closeModal(); toast('Tersimpan'); await refresh(); } catch (e) { toast(e.message, true); } };
+}
+function vSelf(el) {
+  el.innerHTML = '<div class="card" style="max-width:520px"><h3 style="margin:0 0 6px">Daftarkan wajah Anda</h3><div class="small mut">' + (S.me.hasFace ? 'Wajah Anda sudah terdaftar. Tambah sampel bila sering gagal dikenali.' : 'Setelah ini, Anda masuk dengan pindai wajah + PIN. Masuk dengan PIN saja tidak berlaku lagi.') + '</div><button id="selfGo" style="margin-top:12px">📷 ' + (S.me.hasFace ? 'Tambah sampel wajah' : 'Daftarkan wajah sekarang') + '</button></div>';
+  $('#selfGo').onclick = () => enrollModal({ id: S.me.id, nama: S.me.nama });
+}
+function enrollModal(u) {
+  const m = modal('<div class="row"><h3 class="grow" style="margin:0">Wajah · ' + esc(u.nama) + '</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Satu orang, wajah lurus, tanpa masker, cahaya cukup. Ambil 2–3 sampel agar lebih andal.</div>' +
+    '<div class="cam"><video id="eV" playsinline muted style="transform:scaleX(-1)"></video><img id="eI" class="hide" style="width:100%;height:100%;object-fit:cover"></div><div id="eMsg" class="small" style="margin:8px 0">Membuka kamera…</div>' +
+    '<div class="row"><button class="grow" id="eSnap" disabled>Ambil sampel</button><button class="ghost" id="eFile">Dari foto</button></div><input type="file" id="eIn" accept="image/*" class="hide">');
+  let st = null; const msg = t => m.querySelector('#eMsg').textContent = t;
+  m._onclose = () => camStop(st);
+  loadFace().catch(() => msg('Pengenal wajah gagal dimuat — cek internet.'));
+  camStart(m.querySelector('#eV'), 'user').then(s => { st = s; m.querySelector('#eSnap').disabled = false; msg('Siap. Tekan "Ambil sampel".'); }).catch(e => msg('Kamera tidak bisa dibuka — gunakan "Dari foto". (' + (e.message || e.name) + ')'));
+  const send = async (el, src) => { msg('Menghitung sidik wajah…'); try { const d = await faceDesc(el); const r = await call('enrollFace', { userId: u.id, desc: d, source: src }); beep(true); msg('✓ Tersimpan — ' + r.nama + ' kini punya ' + r.samples + ' sampel wajah.'); await refresh(); } catch (e) { beep(false); msg('✕ ' + e.message); } };
+  m.querySelector('#eSnap').onclick = () => send(m.querySelector('#eV'), 'kamera');
+  m.querySelector('#eFile').onclick = () => m.querySelector('#eIn').click();
+  m.querySelector('#eIn').onchange = async e => { const f = e.target.files[0]; if (!f) return; const img = await fileToImg(f); const I = m.querySelector('#eI'); I.src = img.src; I.classList.remove('hide'); m.querySelector('#eV').classList.add('hide'); camStop(st); await send(img, 'foto'); e.target.value = ''; };
+}
+
+/* ================= MODAL & SCANNER QR ================= */
+function modal(html) {
+  closeModal();
+  const w = document.createElement('div'); w.className = 'modal'; w.innerHTML = '<div class="sheet">' + html + '</div>';
+  w.onclick = e => { if (e.target === w || e.target.hasAttribute('data-x')) closeModal(); };
+  document.body.appendChild(w); return w.firstChild;
+}
+function closeModal() { const w = document.querySelector('.modal'); if (!w) return; const s = w.firstChild; if (s._onclose) s._onclose(); w.remove(); }
+
+/** Buka kamera belakang dan baca QR terus-menerus. onCode(text) → 'keep' untuk tetap memindai (opname). */
+function openScanner(title, onCode) {
+  const m = modal('<div class="row"><h3 class="grow" style="margin:0">' + esc(title) + '</h3><button class="ghost sm" data-x>Tutup</button></div>' +
+    '<div class="cam" style="margin-top:10px"><video id="qV" playsinline muted></video><div class="frame"></div><div class="laser"></div></div>' +
+    '<div id="qMsg" class="small mut" style="margin:8px 0">Membuka kamera belakang…</div>' +
+    '<button class="ghost" id="qPhoto" style="width:100%">📸 Kamera tidak jalan? Foto QR-nya</button><input type="file" id="qIn" accept="image/*" capture="environment" class="hide">');
+  let st = null, live = true; const v = m.querySelector('#qV'), msg = t => m.querySelector('#qMsg').textContent = t;
+  m._onclose = () => { live = false; camStop(st); };
+  const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+  const bd = ('BarcodeDetector' in window) ? (() => { try { return new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { return null; } })() : null;
+  const got = text => {
+    const now = Date.now(); if (text === S.lastQr && now - S.lastQrAt < 2500) return; // cegah terbaca dobel
+    S.lastQr = text; S.lastQrAt = now;
+    const keep = onCode(text.trim());
+    if (keep !== 'keep') closeModal(); else beep(true);
+  };
+  const decode = async src => {
+    if (bd) { try { const r = await bd.detect(src); if (r[0]) return r[0].rawValue; } catch (e) {} }
+    if (!window.jsQR) return null;
+    const w = src.videoWidth || src.naturalWidth || src.width, h = src.videoHeight || src.naturalHeight || src.height; if (!w) return null;
+    const k = Math.min(1, 900 / Math.max(w, h)); cv.width = Math.round(w * k); cv.height = Math.round(h * k); cx.drawImage(src, 0, 0, cv.width, cv.height);
+    const r = jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, { inversionAttempts: 'attemptBoth' }); return r && r.data;
+  };
+  m._decode = decode; m._got = got;
+  camStart(v, 'environment').then(s => { st = s; msg('Arahkan ke QR barang…');
+    const tick = async () => { if (!live) return; try { const t = await decode(v); if (t) got(t); } catch (e) {} if (live) setTimeout(tick, 220); }; tick();
+  }).catch(e => msg('Kamera tidak bisa dibuka (' + (e.message || e.name) + '). Gunakan tombol foto di bawah.'));
+  m.querySelector('#qPhoto').onclick = () => m.querySelector('#qIn').click();
+  m.querySelector('#qIn').onchange = async e => { const f = e.target.files[0]; if (!f) return; const img = await fileToImg(f); const t = await decode(img); e.target.value = ''; if (t) got(t); else msg('QR tidak terbaca di foto — dekatkan & pastikan fokus.'); };
+  return m;
+}
+
+/* ================= MULAI ================= */
+(async function init() {
+  let t = null; try { t = sessionStorage.getItem('idcg'); } catch (e) {}
+  if (t) { S.token = t; try { const d = await call('bootstrap'); S.token = t; await enter({ token: t, user: d.me, cara: 'sesi' }); return; } catch (e) { S.token = null; } }
+  resetGate();
+})();
+</script>
+</body>
+</html>
