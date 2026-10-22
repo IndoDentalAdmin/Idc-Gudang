@@ -147,7 +147,7 @@ body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
       <button id="srvGo" style="width:100%;margin-top:10px">Simpan</button>
     </div>
     <details style="margin-top:18px;text-align:left" id="setupBox">
-      <summary class="small mut">Masuk pertama kali (Annisa, Mamat, Manajer — wajah belum terdaftar)</summary>
+      <summary class="small mut">Masuk pertama kali (Annisa, Mamat, Finance — wajah belum terdaftar)</summary>
       <label>Nomor HP atau email</label><input id="sEmail" autocomplete="username" placeholder="mis. 0812-1397-6161">
       <label>PIN</label><input id="sPin" type="password" inputmode="numeric" maxlength="6">
       <button class="ghost" id="sGo" style="width:100%;margin-top:10px">Masuk dengan PIN → daftarkan wajah</button>
@@ -960,7 +960,7 @@ function accRulesCard(el) {
   $('#aGo').onclick = async () => { try { const r = await call('setAccRules', { batas: $('#aB').value, items: ch }); toast('✓ Aturan ACC tersimpan · batas stok ' + r.batas + (r.diubah ? ' · ' + r.diubah + ' barang diubah' : '')); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 
-/* ---- PENGGUNA & WAJAH (Manajer) ---- */
+/* ---- PENGGUNA & WAJAH (Finance) ---- */
 function vUsers(el) {
   el.innerHTML = '<div class="row" style="margin-bottom:10px"><div class="grow"><h3 style="margin:0">Pengguna & wajah</h3><div class="small mut">Yang disimpan hanya sidik wajah (128 angka), bukan foto. Minta persetujuan tertulis karyawan sebelum mendaftarkan wajahnya.</div></div><button class="sm" id="nU">+ Pengguna</button></div>' +
     '<div class="card list">' + S.users.map(u => '<div class="li" style="flex-wrap:wrap"><div class="grow"><div class="nm">' + esc(u.nama) + ' <span class="chip gray">' + esc(u.peran) + '</span>' + (u.kuasa ? ' <span class="chip">pemberi ACC</span>' : '') + (u.aktif !== 'ya' ? ' <span class="chip bad">nonaktif</span>' : '') + '</div>' +
@@ -975,10 +975,10 @@ function vUsers(el) {
 }
 function userModal(u) {
   const n = !u; u = u || { nama: '', email: '', hp: '', peran: 'Perawat', aktif: 'ya', kuasa: false };
-  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah pengguna' : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '"><label>Peran</label><select id="uR">' + ['Perawat', 'PJ Gudang', 'Purchase', 'Penyetuju', 'Manajer'].map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
-    '<div class="small mut" style="margin-top:4px">Perawat & PJ Gudang: cukup wajah. Purchase, Penyetuju, Manajer: wajah + PIN.</div>' +
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah pengguna' : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '"><label>Peran</label><select id="uR">' + ['Perawat', 'PJ Gudang', 'Purchase', 'Penyetuju', 'Finance'].map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
+    '<div class="small mut" style="margin-top:4px">Perawat & PJ Gudang: cukup wajah. Purchase, Penyetuju, Finance: wajah + PIN.</div>' +
     '<label>Nomor HP (untuk masuk pertama & WA)</label><input id="uH" inputmode="tel" value="' + esc(u.hp ? '+' + u.hp : '') + '" placeholder="+62 8…"><label>Email (opsional, untuk notifikasi)</label><input id="uE" type="email" value="' + esc(u.email) + '">' +
-    '<label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Penyetuju/Manajer)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
+    '<label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Penyetuju/Finance)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
     '<label class="chk"><input type="checkbox" id="uK"' + (u.kuasa ? ' checked' : '') + '> Pemberi ACC (YA / TIDAK)</label>' +
     '<label>Status</label><select id="uA"><option value="ya">Aktif</option><option value="tidak"' + (u.aktif === 'tidak' ? ' selected' : '') + '>Nonaktif</option></select>' +
     '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="uS">Simpan</button></div>');
