@@ -75,6 +75,42 @@ td input{padding:8px;width:84px;text-align:center}
 .lbl .q{width:112px;height:112px;flex:none}.lbl .q img,.lbl .q canvas{width:112px!important;height:112px!important}
 .lbl .t{font-size:12px;line-height:1.3}.lbl .t b{font-size:13px;display:block;margin-bottom:3px}.lbl .k{font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:12px;margin-top:4px}
 .lbl .cold{display:inline-block;margin-top:4px;background:#0b4ea2;color:#fff;font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px}
+.badge{display:inline-flex;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;align-items:center;justify-content:center;margin-left:4px}
+.rsBanner{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:var(--bad);color:#fff;border-radius:14px;padding:12px 14px;margin:2px 0 12px;font-weight:500;font-size:14px}
+.rsBanner b{font-weight:800;letter-spacing:.02em}.rsBanner span{flex:1;min-width:0}.rsBanner u{font-weight:700;white-space:nowrap}
+.rsBanner i{flex:none;width:12px;height:12px;border-radius:50%;background:#fff;animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+.sheetRed{border-top:6px solid var(--bad)}.rsHead{font-size:24px;font-weight:900;color:var(--bad);letter-spacing:.02em}.rsList{max-height:46vh;overflow:auto}.rsN{color:var(--bad);font-size:20px;min-width:32px;text-align:right}
+.tile.tRed{border-color:var(--bad);background:var(--bad2)}.tile.tRed b{color:var(--bad)}
+.hello{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:4px 0 12px}
+h3.sec{margin:18px 0 8px;font-size:16px}
+.accGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.acc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;border-left:5px solid var(--warn)}.acc-KEMBALI{border-left-color:var(--blue)}.acc-HAPUS{border-left-color:var(--bad)}
+.accFoto{width:84px;height:84px;object-fit:cover;border-radius:10px;cursor:zoom-in;flex:none;background:#000}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.yn button{padding:14px;font-size:16px;font-weight:800;border-radius:12px}
+.yn .yes{background:var(--pri);color:#fff}.yn .no{background:var(--bad2);color:var(--bad)}
+.noBox{display:flex;gap:6px;margin-top:8px}
+.result.wait{border-color:var(--warn);background:var(--warn2)}
+.seg{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px;overflow-x:auto}.seg button{flex:1;background:transparent;color:var(--mut);white-space:nowrap;padding:9px 12px;font-size:14px}.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.syncSt{margin:10px 0;padding:9px 12px;border-radius:10px;background:var(--bg);font-size:13px}.syncSt.ok{background:var(--pri2);color:var(--pri)}.syncSt.bad{background:var(--bad2);color:var(--bad)}
+canvas{display:block;max-width:100%}.chartCard canvas{margin-top:10px}.chartTip{position:fixed;z-index:60;display:none;max-width:250px;white-space:pre-line;background:var(--ink);color:var(--card);font-size:12px;padding:8px 10px;border-radius:8px;pointer-events:none}
+.accRules{max-height:320px;overflow:auto;margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:0 10px}
+label.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px;margin-top:12px}label.chk input{width:auto}
+.hpNav{display:none}
+body.hp nav.tabs{display:none}
+body.hp main{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+body.hp .hpNav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--card);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right,0px));box-shadow:0 -4px 18px rgba(0,0,0,.06)}
+.hpNav button{flex:1;background:transparent;color:var(--mut);padding:4px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600}
+.hpNav button i,.hpTiles button i{font-style:normal;font-size:21px;line-height:1;position:relative}
+.hpNav button.on{color:var(--pri);background:var(--pri2)}
+.hpNav b,.hpTiles b{position:absolute;top:-6px;right:-12px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--bad);color:#fff;font-size:10px;font-style:normal;display:flex;align-items:center;justify-content:center}
+.hpTiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 12px}
+.hpTiles button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;line-height:1.2;text-align:center}
+body.hp .hello .scanBtn{max-width:none!important;width:100%}
+body.hp .rsBanner{font-size:13px}body.hp .rsBanner span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+body.hp .tiles{margin-top:4px}
+body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 #printArea{display:none}
 @media print{body>*:not(#printArea){display:none!important}#printArea{display:flex!important;flex-wrap:wrap}}
 @media (max-width:640px){.tiles{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}header .who{display:none}}
@@ -110,11 +146,11 @@ td input{padding:8px;width:84px;text-align:center}
       <button id="srvGo" style="width:100%;margin-top:10px">Simpan</button>
     </div>
     <details style="margin-top:18px;text-align:left" id="setupBox">
-      <summary class="small mut">Setup awal Manajer/Purchase (wajah belum terdaftar)</summary>
-      <label>Email</label><input id="sEmail" type="email" autocomplete="username">
+      <summary class="small mut">Masuk pertama kali (Annisa, Mamat, Manajer — wajah belum terdaftar)</summary>
+      <label>Nomor HP atau email</label><input id="sEmail" autocomplete="username" placeholder="mis. 0812-1397-6161">
       <label>PIN</label><input id="sPin" type="password" inputmode="numeric" maxlength="6">
       <button class="ghost" id="sGo" style="width:100%;margin-top:10px">Masuk dengan PIN → daftarkan wajah</button>
-      <div class="small mut" style="margin-top:6px">Hanya berlaku sekali, sampai wajah akun itu didaftarkan.</div>
+      <div class="small mut" style="margin-top:6px">Hanya berlaku sampai wajah akun itu didaftarkan. Perawat & PJ Gudang cukup pindai wajah.</div>
     </details>
   </div>
 </section>
@@ -130,6 +166,7 @@ td input{padding:8px;width:84px;text-align:center}
   </div></header>
   <div class="wrap"><nav class="tabs" id="tabs"></nav></div>
   <main class="wrap" id="view"></main>
+  <nav id="hpNav" class="hpNav"></nav>
 </section>
 
 <div id="printArea"></div>
@@ -142,7 +179,7 @@ td input{padding:8px;width:84px;text-align:center}
 const API_URL = 'https://script.google.com/macros/s/AKfycbyyJ4tqjuM8wjao0eZK_w1CE5Uo6zedH_Zn3wYFWtwvcgTPZ9NpUN-LwQL9Jja9fD_sVw/exec';
 const FACE_LIB = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/';
 const POLL_MS = 10000;
-const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {} };
+const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {}, restock: [], pending: [], myReqs: [], approvers: [], alertQty: 3, accBatas: 5 };
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtT = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
@@ -263,22 +300,31 @@ $('#srvGo').onclick = () => { const v = $('#srvIn').value.trim(); if (!/^https:\
 
 /* ================= SESI & REAL-TIME ================= */
 let pollT = null;
+const can = k => !!(S.me && S.me.can && S.me.can.indexOf(k) >= 0);
 async function enter(r) {
   S.token = r.token; S.me = r.user;
   try { sessionStorage.setItem('idcg', S.token); } catch (e) {}
   $('#gate').classList.add('hide'); $('#app').classList.remove('hide');
-  $('#whoName').textContent = S.me.nama; $('#whoRole').textContent = S.me.peran + (r.cara === 'wajah' ? ' · wajah ✓' : '');
+  $('#whoName').textContent = S.me.nama; $('#whoRole').textContent = S.me.peran + (S.me.kuasa ? ' · pemberi ACC' : '') + (r.cara === 'wajah' ? ' · wajah ✓' : '');
   apply(await call('bootstrap'), true);
-  S.tab = S.me.peran === 'Perawat' ? 'scan' : 'stok';
-  if (r.mustEnroll) S.tab = 'self';
+  S.tab = r.mustEnroll ? 'self' : 'home';
   render();
+  if (!r.mustEnroll) restockPopup(true);
   clearInterval(pollT); pollT = setInterval(poll, POLL_MS);
 }
 function apply(d, first) {
   if (!d || d.same) return false;
   const old = {}; S.items.forEach(i => old[i.kode] = i.stok);
-  S.items = d.items; S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver; if (d.me) S.me = Object.assign(S.me, d.me);
+  const oldPend = new Set((S.pending || []).map(p => p.id)), oldMine = {}; (S.myReqs || []).forEach(r => oldMine[r.id] = r.status);
+  S.items = d.items; S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver; S.restock = d.restock || []; S.pending = d.pending || []; S.myReqs = d.myReqs || [];
+  S.settings = d.settings || null; S.approvers = d.approvers || []; S.alertQty = d.alertQty || 3; S.accBatas = d.accBatas === undefined ? 5 : d.accBatas;
+  if (d.me) S.me = Object.assign(S.me, d.me);
   S.changed = first ? [] : S.items.filter(i => old[i.kode] !== undefined && old[i.kode] !== i.stok).map(i => i.kode);
+  if (!first) {
+    const baru = S.me.kuasa ? S.pending.filter(p => !oldPend.has(p.id)) : [];
+    if (baru.length) { beep(true); toast('🔔 Perlu ACC: ' + baru[0].user + ' · ' + baru[0].nama + (baru.length > 1 ? ' (+' + (baru.length - 1) + ')' : '')); }
+    S.myReqs.forEach(r => { if (oldMine[r.id] === 'MENUNGGU' && r.status !== 'MENUNGGU') { beep(r.status === 'DISETUJUI'); toast((r.status === 'DISETUJUI' ? '✓ Disetujui ' : '✕ Ditolak ') + r.oleh + ' · ' + r.nama, r.status !== 'DISETUJUI'); } });
+  }
   return true;
 }
 async function poll() {
@@ -293,125 +339,307 @@ $('#logout').onclick = logout;
 document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
 
 /* ================= TAB ================= */
-const TABS = {
-  Perawat: [['scan', '📷 Scan ambil'], ['stok', 'Stok'], ['mine', 'Ambilan saya']],
-  Purchase: [['stok', 'Stok'], ['masuk', 'Barang masuk'], ['opname', 'Stock opname'], ['barang', 'Barang & QR'], ['riwayat', 'Riwayat'], ['self', 'Wajah saya']],
-  Manajer: [['stok', 'Stok'], ['scan', '📷 Scan ambil'], ['masuk', 'Barang masuk'], ['opname', 'Stock opname'], ['barang', 'Barang & QR'], ['riwayat', 'Riwayat'], ['users', 'Pengguna & wajah']]
-};
+function tabsFor() {
+  const t = [['home', 'Beranda']];
+  if (S.me.kuasa) t.push(['acc', 'ACC' + (S.pending.length ? ' <span class="badge">' + S.pending.length + '</span>' : '')]);
+  if (can('scan')) t.push(['scan', '📷 Scan ambil']);
+  if (can('keluar')) t.push(['keluar', 'Barang keluar']);
+  if (can('masuk')) t.push(['masuk', 'Barang masuk']);
+  if (can('opname')) t.push(['opname', 'Stock opname']);
+  t.push(['stok', 'Stok']);
+  if (can('scan')) t.push(['mine', 'Ambilan saya']);
+  if (can('barang')) t.push(['barang', 'Barang & QR']);
+  if (can('laporan')) t.push(['laporan', 'Laporan']);
+  if (can('users')) t.push(['users', 'Pengguna & wajah']);
+  if (can('sync') || can('users')) t.push(['set', 'Pengaturan']);
+  if (S.tab === 'self' || !S.me.hasFace) t.push(['self', 'Wajah saya']);
+  return t;
+}
+/* ---- TAMPILAN HP: menu bawah + semua menu satu ketuk di Beranda ---- */
+const ICON = { home: '🏠', acc: '✅', scan: '📷', keluar: '📤', masuk: '📥', opname: '🧮', stok: '📦', mine: '🧾', barang: '🏷️', laporan: '📊', users: '👤', set: '⚙️', self: '🙂' };
+const isHP = () => window.matchMedia('(max-width: 700px)').matches;
+const plain = h => String(h).replace(/<[^>]+>/g, '').replace(/^\S+\s/, m => /[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(m) ? '' : m).trim();
+function hpNav() {
+  const nav = $('#hpNav'); if (!isHP()) { nav.innerHTML = ''; document.body.classList.remove('hp'); return; }
+  document.body.classList.add('hp');
+  const T = tabsFor(), has = k => T.some(t => t[0] === k);
+  const pick = ['home', can('scan') ? 'scan' : 'stok', S.me.kuasa ? 'acc' : can('scan') ? 'mine' : 'stok', can('laporan') ? 'laporan' : 'stok'].filter((k, i, a) => has(k) && a.indexOf(k) === i);
+  const lab = { home: 'Beranda', scan: 'Scan', acc: 'ACC', mine: 'Ambilan', stok: 'Stok', laporan: 'Laporan' };
+  nav.innerHTML = pick.map(k => '<button data-t="' + k + '" class="' + (S.tab === k ? 'on' : '') + '"><i>' + ICON[k] + (k === 'acc' && S.pending.length ? '<b>' + S.pending.length + '</b>' : '') + '</i><span>' + lab[k] + '</span></button>').join('') +
+    '<button data-menu="1" class="' + (pick.indexOf(S.tab) < 0 ? 'on' : '') + '"><i>☰</i><span>Menu</span></button>';
+  nav.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); window.scrollTo(0, 0); if (b.dataset.t === 'scan' && !lastResult) setTimeout(() => $('#bScan') && $('#bScan').click(), 50); });
+  nav.querySelector('[data-menu]').onclick = () => { const m = modal('<div class="row"><h3 class="grow" style="margin:0">Semua menu</h3><button class="ghost sm" data-x>Tutup</button></div>' + menuTiles()); wireTiles(m); };
+}
+function menuTiles() {
+  return '<div class="hpTiles">' + tabsFor().filter(t => t[0] !== 'home').map(t => '<button data-tile="' + t[0] + '"><i>' + ICON[t[0]] + (t[0] === 'acc' && S.pending.length ? '<b>' + S.pending.length + '</b>' : '') + '</i><span>' + plain(t[1]).replace(/\s*\d+$/, '') + '</span></button>').join('') + '</div>';
+}
+function wireTiles(root) { root.querySelectorAll('[data-tile]').forEach(b => b.onclick = () => { closeModal(); S.tab = b.dataset.tile; render(); window.scrollTo(0, 0); }); }
+window.addEventListener('resize', () => { if (S.me) { const w = document.body.classList.contains('hp'); if (w !== isHP()) render(); } });
 function render() {
-  const tabs = TABS[S.me.peran] || TABS.Perawat;
-  if (S.tab === 'self' && !tabs.some(t => t[0] === 'self')) tabs.push(['self', 'Wajah saya']);
-  $('#tabs').innerHTML = tabs.map(t => '<button data-t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
+  $('#tabs').innerHTML = tabsFor().map(t => '<button data-t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
   $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); });
-  const V = { scan: vScan, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, barang: vBarang, riwayat: vRiwayat, users: vUsers, self: vSelf }[S.tab] || vStok;
-  $('#view').innerHTML = ''; V($('#view'));
+  const V = { home: vHome, acc: vAcc, scan: vScan, keluar: vKeluar, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, barang: vBarang, laporan: vLaporan, users: vUsers, set: vSet, self: vSelf }[S.tab] || vHome;
+  $('#view').innerHTML = restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  const rb = $('#rsBanner'); if (rb) rb.onclick = () => restockPopup(false);
   (S.changed || []).forEach(k => { const el = document.querySelector('[data-item="' + k + '"]'); if (el) { el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); } });
   S.changed = [];
+  hpNav();
+  if (isHP() && S.tab === 'home') { const h = document.querySelector('.hello'); if (h) { h.insertAdjacentHTML('afterend', '<div class="small mut" style="margin:-4px 0 6px">Semua menu — satu ketuk</div>' + menuTiles()); wireTiles($('#view')); } }
 }
 const itemBy = k => S.items.find(i => i.kode === k);
 const stCls = i => i.stok <= 0 ? 'zero' : i.rendah ? 'low' : '';
-const stChip = i => i.stok <= 0 ? '<span class="chip bad">Habis</span>' : i.rendah ? '<span class="chip warn">Menipis</span>' : '';
+const stChip = i => i.stok <= 0 ? '<span class="chip bad">Habis</span>' : i.rendah ? '<span class="chip bad">Segera restock</span>' : '';
 const cold = i => /2\s*[–-]\s*10|kulkas|refriger/i.test((i.suhu || '') + (i.lokasi || ''));
-function itemCard(i) {
-  const pct = Math.min(100, Math.round(i.stok / Math.max(1, i.minStok * 3) * 100));
-  return '<div class="item ' + stCls(i) + '" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div>' +
-    '<div class="meta">' + esc(i.kode) + ' · ' + esc(i.lokasi) + (cold(i) ? ' · ❄ ' + esc(i.suhu) : '') + '</div>' +
-    '<div class="bar"><i style="width:' + pct + '%"></i></div><div class="meta">min. ' + i.minStok + ' ' + stChip(i) + '</div></div>' +
-    '<div class="qty"><b>' + i.stok + '</b><span>' + esc(i.satuan) + '</span></div></div>';
+const kodeOf = qr => String(qr || '').trim().replace(/^IDCG:/i, '').toUpperCase();
+const ST = { MENUNGGU: ['warn', 'Menunggu ACC'], DISETUJUI: ['', 'Disetujui'], DITOLAK: ['bad', 'Ditolak'], BATAL: ['gray', 'Dibatalkan'] };
+const JN = { KELUAR: 'Ambil / keluar', KEMBALI: 'Kembalikan', HAPUS: 'Hapus barang masuk' };
+const stBadge = s => '<span class="chip ' + (ST[s] || ['gray'])[0] + '">' + (ST[s] || [0, s])[1] + '</span>';
+const accNames = () => (S.approvers.length ? S.approvers.join(' / ') : 'Annisa / Mamat');
+
+/* ---- PERINGATAN RESTOCK (stok ≤ 3) ---- */
+function restockBanner() {
+  const r = S.restock || []; if (!r.length) return '';
+  const top = r.slice().sort((a, b) => a.stok - b.stok).slice(0, 4).map(x => esc(x.nama) + ' (' + x.stok + ')').join(', ');
+  return '<button class="rsBanner" id="rsBanner"><i></i><span><b>SEGERA RESTOCK!!</b> ' + r.length + ' item stoknya ≤ ' + S.alertQty + ': ' + top + (r.length > 4 ? ', …' : '') + '</span><u>Lihat</u></button>';
+}
+function restockPopup(onLogin) {
+  const r = (S.restock || []).slice().sort((a, b) => a.stok - b.stok); if (!r.length) return;
+  if (onLogin) { const key = 'idcg-rs-' + new Date().toDateString() + '-' + r.map(x => x.kode + x.stok).join(); try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, 1); } catch (e) {} }
+  const m = modal('<div class="rsPop"><div class="rsHead">⚠ SEGERA RESTOCK!!</div><div class="small" style="margin:4px 0 10px">' + r.length + ' item stoknya tinggal ' + S.alertQty + ' atau kurang. Purchase mohon segera memesan.</div>' +
+    '<div class="list rsList">' + r.map(x => '<div class="li"><div class="grow nm" style="font-size:14px">' + esc(x.nama) + '<div class="meta">' + esc(x.kode) + '</div></div><b class="rsN">' + x.stok + '</b></div>').join('') + '</div>' +
+    '<button style="width:100%;margin-top:12px" data-x>Mengerti</button></div>');
+  m.classList.add('sheetRed');
 }
 
-/* ---- Perawat: SCAN ---- */
+/* ---- BERANDA ---- */
+function vHome(el) {
+  const it = S.items, low = (S.restock || []).length;
+  const keluarT = S.recent.filter(m => m.jenis === 'KELUAR' && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
+  const masukT = S.recent.filter(m => m.jenis === 'MASUK' && !m.batal && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
+  let h = '<div class="hello"><div><div class="small mut">Selamat bertugas</div><h2 style="margin:0">' + esc(S.me.nama) + '</h2><div class="small mut">' + esc(S.me.peran) + (S.me.kuasa ? ' · pemberi ACC' : '') + ' · Gudang HT</div></div>' +
+    (can('scan') ? '<button class="scanBtn" id="hScan" style="max-width:260px;padding:16px">📷 Scan ambil barang</button>' : '') + '</div>';
+  h += '<div class="tiles"><div class="tile"><b>' + it.length + '</b><span>Jenis barang</span></div><div class="tile' + (low ? ' tRed' : '') + '"><b>' + low + '</b><span>Segera restock (≤ ' + S.alertQty + ')</span></div>' +
+    '<div class="tile"><b>' + keluarT + '</b><span>Keluar hari ini</span></div><div class="tile"><b>' + (S.me.kuasa ? S.pending.length : masukT) + '</b><span>' + (S.me.kuasa ? 'Menunggu ACC Anda' : 'Masuk hari ini') + '</span></div></div>';
+  if (S.me.kuasa) h += '<h3 class="sec">Perlu ACC (' + S.pending.length + ')</h3><div id="hAcc"></div>';
+  const myP = (S.myReqs || []).filter(r => r.status === 'MENUNGGU');
+  if (myP.length) h += '<h3 class="sec">Permintaan saya yang menunggu ACC</h3><div class="card list">' + myP.map(reqLine).join('') + '</div>';
+  if (low) h += '<h3 class="sec" style="color:var(--bad)">Segera restock</h3><div class="items">' + S.items.filter(i => i.rendah).sort((a, b) => a.stok - b.stok).slice(0, 6).map(itemCard).join('') + '</div>';
+  el.innerHTML = h;
+  if ($('#hScan')) $('#hScan').onclick = () => { S.tab = 'scan'; render(); $('#bScan').click(); };
+  if ($('#hAcc')) accList($('#hAcc'), S.pending.slice(0, 5));
+  wireReqLines(el);
+}
+function reqLine(r) {
+  return '<div class="li" data-rq="' + r.id + '"><div class="grow"><div class="nm" style="font-size:14px">' + esc(r.nama) + ' × ' + r.qty + '</div><div class="meta">' + JN[r.jenis] + ' · ' + fmtT(r.at) + (r.tujuan ? ' · ' + esc(r.tujuan) : '') +
+    (r.oleh && r.status !== 'MENUNGGU' ? ' · ' + (r.status === 'BATAL' ? 'oleh ' : 'ACC: ') + esc(r.oleh) : '') + (r.alasan ? ' · "' + esc(r.alasan) + '"' : '') + '</div></div>' + stBadge(r.status) +
+    (r.status === 'MENUNGGU' && r.userId === S.me.id ? '<button class="ghost sm" data-cancel="' + r.id + '">Batalkan</button>' : '') + '</div>';
+}
+function wireReqLines(el) {
+  el.querySelectorAll('[data-cancel]').forEach(b => b.onclick = async () => { try { await call('cancelReq', { id: b.dataset.cancel }); toast('Permintaan dibatalkan'); lastResult = null; await refresh(); } catch (e) { toast(e.message, true); } });
+}
+
+/* ---- ACC (Annisa & Mamat) ---- */
+function vAcc(el) {
+  el.innerHTML = '<div class="row" style="margin:4px 0 10px"><div class="grow"><h3 style="margin:0">Perlu ACC</h3><div class="small mut">Muncul hanya untuk stok ≤ ' + S.accBatas + ', barang sulit didapat, pengembalian, dan hapus. Cukup salah satu (' + esc(accNames()) + ').</div></div></div><div id="accL"></div>';
+  accList($('#accL'), S.pending);
+}
+function accList(box, list) {
+  if (!list.length) { box.innerHTML = '<div class="card mut small">Tidak ada permintaan. Semua beres.</div>'; return; }
+  box.innerHTML = '<div class="accGrid">' + list.map(r => {
+    const it = itemBy(r.kode) || {}, own = r.userId === S.me.id;
+    const eff = r.jenis === 'KELUAR' ? 'Stok ' + it.stok + ' → ' + (it.stok - r.qty) : r.jenis === 'KEMBALI' ? 'Stok ' + it.stok + ' → ' + (it.stok + Number(r.qty)) : 'Stok ' + it.stok + ' → ' + (it.stok - r.qty);
+    return '<div class="acc acc-' + r.jenis + '" data-acc="' + r.id + '"><div class="row" style="align-items:flex-start"><div class="grow"><span class="chip ' + (r.jenis === 'KELUAR' ? 'warn' : r.jenis === 'KEMBALI' ? 'blue' : 'bad') + '">' + JN[r.jenis] + '</span>' +
+      '<div class="nm" style="font-size:16px;margin-top:6px">' + esc(r.nama) + ' <span class="mut">× ' + r.qty + '</span></div><div class="meta">' + esc(r.user) + ' (' + esc(r.peran) + ') · ' + fmtT(r.at) + '</div>' +
+      (r.tujuan ? '<div class="small" style="margin-top:4px">📍 ' + esc(r.tujuan) + '</div>' : '') + (r.catatan ? '<div class="small mut">“' + esc(r.catatan) + '”</div>' : '') +
+      '<div class="small" style="margin-top:4px"><b>' + eff + '</b></div></div>' + (r.foto ? '<img class="accFoto" src="' + esc(r.foto) + '" alt="Foto barang" data-zoom="' + esc(r.foto) + '">' : '') + '</div>' +
+      (own ? '<div class="small mut" style="margin-top:10px">Permintaan Anda sendiri — menunggu ACC pemberi ACC yang lain.</div>' :
+      '<div class="yn"><button class="yes" data-ya="' + r.id + '">✓ YA</button><button class="no" data-no="' + r.id + '">✕ TIDAK</button></div><div class="noBox hide" data-nb="' + r.id + '"><input placeholder="Alasan (opsional), mis. tidak ada jadwal pasien" data-al="' + r.id + '"><button class="bad sm" data-no2="' + r.id + '">Kirim TIDAK</button></div>') + '</div>';
+  }).join('') + '</div>';
+  box.querySelectorAll('[data-ya]').forEach(b => b.onclick = async () => { b.disabled = true; try { const r = await call('decide', { id: b.dataset.ya, ya: true }); beep(true); toast('✓ Disetujui · ' + r.nama + ': stok ' + r.before + ' → ' + r.after); await refresh(); } catch (e) { b.disabled = false; toast(e.message, true); } });
+  box.querySelectorAll('[data-no]').forEach(b => b.onclick = () => { box.querySelector('[data-nb="' + b.dataset.no + '"]').classList.remove('hide'); box.querySelector('[data-al="' + b.dataset.no + '"]').focus(); });
+  box.querySelectorAll('[data-no2]').forEach(b => b.onclick = async () => { try { await call('decide', { id: b.dataset.no2, ya: false, alasan: box.querySelector('[data-al="' + b.dataset.no2 + '"]').value }); toast('Ditolak — peminta diberi tahu'); await refresh(); } catch (e) { toast(e.message, true); } });
+  box.querySelectorAll('[data-zoom]').forEach(i => i.onclick = () => modal('<img src="' + esc(i.dataset.zoom) + '" style="width:100%;border-radius:12px"><button class="ghost" style="width:100%;margin-top:10px" data-x>Tutup</button>'));
+}
+
+/* ---- SCAN AMBIL ---- */
 let lastResult = null;
 function vScan(el) {
   el.innerHTML = '<div class="card scanBig">' +
     '<div class="small mut">Langkah 2 dari 2 · arahkan kamera ke QR pada barang</div>' +
     '<button class="scanBtn" id="bScan"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>Scan QR barang</button>' +
-    '<div class="small mut">Stok langsung berkurang otomatis — tidak perlu mengetik apa pun.</div>' +
+    '<div class="small mut">Tanpa mengetik — stok langsung berkurang. ACC ' + esc(accNames()) + ' hanya bila stok ≤ ' + S.accBatas + ' atau barang ditandai sulit didapat.</div>' +
     '<div id="res" style="width:100%;display:flex;justify-content:center"></div></div>' +
-    '<h3 style="margin:18px 0 8px">Ambilan saya hari ini</h3><div class="card list" id="todayList"></div>';
+    '<h3 class="sec">Ambilan saya hari ini</h3><div class="card list" id="todayList"></div>';
   $('#bScan').onclick = () => openScanner('Scan QR barang yang diambil', takeItem);
-  showResult(); mineList($('#todayList'), true);
+  showResult();
+  const rows = (S.myReqs || []).filter(r => today(r.at));
+  $('#todayList').innerHTML = rows.length ? rows.map(reqLine).join('') : '<div class="mut small">Belum ada.</div>';
+  wireReqLines(el);
 }
 async function takeItem(qr, qty) {
-  try {
-    const r = await call('scanOut', { qr, qty: qty || 1 }); beep(true);
-    lastResult = r; const it = itemBy(r.kode); if (it) { it.stok = r.after; it.rendah = r.rendah; } S.ver = 0;
-    S.recent.unshift({ id: r.id, at: new Date().toISOString(), kode: r.kode, nama: r.nama, jenis: 'KELUAR', qty: r.qty, stokSebelum: r.before, stokSesudah: r.after, user: S.me.nama, userId: S.me.id });
-  } catch (e) { beep(false); lastResult = { err: e.message }; }
-  if (S.tab !== 'scan') S.tab = 'scan';
-  render();
+  try { lastResult = await call('scanOut', { qr, qty: qty || 1 }); beep(true); await refresh().catch(() => {}); }
+  catch (e) { beep(false); lastResult = { err: e.message }; }
+  S.tab = 'scan'; render();
 }
 function showResult() {
   const box = $('#res'); if (!box || !lastResult) return;
   const r = lastResult;
   if (r.err) { box.innerHTML = '<div class="result err"><b>✕ Tidak tercatat</b><div style="margin-top:6px">' + esc(r.err) + '</div></div>'; return; }
-  box.innerHTML = '<div class="result"><div class="small mut">✓ Tercatat atas nama ' + esc(S.me.nama) + ' · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + '</div>' +
-    '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diambil ' + r.qty + ' ' + esc(r.satuan) + '</div>' +
-    '<div class="big" style="margin:6px 0">Stok ' + r.before + ' → ' + r.after + '</div>' +
-    (r.rendah ? '<div class="chip warn" style="margin-bottom:6px">Stok menipis — Purchase otomatis diberi tahu</div>' : '') +
-    (cold(r) ? '<div class="small">❄ ' + esc(r.suhu) + (r.catatan ? ' · ' + esc(r.catatan) : '') + '</div>' : (r.catatan ? '<div class="small">' + esc(r.catatan) + '</div>' : '')) +
-    '<div class="row" style="margin-top:12px"><button class="soft sm" id="bMore">+1 lagi barang ini</button><button class="bad sm" id="bUndo">Batal (salah scan)</button></div></div>';
+  const live = (S.myReqs || []).find(x => x.id === r.id) || r, it = itemBy(r.kode) || {}, st = live.status;
+  if (r.langsung) {
+    box.innerHTML = '<div class="result"><div class="small mut">✓ Tercatat atas nama ' + esc(S.me.nama) + ' · ' + fmtT(r.at) + '</div>' +
+      '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diambil ' + r.qty + ' ' + esc(r.satuan || '') + '</div>' +
+      '<div class="big" style="margin:6px 0">Stok ' + r.before + ' → ' + r.after + '</div>' +
+      (r.after <= S.alertQty ? '<div class="chip bad" style="margin-bottom:6px">SEGERA RESTOCK — Purchase diberi tahu</div>' : '') +
+      (cold(r) ? '<div class="small">❄ ' + esc(r.suhu) + (r.catatan ? ' · ' + esc(r.catatan) : '') + '</div>' : '') +
+      '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="soft sm" id="bMore">+1 lagi barang ini</button><button class="ghost sm" id="bRet">↩ Salah ambil? Kembalikan</button></div></div>';
+    $('#bRet').onclick = () => returnModal({ id: r.mutasiId, kode: r.kode, nama: r.nama, qty: r.qty, at: r.at }, 0);
+  } else {
+    box.innerHTML = '<div class="result ' + (st === 'MENUNGGU' ? 'wait' : st === 'DISETUJUI' ? '' : 'err') + '"><div class="small mut">' + (st === 'MENUNGGU' ? '⏳ Perlu ACC ' + esc(accNames()) + ' — ' + esc(r.alasanAcc || '') : st === 'DISETUJUI' ? '✓ Disetujui ' + esc(live.oleh) : '✕ ' + (ST[st] || [0, st])[1] + (live.oleh ? ' · ' + esc(live.oleh) : '')) + '</div>' +
+      '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diminta ' + r.qty + ' ' + esc(r.satuan || it.satuan || '') + '</div>' +
+      '<div class="big" style="margin:6px 0">' + (st === 'DISETUJUI' ? 'Stok sekarang ' + it.stok : st === 'MENUNGGU' ? 'Stok ' + it.stok + ' → ' + (it.stok - r.qty) + ' setelah ACC' : 'Stok tetap ' + it.stok) + '</div>' +
+      (live.alasan ? '<div class="small">Alasan: ' + esc(live.alasan) + ' — kembalikan barang ke rak.</div>' : '') +
+      '<div class="row" style="margin-top:12px">' + (st === 'MENUNGGU' ? '<button class="bad sm" id="bUndo">Batal (salah scan)</button>' : '') + '<button class="soft sm" id="bMore">Ambil lagi barang ini</button></div></div>';
+    if ($('#bUndo')) $('#bUndo').onclick = async () => { try { await call('cancelReq', { id: r.id }); toast('Dibatalkan — stok tidak berubah'); lastResult = null; await refresh(); } catch (e) { toast(e.message, true); } };
+  }
   $('#bMore').onclick = () => takeItem('IDCG:' + r.kode, 1);
-  $('#bUndo').onclick = async () => { try { const u = await call('undoOut', { id: r.id }); toast('Dibatalkan · stok kembali ' + u.after); lastResult = null; await refresh(); } catch (e) { toast(e.message, true); } };
 }
-function mineList(el, onlyToday) {
-  const rows = S.recent.filter(m => m.userId === S.me.id && (!onlyToday || today(m.at)));
-  el.innerHTML = rows.length ? rows.map(m => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + '</div><div class="meta">' + fmtT(m.at) + ' · ' + m.jenis + (m.batal ? ' · dibatalkan' : '') + '</div></div><b>' + (m.jenis === 'KELUAR' ? '−' : '+') + m.qty + '</b></div>').join('') : '<div class="mut small">Belum ada.</div>';
-}
-function vMine(el) { el.innerHTML = '<h3 style="margin:8px 0">Ambilan saya</h3><div class="card list" id="ml"></div>'; mineList($('#ml'), false); }
 
-/* ---- STOK real-time ---- */
+/* ---- AMBILAN SAYA + KEMBALIKAN (foto + QR) ---- */
+function vMine(el) {
+  const taken = S.recent.filter(m => m.jenis === 'KELUAR' && m.userId === S.me.id);
+  const ret = {}; (S.myReqs || []).filter(r => r.jenis === 'KEMBALI' && (r.status === 'MENUNGGU' || r.status === 'DISETUJUI')).forEach(r => ret[r.refId] = (ret[r.refId] || 0) + Number(r.qty));
+  el.innerHTML = '<h3 class="sec" style="margin-top:4px">Barang yang sudah saya ambil</h3><div class="small mut" style="margin-bottom:8px">Tidak jadi dipakai? Tekan <b>Kembalikan</b>, foto barangnya dengan QR terlihat, lalu tunggu ACC.</div><div class="card list" id="tk"></div>' +
+    '<h3 class="sec">Riwayat permintaan</h3><div class="card list" id="ml"></div>';
+  $('#tk').innerHTML = taken.length ? taken.map(m => { const sisa = Number(m.qty) - (ret[m.id] || 0);
+    return '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + ' × ' + m.qty + '</div><div class="meta">' + fmtT(m.at) + ' · ACC ' + esc(m.disetujui || '-') + (ret[m.id] ? ' · ' + ret[m.id] + ' dikembalikan/diproses' : '') + '</div></div>' +
+      (sisa > 0 ? '<button class="soft sm" data-ret="' + m.id + '">↩ Kembalikan</button>' : '<span class="chip gray">Selesai</span>') + '</div>'; }).join('') : '<div class="mut small">Belum ada barang yang disetujui.</div>';
+  $('#ml').innerHTML = (S.myReqs || []).length ? S.myReqs.map(reqLine).join('') : '<div class="mut small">Belum ada.</div>';
+  el.querySelectorAll('[data-ret]').forEach(b => b.onclick = () => returnModal(S.recent.find(m => m.id === b.dataset.ret), ret[b.dataset.ret] || 0));
+  wireReqLines(el);
+}
+/** Kecilkan foto sebelum dikirim (maks 1280 px). */
+function shrink(img, max) { const k = Math.min(1, (max || 1280) / Math.max(img.naturalWidth, img.naturalHeight)); const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); return c; }
+function qrInCanvas(c) { if (!window.jsQR) return null; const x = c.getContext('2d').getImageData(0, 0, c.width, c.height); const r = jsQR(x.data, c.width, c.height, { inversionAttempts: 'attemptBoth' }); return r && r.data; }
+function returnModal(m, sudah) {
+  const maxQ = Number(m.qty) - sudah;
+  const md = modal('<div class="row"><h3 class="grow" style="margin:0">Kembalikan barang</h3><button class="ghost sm" data-x>Tutup</button></div>' +
+    '<div class="nm" style="margin-top:8px">' + esc(m.nama) + '</div><div class="meta">diambil ' + m.qty + ' · ' + fmtT(m.at) + '</div>' +
+    '<ol class="small" style="padding-left:18px;margin:10px 0"><li>Foto barangnya — <b>QR yang tertempel harus terlihat jelas</b>.</li><li>Sistem membaca QR di foto untuk memastikan barangnya benar.</li><li>Tekan Kirim → ' + esc(accNames()) + ' menekan YA → stok bertambah.</li></ol>' +
+    '<button id="rCam" style="width:100%">📸 Foto barang + QR</button><input type="file" id="rIn" accept="image/*" capture="environment" class="hide">' +
+    '<div id="rPrev" style="margin-top:10px"></div><div class="grid2"><div><label>Jumlah dikembalikan</label><input id="rQ" type="number" min="1" max="' + maxQ + '" value="' + maxQ + '"></div><div><label>Alasan</label><input id="rC" placeholder="mis. pasien batal"></div></div>' +
+    '<button id="rGo" style="width:100%;margin-top:12px" disabled>Kirim permintaan kembali</button>');
+  let foto = null, qr = null;
+  md.querySelector('#rCam').onclick = () => md.querySelector('#rIn').click();
+  md.querySelector('#rIn').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return; e.target.value = '';
+    const img = await fileToImg(f), c = shrink(img, 1280); qr = qrInCanvas(c) || qrInCanvas(shrink(img, 700));
+    foto = c.toDataURL('image/jpeg', 0.8);
+    const okQ = qr && kodeOf(qr) === m.kode;
+    md.querySelector('#rPrev').innerHTML = '<img src="' + foto + '" style="width:100%;max-height:260px;object-fit:contain;border-radius:12px;background:#000"><div class="small" style="margin-top:6px;color:' + (okQ ? 'var(--pri)' : 'var(--bad)') + '">' +
+      (okQ ? '✓ QR terbaca: ' + esc(qr) + ' — cocok dengan ' + esc(m.nama) : qr ? '✕ QR di foto milik barang lain (' + esc(qr) + '). Foto barang yang benar.' : '✕ QR tidak terbaca. Foto ulang lebih dekat, QR menghadap kamera & tidak silau.') + '</div>';
+    md.querySelector('#rGo').disabled = !okQ;
+  };
+  md.querySelector('#rGo').onclick = async () => {
+    try { await call('returnReq', { mutasiId: m.id, qty: md.querySelector('#rQ').value, catatan: md.querySelector('#rC').value, foto, qrFoto: qr }); closeModal(); beep(true); toast('Terkirim — menunggu ACC ' + accNames()); await refresh(); }
+    catch (e) { toast(e.message, true); }
+  };
+}
+
+/* ---- STOK ---- */
 let stokQ = '', stokF = 'all';
+function itemCard(i) {
+  const pct = Math.min(100, Math.round(i.stok / Math.max(1, i.minStok * 4) * 100));
+  return '<div class="item ' + stCls(i) + '" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div>' +
+    '<div class="meta">' + esc(i.kode) + (i.lokasi ? ' · ' + esc(i.lokasi) : '') + (cold(i) ? ' · ❄ ' + esc(i.suhu) : '') + (i.dariExcel ? ' · ⇄ Sheet' : '') + '</div>' +
+    '<div class="bar"><i style="width:' + pct + '%"></i></div><div class="meta">restock bila ≤ ' + i.minStok + ' ' + stChip(i) + (i.perluAcc ? ' <span class="chip blue" title="' + esc(i.alasanAcc) + '">perlu ACC</span>' : '') + (i.ditahan ? ' <span class="chip warn">' + i.ditahan + ' menunggu ACC</span>' : '') + '</div></div>' +
+    '<div class="qty"><b>' + i.stok + '</b><span>' + esc(i.satuan) + '</span></div></div>';
+}
 function vStok(el) {
-  const it = S.items, low = it.filter(i => i.rendah).length;
-  const outT = S.recent.filter(m => m.jenis === 'KELUAR' && !m.batal && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
-  const inT = S.recent.filter(m => m.jenis === 'MASUK' && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
-  el.innerHTML = '<div class="tiles"><div class="tile"><b>' + it.length + '</b><span>Jenis barang</span></div><div class="tile"><b style="color:' + (low ? 'var(--warn)' : 'inherit') + '">' + low + '</b><span>Menipis / habis</span></div>' +
-    '<div class="tile"><b>' + outT + '</b><span>Keluar hari ini</span></div><div class="tile"><b>' + inT + '</b><span>Masuk hari ini</span></div></div>' +
-    '<div class="row" style="margin-bottom:10px"><input id="q" placeholder="Cari nama / kode / lokasi…" value="' + esc(stokQ) + '" class="grow">' +
-    '<select id="f" style="width:auto"><option value="all">Semua</option><option value="low"' + (stokF === 'low' ? ' selected' : '') + '>Menipis</option></select></div><div class="items" id="il"></div>';
-  const draw = () => { const q = stokQ.toLowerCase(); $('#il').innerHTML = it.filter(i => (stokF !== 'low' || i.rendah) && (!q || (i.nama + i.kode + i.lokasi + i.kategori).toLowerCase().includes(q))).map(itemCard).join('') || '<div class="mut">Tidak ada.</div>'; };
+  el.innerHTML = '<div class="row" style="margin-bottom:10px"><input id="q" placeholder="Cari nama / kode / lokasi…" value="' + esc(stokQ) + '" class="grow">' +
+    '<select id="f" style="width:auto"><option value="all">Semua</option><option value="low"' + (stokF === 'low' ? ' selected' : '') + '>Segera restock</option></select></div><div class="small mut" id="cnt" style="margin-bottom:6px"></div><div class="items" id="il"></div>';
+  const draw = () => { const q = stokQ.toLowerCase(), L = S.items.filter(i => (stokF !== 'low' || i.rendah) && (!q || (i.nama + i.kode + i.lokasi + i.kategori).toLowerCase().includes(q)));
+    $('#cnt').textContent = L.length + ' barang'; $('#il').innerHTML = L.map(itemCard).join('') || '<div class="mut">Tidak ada.</div>'; };
   $('#q').oninput = e => { stokQ = e.target.value; draw(); }; $('#f').onchange = e => { stokF = e.target.value; draw(); }; draw();
 }
+function itemPicker(id, sel) {
+  return '<select id="' + id + '" class="grow"><option value="">— pilih barang —</option>' + S.items.slice().sort((a, b) => a.nama.localeCompare(b.nama)).map(i => '<option value="' + esc(i.kode) + '"' + (sel === i.kode ? ' selected' : '') + '>' + esc(i.nama) + ' (stok ' + i.stok + ')</option>').join('') + '</select>';
+}
 
-/* ---- Purchase: BARANG MASUK ---- */
+/* ---- BARANG KELUAR (input manual, perlu ACC) ---- */
+const TUJUAN = ['Ruang praktik 1', 'Ruang praktik 2', 'Ruang praktik 3', 'Sterilisasi', 'Kirim ke cabang Pluit', 'Rusak / kedaluwarsa'];
+function vKeluar(el) {
+  const f = S.outForm || (S.outForm = {});
+  el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Barang keluar</h3><div class="small mut">Untuk pengeluaran di luar scan perawat (kirim ke ruang/cabang, rusak, kedaluwarsa). Stok langsung berkurang; ACC hanya bila stok ≤ ' + S.accBatas + ' atau barang sulit didapat.</div>' +
+    '<div class="row" style="margin-top:12px">' + itemPicker('oK', f.kode) + '<button class="soft" id="oScan2">📷 Scan</button></div>' +
+    '<div class="grid2"><div><label>Jumlah</label><input id="oQ" type="number" min="1" inputmode="numeric" value="' + esc(f.qty || 1) + '"></div><div><label>Tujuan / keperluan</label><input id="oT" list="tjl" value="' + esc(f.tujuan || '') + '" placeholder="pilih atau ketik"><datalist id="tjl">' + TUJUAN.map(t => '<option value="' + t + '">').join('') + '</datalist></div></div>' +
+    '<div class="chips">' + TUJUAN.map(t => '<button class="ghost sm" data-tj="' + esc(t) + '">' + esc(t) + '</button>').join('') + '</div>' +
+    '<label>Catatan</label><input id="oC" placeholder="mis. untuk pasien a.n. … / no. batch rusak">' +
+    '<button id="oGo" style="width:100%;margin-top:14px">Simpan barang keluar</button></div>' +
+    '<h3 class="sec">Barang keluar terakhir</h3><div class="card list" id="okl"></div>';
+  el.querySelectorAll('[data-tj]').forEach(b => b.onclick = () => { $('#oT').value = b.dataset.tj; f.tujuan = b.dataset.tj; });
+  $('#oK').onchange = e => f.kode = e.target.value; $('#oQ').oninput = e => f.qty = e.target.value; $('#oT').oninput = e => f.tujuan = e.target.value;
+  $('#oScan2').onclick = () => openScanner('Scan QR barang yang keluar', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal: ' + k, true); f.kode = k; render(); });
+  $('#oGo').onclick = async () => {
+    try { const r = await call('outManual', { kode: $('#oK').value, qty: $('#oQ').value, tujuan: $('#oT').value, catatan: $('#oC').value }); beep(true); toast(r.langsung ? '✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after : 'Perlu ACC (' + r.alasanAcc + ') — terkirim ke ' + accNames()); S.outForm = {}; await refresh(); }
+    catch (e) { beep(false); toast(e.message, true); }
+  };
+  const rows = S.recent.filter(m => m.jenis === 'KELUAR').slice(0, 12);
+  $('#okl').innerHTML = rows.map(m => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + '</div><div class="meta">' + fmtT(m.at) + ' · ' + esc(m.user) + (m.tujuan ? ' · ' + esc(m.tujuan) : '') + ' · ACC ' + esc(m.disetujui || '-') + '</div></div><b style="color:var(--warn)">−' + m.qty + '</b></div>').join('') || '<div class="mut small">Belum ada.</div>';
+}
+
+/* ---- BARANG MASUK + HAPUS (perlu ACC) ---- */
 function vMasuk(el) {
   const f = S.inForm;
-  el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Barang masuk</h3><div class="small mut">Scan QR di kemasan atau pilih barang, isi jumlah, simpan. Stok bertambah otomatis.</div>' +
-    '<div class="row" style="margin-top:12px"><select id="iK" class="grow"><option value="">— pilih barang —</option>' + S.items.map(i => '<option value="' + esc(i.kode) + '"' + (f.kode === i.kode ? ' selected' : '') + '>' + esc(i.nama) + ' (stok ' + i.stok + ')</option>').join('') + '</select><button class="soft" id="iScan">📷 Scan</button></div>' +
+  el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Barang masuk</h3><div class="small mut">Scan QR di kemasan atau pilih barang, isi jumlah, simpan. Stok bertambah otomatis dan tercatat di Sheet IN OUT HT.</div>' +
+    '<div class="row" style="margin-top:12px">' + itemPicker('iK', f.kode) + '<button class="soft" id="iScan">📷 Scan</button></div>' +
     '<div class="grid2"><div><label>Jumlah masuk</label><input id="iQ" type="number" min="1" inputmode="numeric" value="' + esc(f.qty || '') + '"></div><div><label>Supplier</label><input id="iS" value="' + esc(f.supplier || '') + '"></div>' +
     '<div><label>No. faktur</label><input id="iF"></div><div><label>Batch / LOT</label><input id="iB"></div><div><label>Kedaluwarsa</label><input id="iE" type="date"></div><div><label>Catatan</label><input id="iC"></div></div>' +
     '<button id="iGo" style="width:100%;margin-top:14px">Simpan barang masuk</button></div>' +
-    '<h3 style="margin:18px 0 8px">Masuk terakhir</h3><div class="card list" id="inl"></div>';
-  $('#iScan').onclick = () => openScanner('Scan QR barang yang datang', qr => { const k = qr.replace(/^IDCG:/i, '').toUpperCase(); if (!itemBy(k)) return toast('QR tidak dikenal: ' + k, true); S.inForm.kode = k; render(); setTimeout(() => $('#iQ').focus(), 50); });
+    '<h3 class="sec">Masuk terakhir</h3><div class="small mut" style="margin-bottom:6px">Salah catat atau barang tidak jadi datang? Tekan <b>Hapus</b> — perlu ACC ' + esc(accNames()) + '.</div><div class="card list" id="inl"></div>';
+  $('#iScan').onclick = () => openScanner('Scan QR barang yang datang', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal: ' + k, true); S.inForm.kode = k; render(); setTimeout(() => $('#iQ').focus(), 50); });
   $('#iK').onchange = e => S.inForm.kode = e.target.value;
   $('#iGo').onclick = async () => {
     try { const r = await call('goodsIn', { kode: $('#iK').value, qty: $('#iQ').value, supplier: $('#iS').value, faktur: $('#iF').value, batch: $('#iB').value, expired: $('#iE').value, catatan: $('#iC').value });
       toast('✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after); beep(true); S.inForm = {}; await refresh(); } catch (e) { toast(e.message, true); beep(false); }
   };
-  const rows = S.recent.filter(m => m.jenis === 'MASUK').slice(0, 10);
-  $('#inl').innerHTML = rows.map(m => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + '</div><div class="meta">' + fmtT(m.at) + ' · ' + esc(m.user) + (m.supplier ? ' · ' + esc(m.supplier) : '') + (m.batch ? ' · LOT ' + esc(m.batch) : '') + (m.expired ? ' · ED ' + esc(String(m.expired).slice(0, 10)) : '') + '</div></div><b style="color:var(--pri)">+' + m.qty + '</b></div>').join('') || '<div class="mut small">Belum ada.</div>';
+  const pendDel = new Set((S.myReqs || []).concat(S.pending || []).filter(r => r.jenis === 'HAPUS' && r.status === 'MENUNGGU').map(r => r.refId));
+  const rows = S.recent.filter(m => m.jenis === 'MASUK').slice(0, 15);
+  $('#inl').innerHTML = rows.map(m => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + (m.batal ? ' <span class="chip gray">dihapus</span>' : '') + '</div><div class="meta">' + fmtT(m.at) + ' · ' + esc(m.user) + (m.supplier ? ' · ' + esc(m.supplier) : '') + (m.batch ? ' · LOT ' + esc(m.batch) : '') + '</div></div><b style="color:var(--pri)">+' + m.qty + '</b>' +
+    (m.batal ? '' : pendDel.has(m.id) ? '<span class="chip warn">Hapus menunggu ACC</span>' : '<button class="bad sm" data-del="' + m.id + '">Hapus</button>') + '</div>').join('') || '<div class="mut small">Belum ada.</div>';
+  el.querySelectorAll('[data-del]').forEach(b => b.onclick = () => deleteModal(S.recent.find(m => m.id === b.dataset.del)));
+}
+function deleteModal(m) {
+  const md = modal('<div class="row"><h3 class="grow" style="margin:0">Hapus barang masuk</h3><button class="ghost sm" data-x>Tutup</button></div><div class="nm" style="margin-top:8px">' + esc(m.nama) + ' +' + m.qty + '</div><div class="meta">' + fmtT(m.at) + ' · dicatat ' + esc(m.user) + '</div>' +
+    '<div class="small" style="margin:10px 0">Setelah ' + esc(accNames()) + ' menekan YA, stok dikurangi ' + m.qty + ' dan catatan ditandai "dihapus" (riwayat tetap tersimpan).</div>' +
+    '<label>Alasan (wajib)</label><input id="dA" placeholder="mis. salah input jumlah / barang tidak jadi datang">' +
+    '<label>Foto bukti (opsional)</label><button class="ghost" id="dCam" style="width:100%">📸 Foto faktur / barang</button><input type="file" id="dIn" accept="image/*" capture="environment" class="hide"><div id="dPrev"></div>' +
+    '<button id="dGo" class="bad" style="width:100%;margin-top:12px">Kirim permintaan hapus</button>');
+  let foto = null;
+  md.querySelector('#dCam').onclick = () => md.querySelector('#dIn').click();
+  md.querySelector('#dIn').onchange = async e => { const f = e.target.files[0]; if (!f) return; const c = shrink(await fileToImg(f), 1280); foto = c.toDataURL('image/jpeg', 0.8); md.querySelector('#dPrev').innerHTML = '<img src="' + foto + '" style="width:100%;max-height:200px;object-fit:contain;margin-top:8px;border-radius:10px">'; };
+  md.querySelector('#dGo').onclick = async () => { try { await call('deleteReq', { mutasiId: m.id, alasan: md.querySelector('#dA').value, foto }); closeModal(); toast('Terkirim — menunggu ACC ' + accNames()); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 
-/* ---- Purchase: STOCK OPNAME ---- */
+/* ---- STOCK OPNAME ---- */
 function vOpname(el) {
   const C = S.opCounts;
-  el.innerHTML = '<div class="card"><div class="row"><div class="grow"><h3 style="margin:0">Stock opname</h3><div class="small mut">Hitung fisik di rak. Isi angkanya, atau <b>scan QR tiap barang</b> (1 scan = +1). Sistem menyamakan stok & mencatat selisih.</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
-    '<div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Barang</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>' +
-    S.items.map(i => '<tr data-k="' + esc(i.kode) + '"><td><div class="nm" style="font-size:14px">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + ' · ' + esc(i.lokasi) + '</div></td><td><b>' + i.stok + '</b></td><td><input type="number" min="0" inputmode="numeric" data-c="' + esc(i.kode) + '" value="' + (C[i.kode] ?? '') + '"></td><td class="sel"></td></tr>').join('') +
-    '</tbody></table></div><label>Catatan opname</label><input id="oN" placeholder="mis. opname akhir bulan Oktober"><button id="oGo" style="width:100%;margin-top:12px">Simpan opname</button><div id="oRes"></div></div>';
+  el.innerHTML = '<div class="card"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Stock opname</h3><div class="small mut">Hitung fisik di rak. Isi angkanya, atau <b>scan QR tiap barang</b> (1 scan = +1). Selisih dicatat & dikirim ke Sheet (STOCK AKHIR).</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
+    '<input id="oF" placeholder="Saring nama barang…" style="margin-top:10px"><div style="overflow-x:auto;margin-top:6px"><table><thead><tr><th>Barang</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>' +
+    S.items.map(i => '<tr data-k="' + esc(i.kode) + '" data-n="' + esc(i.nama.toLowerCase()) + '"><td><div class="nm" style="font-size:14px">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + '</div></td><td><b>' + i.stok + '</b></td><td><input type="number" min="0" inputmode="numeric" data-c="' + esc(i.kode) + '" value="' + (C[i.kode] ?? '') + '"></td><td class="sel"></td></tr>').join('') +
+    '</tbody></table></div><label>Catatan opname</label><input id="oN" placeholder="mis. opname akhir bulan"><button id="oGo" style="width:100%;margin-top:12px">Simpan opname</button></div>';
   const upd = () => el.querySelectorAll('tr[data-k]').forEach(tr => { const k = tr.dataset.k, v = C[k], i = itemBy(k), c = tr.querySelector('.sel');
     if (v === undefined || v === '') { c.innerHTML = '<span class="mut">–</span>'; return; } const d = Number(v) - i.stok;
     c.innerHTML = d === 0 ? '<span class="chip">cocok</span>' : '<span class="chip ' + (d < 0 ? 'bad' : 'blue') + '">' + (d > 0 ? '+' : '') + d + '</span>'; });
   el.querySelectorAll('input[data-c]').forEach(inp => inp.oninput = () => { C[inp.dataset.c] = inp.value; upd(); });
+  $('#oF').oninput = e => { const q = e.target.value.toLowerCase(); el.querySelectorAll('tr[data-k]').forEach(tr => tr.style.display = !q || tr.dataset.n.includes(q) ? '' : 'none'); };
   upd();
-  $('#oScan').onclick = () => openScanner('Scan tiap barang di rak (1 scan = 1 unit)', qr => { const k = qr.replace(/^IDCG:/i, '').toUpperCase(); if (!itemBy(k)) return toast('QR tidak dikenal', true);
+  $('#oScan').onclick = () => openScanner('Scan tiap barang di rak (1 scan = 1 unit)', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal', true);
     C[k] = String((Number(C[k]) || 0) + 1); const inp = el.querySelector('input[data-c="' + k + '"]'); if (inp) inp.value = C[k]; upd(); toast(itemBy(k).nama + ' · fisik ' + C[k]); return 'keep'; });
   $('#oGo').onclick = async () => {
     const counts = {}; Object.keys(C).forEach(k => { if (C[k] !== '' && C[k] !== undefined) counts[k] = Number(C[k]); });
-    try { const r = await call('opname', { counts, catatan: $('#oN').value }); S.opCounts = {};
-      await refresh();
-      $('#view').insertAdjacentHTML('afterbegin', '<div class="card" style="margin-bottom:12px;border-color:var(--pri)"><b>Opname tersimpan</b> · ' + r.cocok + ' cocok, ' + r.beda + ' selisih' + (r.beda ? ' (Manajer diberi tahu lewat email)' : '') +
+    try { const r = await call('opname', { counts, catatan: $('#oN').value }); S.opCounts = {}; await refresh();
+      $('#view').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:12px;border-color:var(--pri)"><b>Opname tersimpan</b> · ' + r.cocok + ' cocok, ' + r.beda + ' selisih' +
         '<div class="list" style="margin-top:6px">' + r.rows.map(x => '<div class="li"><div class="grow">' + esc(x.nama) + '</div><span class="small mut">sistem ' + x.sistem + ' → fisik ' + x.fisik + '</span> ' + (x.selisih ? '<span class="chip ' + (x.selisih < 0 ? 'bad' : 'blue') + '">' + (x.selisih > 0 ? '+' : '') + x.selisih + '</span>' : '<span class="chip">cocok</span>') + '</div>').join('') + '</div></div>');
     } catch (e) { toast(e.message, true); }
   };
@@ -419,12 +647,14 @@ function vOpname(el) {
 
 /* ---- BARANG & QR ---- */
 function vBarang(el) {
-  el.innerHTML = '<div class="row" style="margin-bottom:10px"><div class="grow"><h3 style="margin:0">Barang & label QR</h3><div class="small mut">Tempel label QR di kemasan / rak. Isi QR: <code>IDCG:KODE</code></div></div><button class="ghost sm" id="pAll">🖨 Cetak semua label</button><button class="sm" id="nItem">+ Barang</button></div>' +
-    '<div class="items">' + S.items.map(i => '<div class="item" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + ' · ' + esc(i.satuan) + ' · stok ' + i.stok + '</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="soft sm" data-qr="' + esc(i.kode) + '">QR</button><button class="ghost sm" data-ed="' + esc(i.kode) + '">Ubah</button></div></div>').join('') + '</div>';
-  el.querySelectorAll('[data-qr]').forEach(b => b.onclick = () => labelModal([itemBy(b.dataset.qr)]));
-  el.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => itemModal(itemBy(b.dataset.ed)));
+  el.innerHTML = '<div class="row" style="margin-bottom:10px;flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Barang & label QR</h3><div class="small mut">Tempel label QR di kemasan / rak. Isi QR: <code>IDCG:KODE</code>. Barang dari Sheet memakai kode di kolom KODE QR.</div></div><button class="ghost sm" id="pAll">🖨 Label (' + S.items.length + ')</button>' + (can('edit') ? '<button class="sm" id="nItem">+ Barang</button>' : '') + '</div>' +
+    '<input id="bF" placeholder="Saring nama barang…" style="margin-bottom:10px"><div class="items" id="bl"></div>';
+  const draw = q => { $('#bl').innerHTML = S.items.filter(i => !q || (i.nama + i.kode).toLowerCase().includes(q)).map(i => '<div class="item" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + ' · ' + esc(i.satuan) + ' · stok ' + i.stok + '</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="soft sm" data-qr="' + esc(i.kode) + '">QR</button>' + (can('edit') ? '<button class="ghost sm" data-ed="' + esc(i.kode) + '">Ubah</button>' : '') + '</div></div>').join('');
+    el.querySelectorAll('[data-qr]').forEach(b => b.onclick = () => labelModal([itemBy(b.dataset.qr)]));
+    el.querySelectorAll('[data-ed]').forEach(b => b.onclick = () => itemModal(itemBy(b.dataset.ed))); };
+  draw(''); $('#bF').oninput = e => draw(e.target.value.toLowerCase());
   $('#pAll').onclick = () => labelModal(S.items);
-  $('#nItem').onclick = () => itemModal(null);
+  if ($('#nItem')) $('#nItem').onclick = () => itemModal(null);
 }
 function labelHtml(i) {
   return '<div class="lbl"><div class="q" data-q="IDCG:' + esc(i.kode) + '"></div><div class="t"><b>' + esc(i.nama) + '</b>' + esc(i.satuan) + (i.lokasi ? '<br>' + esc(i.lokasi) : '') +
@@ -432,16 +662,16 @@ function labelHtml(i) {
 }
 function drawQrs(root) { root.querySelectorAll('[data-q]').forEach(d => { d.innerHTML = ''; if (window.QRCode) new QRCode(d, { text: d.dataset.q, width: 224, height: 224, correctLevel: QRCode.CorrectLevel.M }); else d.textContent = d.dataset.q; }); }
 function labelModal(list) {
-  const m = modal('<div class="row"><h3 class="grow" style="margin:0">Label QR (' + list.length + ')</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Cetak di kertas stiker, potong, tempel di kemasan. Satu label untuk satu jenis barang.</div>' +
+  const m = modal('<div class="row"><h3 class="grow" style="margin:0">Label QR (' + list.length + ')</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Cetak di kertas stiker, potong, tempel di kemasan.</div>' +
     '<div id="lbls" style="display:flex;flex-wrap:wrap;justify-content:center">' + list.map(labelHtml).join('') + '</div><button id="lPrint" style="width:100%;margin-top:12px">🖨 Cetak</button>');
   drawQrs(m);
   m.querySelector('#lPrint').onclick = () => { const p = $('#printArea'); p.innerHTML = list.map(labelHtml).join(''); drawQrs(p); setTimeout(() => window.print(), 300); };
 }
 function itemModal(i) {
-  const n = !i; i = i || { kode: '', nama: '', kategori: '', satuan: '', stok: 0, minStok: 1, lokasi: '', suhu: '', catatan: '' };
+  const n = !i; i = i || { kode: '', nama: '', kategori: '', satuan: '', stok: 0, minStok: S.alertQty, lokasi: 'Gudang HT', suhu: '', catatan: '' };
   const f = (k, l, t) => '<div><label>' + l + '</label><input id="m_' + k + '" ' + (t || '') + ' value="' + esc(i[k]) + '"></div>';
-  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah barang' : 'Ubah barang') + '</h3><div class="grid2">' + f('kode', 'Kode (jadi isi QR)', n ? '' : 'disabled') + f('nama', 'Nama barang') + f('kategori', 'Kategori') + f('satuan', 'Satuan (mis. syringe 4,6 g)') +
-    (n ? f('stok', 'Stok awal', 'type=number min=0') : '') + f('minStok', 'Batas minimum (peringatan)', 'type=number min=0') + f('lokasi', 'Lokasi simpan') + f('suhu', 'Suhu simpan') + '</div>' + f('catatan', 'Catatan (mis. Rx, umur setelah dibuka)') +
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah barang' : 'Ubah barang') + '</h3>' + (i.dariExcel ? '<div class="small mut">Nama & stok barang ini mengikuti Sheet IN OUT HT.</div>' : '') + '<div class="grid2">' + f('kode', 'Kode (jadi isi QR)', n ? '' : 'disabled') + f('nama', 'Nama barang') + f('kategori', 'Kategori') + f('satuan', 'Satuan') +
+    (n ? f('stok', 'Stok awal', 'type=number min=0') : '') + f('minStok', 'Peringatan restock bila stok ≤', 'type=number min=0') + f('lokasi', 'Lokasi simpan') + f('suhu', 'Suhu simpan') + '</div>' + f('catatan', 'Catatan (mis. Rx, umur setelah dibuka)') +
     '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="mSave">Simpan</button></div>');
   m.querySelector('#mSave').onclick = async () => {
     const it = {}; ['kode', 'nama', 'kategori', 'satuan', 'stok', 'minStok', 'lokasi', 'suhu', 'catatan'].forEach(k => { const e = m.querySelector('#m_' + k); if (e) it[k] = e.value; });
@@ -449,44 +679,135 @@ function itemModal(i) {
   };
 }
 
-/* ---- RIWAYAT ---- */
-let rwF = '';
-async function vRiwayat(el) {
-  el.innerHTML = '<div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">Riwayat mutasi</h3><select id="rF" style="width:auto"><option value="">Semua</option><option>KELUAR</option><option>MASUK</option><option>OPNAME</option><option>BATAL</option></select><button class="ghost sm" id="xls">⬇ Excel</button></div><div class="card" style="overflow-x:auto"><table id="rt"><tr><td class="mut">Memuat…</td></tr></table></div>';
-  $('#rF').value = rwF; $('#rF').onchange = e => { rwF = e.target.value; vRiwayat(el); };
-  $('#xls').onclick = async () => { try { const r = await call('exportXlsx'); if (!r.b64) return toast('Ekspor hanya tersedia di aplikasi asli', true); const a = document.createElement('a'); a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + r.b64; a.download = r.name; a.click(); } catch (e) { toast(e.message, true); } };
-  let rows; try { rows = await call('history', {}); } catch (e) { $('#rt').innerHTML = '<tr><td>' + esc(e.message) + '</td></tr>'; return; }
-  if (rwF) rows = rows.filter(r => r.jenis === rwF);
-  const col = { KELUAR: 'warn', MASUK: '', OPNAME: 'blue', BATAL: 'gray' };
-  $('#rt').innerHTML = '<thead><tr><th>Waktu</th><th>Barang</th><th>Jenis</th><th>Jml</th><th>Stok</th><th>Oleh</th><th>Ket.</th></tr></thead><tbody>' + rows.map(r => '<tr><td class="small">' + fmtT(r.at) + '</td><td>' + esc(r.nama) + '</td><td><span class="chip ' + col[r.jenis] + '">' + r.jenis + '</span></td><td>' + r.qty + '</td><td class="small">' + r.stokSebelum + ' → ' + r.stokSesudah + '</td><td class="small">' + esc(r.user) + '</td><td class="small mut">' + esc([r.catatan, r.supplier, r.batch && 'LOT ' + r.batch, r.batal && 'dibatalkan'].filter(Boolean).join(' · ')) + '</td></tr>').join('') + '</tbody>';
+/* ---- LAPORAN TERPISAH ---- */
+const RPT = [['statistik', '📊 Statistik'], ['masuk', 'Barang Masuk'], ['keluar', 'Barang Keluar'], ['opname', 'Stock Opname'], ['kembali', 'Pengembalian & Hapus']];
+const L = { type: 'statistik', from: '', to: '', user: '' };
+async function vLaporan(el) {
+  if (!L.from) { const d = new Date(), ymd = x => x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); L.to = ymd(d); d.setDate(1); L.from = ymd(d); }
+  el.innerHTML = '<div class="seg" id="rT">' + RPT.map(r => '<button data-r="' + r[0] + '" class="' + (L.type === r[0] ? 'on' : '') + '">' + r[1] + '</button>').join('') + '</div>' +
+    '<div class="row" style="margin:10px 0;flex-wrap:wrap"><label style="margin:0">Dari</label><input type="date" id="rF" value="' + L.from + '" style="width:auto"><label style="margin:0">s/d</label><input type="date" id="rTo" value="' + L.to + '" style="width:auto"><div class="grow"></div><button class="ghost sm" id="xls">⬇ Excel laporan ini</button></div>' +
+    '<div id="rSum" class="small mut"></div><div class="card" style="overflow-x:auto;margin-top:8px"><table id="rt"><tr><td class="mut">Memuat…</td></tr></table></div>';
+  el.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { L.type = b.dataset.r; vLaporan(el); });
+  $('#rF').onchange = e => { L.from = e.target.value; vLaporan(el); }; $('#rTo').onchange = e => { L.to = e.target.value; vLaporan(el); };
+  $('#xls').onclick = async () => { try { const r = await call('exportReport', L); if (!r.b64) return toast('Unduh Excel tersedia di aplikasi asli', true); const a = document.createElement('a'); a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + r.b64; a.download = r.name; a.click(); } catch (e) { toast(e.message, true); } };
+  if (L.type === 'statistik') return vStat(el);
+  let R; try { R = await call('report', L); } catch (e) { $('#rt').innerHTML = '<tr><td>' + esc(e.message) + '</td></tr>'; return; }
+  $('#rSum').innerHTML = '<b>' + esc(R.judul) + '</b> · ' + R.jumlahBaris + ' transaksi · total ' + R.total + ' unit' + (L.type === 'keluar' && R.ditolak ? ' · ' + R.ditolak + ' permintaan ditolak (tidak mengurangi stok)' : '');
+  $('#rt').innerHTML = '<thead><tr>' + R.kolom.map(k => '<th>' + esc(k) + '</th>').join('') + '</tr></thead><tbody>' + (R.rows.length ? R.rows.map(r => '<tr>' + r.map((c, i) => '<td' + (i === 0 ? ' class="small"' : '') + '>' + (/^https:\/\/drive\.google\.com\/thumbnail/.test(c) || /^data:image/.test(c) ? '<a href="' + esc(c) + '" target="_blank">foto</a>' : esc(c)) + '</td>').join('') + '</tr>').join('') : '<tr><td colspan="' + R.kolom.length + '" class="mut">Tidak ada transaksi pada periode ini.</td></tr>') + '</tbody>';
+}
+
+/* ---- STATISTIK: barang paling cepat habis + per pengambil (grafik bisa diunduh) ---- */
+async function vStat(el) {
+  $('#rSum').innerHTML = 'Memuat statistik…'; $('#rt').closest('.card').remove();
+  let st; try { st = await call('stats', L); } catch (e) { $('#rSum').textContent = e.message; return; }
+  const wrap = document.createElement('div'); el.appendChild(wrap);
+  const ppl = st.orang;
+  wrap.innerHTML = '<div class="row" style="flex-wrap:wrap;margin:4px 0 10px"><label style="margin:0">Pengambil</label><select id="sU2" style="width:auto"><option value="">Semua orang</option>' + ppl.map(p => '<option' + (L.user === p.nama ? ' selected' : '') + '>' + esc(p.nama) + '</option>').join('') + '</select><div class="grow"></div></div>' +
+    '<div class="card chartCard"><div class="row"><div class="grow"><h3 style="margin:0">Barang paling cepat habis</h3><div class="small mut">Perkiraan hari sampai habis = stok sekarang ÷ pemakaian per hari (' + st.hari + ' hari terakhir' + (st.user ? ', hanya ambilan ' + esc(st.user) : '') + ')</div></div><button class="ghost sm" data-png="c1">⬇ Grafik (PNG)</button></div><canvas id="c1"></canvas><div class="small mut" id="c1n"></div></div>' +
+    '<div class="card chartCard" style="margin-top:12px"><div class="row"><div class="grow"><h3 style="margin:0">Pengambilan per orang</h3><div class="small mut">Total unit diambil (dikurangi yang dikembalikan) dan barang terbanyak</div></div><button class="ghost sm" data-png="c2">⬇ Grafik (PNG)</button></div><canvas id="c2"></canvas></div>' +
+    '<div class="card" style="margin-top:12px;overflow-x:auto"><table><thead><tr><th>Barang</th><th>Stok</th><th>Terpakai</th><th>Per hari</th><th>Habis dalam</th></tr></thead><tbody>' +
+    (st.barang.length ? st.barang.map(b => '<tr><td>' + esc(b.nama) + '</td><td>' + b.stok + '</td><td>' + b.pakai + '</td><td>' + b.perHari + '</td><td>' + (b.hariHabis === null ? '–' : '<b' + (b.hariHabis <= 7 ? ' style="color:var(--bad)"' : '') + '>' + b.hariHabis + ' hari</b>') + '</td></tr>').join('') : '<tr><td colspan="5" class="mut">Belum ada pengambilan pada periode ini.</td></tr>') + '</tbody></table></div>';
+  $('#rSum').innerHTML = '<b>Statistik pemakaian</b> · ' + st.barang.length + ' barang terpakai · ' + ppl.length + ' pengambil';
+  $('#sU2').onchange = e => { L.user = e.target.value; vLaporan(el); };
+  const top = st.barang.filter(b => b.hariHabis !== null).slice(0, 10);
+  barChart($('#c1'), top.map(b => ({ label: b.nama, value: b.hariHabis, text: (b.hariHabis <= 7 ? '⚠ ' : '') + b.hariHabis + ' hari · ' + b.perHari + '/hari', bad: b.hariHabis <= 7, tip: b.nama + '\nStok ' + b.stok + ' · terpakai ' + b.pakai + ' (' + b.perHari + '/hari)\nHabis dalam ±' + b.hariHabis + ' hari' })),
+    { title: 'Barang paling cepat habis' + (st.user ? ' · ' + st.user : ''), sub: 'Gudang HT · ' + (L.from || '') + ' s/d ' + (L.to || '') + ' · merah = habis ≤ 7 hari', unit: 'hari' });
+  $('#c1n').textContent = top.length ? '' : 'Belum ada data pemakaian.';
+  barChart($('#c2'), ppl.map(p => ({ label: p.nama + ' (' + p.peran + ')', value: p.total, text: p.total + ' unit', tip: p.nama + ' · ' + p.total + ' unit\n' + p.top.map(x => '• ' + x.nama + ': ' + x.qty).join('\n') })),
+    { title: 'Pengambilan per orang', sub: 'Gudang HT · ' + (L.from || '') + ' s/d ' + (L.to || ''), unit: 'unit' });
+  wrap.querySelectorAll('[data-png]').forEach(b => b.onclick = () => { const c = $('#' + b.dataset.png); const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'IDC-Gudang-' + (b.dataset.png === 'c1' ? 'paling-cepat-habis' : 'per-pengambil') + '-' + (L.to || 'periode') + '.png'; a.click(); if (window.DEMO_API) toast('Unduh grafik berjalan di aplikasi asli (di simulasi Claude unduhan diblokir)'); });
+}
+/** Grafik batang horizontal di <canvas> — judul & periode ikut tergambar agar PNG yang diunduh bisa dibaca sendiri. */
+function barChart(c, rows, o) {
+  const cs = getComputedStyle(document.documentElement), tok = n => cs.getPropertyValue(n).trim();
+  const dpr = Math.max(2, window.devicePixelRatio || 1), W = Math.max(320, c.parentNode.clientWidth - 2), rowH = 34, top = 62, H = top + Math.max(1, rows.length) * rowH + 30;
+  c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px';
+  const x = c.getContext('2d'); x.scale(dpr, dpr);
+  x.fillStyle = tok('--card'); x.fillRect(0, 0, W, H);
+  x.fillStyle = tok('--ink'); x.font = '700 15px system-ui,sans-serif'; x.fillText(o.title, 12, 22);
+  x.fillStyle = tok('--mut'); x.font = '12px system-ui,sans-serif'; x.fillText(o.sub, 12, 40);
+  const labW = Math.min(W * 0.42, 260), x0 = 12 + labW + 8, x1 = W - 118, max = Math.max(1, ...rows.map(r => r.value));
+  const nice = (v => { const p = Math.pow(10, Math.floor(Math.log10(v))); return Math.ceil(v / p) * p; })(max);
+  x.strokeStyle = tok('--line'); x.lineWidth = 1; x.fillStyle = tok('--mut'); x.font = '11px system-ui,sans-serif';
+  for (let k = 0; k <= 4; k++) { const gx = x0 + (x1 - x0) * k / 4; x.beginPath(); x.moveTo(gx, top - 6); x.lineTo(gx, H - 24); x.stroke(); x.fillText(String(Math.round(nice * k / 4 * 10) / 10), gx - 4, H - 10); }
+  c._bars = [];
+  rows.forEach((r, i) => {
+    const y = top + i * rowH, w = Math.max(3, (x1 - x0) * r.value / nice);
+    x.fillStyle = tok('--ink'); x.font = '13px system-ui,sans-serif';
+    let lab = r.label; while (x.measureText(lab).width > labW && lab.length > 4) lab = lab.slice(0, -2); if (lab !== r.label) lab = lab.slice(0, -1) + '…';
+    x.fillText(lab, 12, y + 19);
+    x.fillStyle = r.bad ? tok('--bad') : tok('--pri');
+    const h = 18, yy = y + 7; x.beginPath(); x.moveTo(x0, yy); x.lineTo(x0 + w - 4, yy); x.quadraticCurveTo(x0 + w, yy, x0 + w, yy + 4); x.lineTo(x0 + w, yy + h - 4); x.quadraticCurveTo(x0 + w, yy + h, x0 + w - 4, yy + h); x.lineTo(x0, yy + h); x.closePath(); x.fill();
+    x.fillStyle = r.bad ? tok('--bad') : tok('--mut'); x.font = (r.bad ? '700 ' : '') + '12px system-ui,sans-serif'; x.fillText(r.text, x0 + w + 6, y + 20);
+    c._bars.push({ y0: y, y1: y + rowH, tip: r.tip });
+  });
+  const tipEl = document.getElementById('chartTip') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'chartTip', className: 'chartTip' }));
+  c.onmousemove = e => { const b = c.getBoundingClientRect(), yy = e.clientY - b.top, bar = c._bars.find(q => yy >= q.y0 && yy < q.y1);
+    if (!bar) { tipEl.style.display = 'none'; return; } tipEl.textContent = bar.tip; tipEl.style.display = 'block'; tipEl.style.left = Math.min(window.innerWidth - 260, e.clientX + 14) + 'px'; tipEl.style.top = (e.clientY + 14) + 'px'; };
+  c.onmouseleave = () => { tipEl.style.display = 'none'; };
+}
+
+/* ---- PENGATURAN (Sheet IN OUT HT & WhatsApp) ---- */
+function vSet(el) {
+  const s = S.settings || {};
+  el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Sheet stok keseluruhan · IN OUT HT</h3><div class="small mut">Annisa mengubah stok di Sheet → otomatis masuk sistem (tiap diedit & tiap 5 menit). Transaksi di sistem → otomatis ditambahkan ke kolom IN / OUT.</div>' +
+    '<div class="syncSt ' + (s.syncErr ? 'bad' : s.lastSync ? 'ok' : '') + '">' + (s.syncErr ? '✕ ' + esc(s.syncErr) : s.lastSync ? '✓ Tersambung · sinkron terakhir ' + fmtT(s.lastSync) : 'Belum tersambung') + '</div>' +
+    (can('users') ? '<label>Link Google Sheet (format Google Spreadsheet, bukan .xlsx)</label><input id="sU" value="' + esc(s.masterUrl || '') + '" placeholder="https://docs.google.com/spreadsheets/d/…/edit"><label>Nama tab</label><input id="sT" value="' + esc(s.masterTab || 'STOCK GUDANG') + '">' +
+      '<button id="sGo2" style="width:100%;margin-top:12px">Hubungkan & tarik data</button>' : '') +
+    '<button class="ghost" id="sNow" style="width:100%;margin-top:8px"' + (s.masterUrl ? '' : ' disabled') + '>⇄ Sinkron sekarang</button></div>' +
+    (can('users') ? '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 4px">WhatsApp ke Annisa & Mamat (opsional)</h3><div class="small mut">Kirim pesan WA otomatis setiap ada permintaan ACC baru. Perlu akun gateway Fonnte (berbayar). Kosongkan untuk mematikan.</div><label>Token Fonnte</label><input id="wT" placeholder="' + (s.waOn ? '•••••• (aktif)' : 'belum diisi') + '"><button class="ghost" id="wGo" style="width:100%;margin-top:10px">Simpan</button></div>' : '');
+  if (can('edit')) accRulesCard(el);
+  if ($('#sGo2')) $('#sGo2').onclick = async () => { $('#sGo2').disabled = true; $('#sGo2').textContent = 'Menghubungkan…'; try { const r = await call('setMaster', { url: $('#sU').value, tab: $('#sT').value }); toast('✓ Tersambung · ' + r.baru + ' barang baru, ' + r.ubah + ' diperbarui' + (r.disembunyikan ? ', ' + r.disembunyikan + ' barang contoh disembunyikan' : '')); await refresh(); } catch (e) { toast(e.message, true); render(); } };
+  $('#sNow').onclick = async () => { try { const r = await call('syncNow'); toast('⇄ ' + (r.skip ? r.pesan : r.ubah + ' diperbarui dari Sheet · ' + r.kirim + ' dikirim ke Sheet · ' + r.baru + ' baru')); await refresh(); } catch (e) { toast(e.message, true); } };
+  if ($('#wGo')) $('#wGo').onclick = async () => { try { const r = await call('saveWa', { token: $('#wT').value }); toast(r.waOn ? 'WA aktif' : 'WA dimatikan'); await refresh(); } catch (e) { toast(e.message, true); } };
+}
+
+function accRulesCard(el) {
+  const box = document.createElement('div'); box.className = 'card'; box.style.marginTop = '12px';
+  const marked = S.items.filter(i => i.perluAcc).length;
+  box.innerHTML = '<h3 style="margin:0 0 4px">Aturan ACC pengambilan</h3><div class="small mut">Normalnya stok langsung turun saat discan. ACC Annisa / Mamat hanya diminta bila:</div>' +
+    '<div class="grid2"><div><label>1. Stok tinggal ≤ (angka)</label><input id="aB" type="number" min="0" value="' + S.accBatas + '"></div><div><label>2. Barang sulit didapat (' + marked + ' ditandai)</label><input id="aQ" placeholder="Cari barang…"></div></div>' +
+    '<div class="accRules" id="aL"></div><button id="aGo" style="width:100%;margin-top:12px">Simpan aturan ACC</button>';
+  el.appendChild(box);
+  const ch = {};
+  const draw = q => { $('#aL').innerHTML = S.items.filter(i => !q || i.nama.toLowerCase().includes(q)).sort((a, b) => (b.perluAcc - a.perluAcc) || a.nama.localeCompare(b.nama)).map(i => { const c = ch[i.kode] || { perlu: i.perluAcc, alasan: i.alasanAcc };
+    return '<div class="li"><label class="chk grow" style="margin:0"><input type="checkbox" data-pa="' + esc(i.kode) + '"' + (c.perlu ? ' checked' : '') + '> <span><span class="nm" style="font-size:14px">' + esc(i.nama) + '</span> <span class="meta">stok ' + i.stok + '</span></span></label><input data-ar="' + esc(i.kode) + '" placeholder="Alasan, mis. inden 2 bulan" value="' + esc(c.alasan || '') + '" style="max-width:220px' + (c.perlu ? '' : ';display:none') + '"></div>'; }).join('');
+    $('#aL').querySelectorAll('[data-pa]').forEach(x => x.onchange = () => { const k = x.dataset.pa; ch[k] = Object.assign(ch[k] || { alasan: itemBy(k).alasanAcc }, { perlu: x.checked }); $('#aL').querySelector('[data-ar="' + k + '"]').style.display = x.checked ? '' : 'none'; });
+    $('#aL').querySelectorAll('[data-ar]').forEach(x => x.oninput = () => { const k = x.dataset.ar; ch[k] = Object.assign(ch[k] || { perlu: itemBy(k).perluAcc }, { alasan: x.value }); }); };
+  draw(''); $('#aQ').oninput = e => draw(e.target.value.toLowerCase());
+  $('#aGo').onclick = async () => { try { const r = await call('setAccRules', { batas: $('#aB').value, items: ch }); toast('✓ Aturan ACC tersimpan · batas stok ' + r.batas + (r.diubah ? ' · ' + r.diubah + ' barang diubah' : '')); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 
 /* ---- PENGGUNA & WAJAH (Manajer) ---- */
 function vUsers(el) {
   el.innerHTML = '<div class="row" style="margin-bottom:10px"><div class="grow"><h3 style="margin:0">Pengguna & wajah</h3><div class="small mut">Yang disimpan hanya sidik wajah (128 angka), bukan foto. Minta persetujuan tertulis karyawan sebelum mendaftarkan wajahnya.</div></div><button class="sm" id="nU">+ Pengguna</button></div>' +
-    '<div class="card list">' + S.users.map(u => '<div class="li"><div class="grow"><div class="nm">' + esc(u.nama) + ' <span class="chip gray">' + esc(u.peran) + '</span>' + (u.aktif !== 'ya' ? ' <span class="chip bad">nonaktif</span>' : '') + '</div>' +
-      '<div class="meta">' + (u.faces ? '✓ wajah terdaftar (' + u.faces + ' sampel) · ' + esc(u.faceAt) : '<span style="color:var(--warn)">Wajah belum terdaftar — belum bisa masuk</span>') + (u.email ? ' · ' + esc(u.email) : '') + '</div></div>' +
+    '<div class="card list">' + S.users.map(u => '<div class="li" style="flex-wrap:wrap"><div class="grow"><div class="nm">' + esc(u.nama) + ' <span class="chip gray">' + esc(u.peran) + '</span>' + (u.kuasa ? ' <span class="chip">pemberi ACC</span>' : '') + (u.aktif !== 'ya' ? ' <span class="chip bad">nonaktif</span>' : '') + '</div>' +
+      '<div class="meta">' + (u.faces ? '✓ wajah terdaftar (' + u.faces + ' sampel)' : '<span style="color:var(--warn)">Wajah belum terdaftar — belum bisa masuk</span>') + (u.hp ? ' · +' + esc(u.hp) : '') + (u.email ? ' · ' + esc(u.email) : '') + '</div></div>' +
       '<div class="row" style="flex-wrap:wrap;justify-content:flex-end;gap:6px"><button class="soft sm" data-en="' + u.id + '">📷 ' + (u.faces ? 'Tambah sampel' : 'Daftarkan wajah') + '</button>' + (u.faces ? '<button class="bad sm" data-cl="' + u.id + '">Hapus wajah</button>' : '') + '<button class="ghost sm" data-ue="' + u.id + '">Ubah</button></div></div>').join('') + '</div>';
   el.querySelectorAll('[data-en]').forEach(b => b.onclick = () => enrollModal(S.users.find(u => u.id === b.dataset.en)));
-  el.querySelectorAll('[data-cl]').forEach(b => b.onclick = async () => { const u = S.users.find(x => x.id === b.dataset.cl); if (!confirmBox('Hapus semua data wajah ' + u.nama + '? Ia tidak bisa masuk sampai didaftarkan ulang.')) return; try { await call('clearFace', { userId: u.id }); toast('Data wajah dihapus'); await refresh(); } catch (e) { toast(e.message, true); } });
+  el.querySelectorAll('[data-cl]').forEach(b => b.onclick = () => { const u = S.users.find(x => x.id === b.dataset.cl);
+    const m = modal('<h3 style="margin:0">Hapus data wajah ' + esc(u.nama) + '?</h3><div class="small mut" style="margin:6px 0 12px">Ia tidak bisa masuk sampai didaftarkan ulang.</div><div class="row"><button class="ghost grow" data-x>Batal</button><button class="bad grow" id="cfY">Hapus</button></div>');
+    m.querySelector('#cfY').onclick = async () => { try { await call('clearFace', { userId: u.id }); closeModal(); toast('Data wajah dihapus'); await refresh(); } catch (e) { toast(e.message, true); } }; });
   el.querySelectorAll('[data-ue]').forEach(b => b.onclick = () => userModal(S.users.find(u => u.id === b.dataset.ue)));
   $('#nU').onclick = () => userModal(null);
 }
-function confirmBox(msg) { return window.DEMO_API ? true : confirm(msg); }
 function userModal(u) {
-  const n = !u; u = u || { nama: '', email: '', peran: 'Perawat', aktif: 'ya' };
-  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah pengguna' : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '"><label>Peran</label><select id="uR">' + ['Perawat', 'Purchase', 'Manajer'].map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
-    '<label>Email (untuk notifikasi; Purchase/Manajer)</label><input id="uE" type="email" value="' + esc(u.email) + '"><label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Manajer)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
+  const n = !u; u = u || { nama: '', email: '', hp: '', peran: 'Perawat', aktif: 'ya', kuasa: false };
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah pengguna' : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '"><label>Peran</label><select id="uR">' + ['Perawat', 'PJ Gudang', 'Purchase', 'Penyetuju', 'Manajer'].map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
+    '<div class="small mut" style="margin-top:4px">Perawat & PJ Gudang: cukup wajah. Purchase, Penyetuju, Manajer: wajah + PIN.</div>' +
+    '<label>Nomor HP (untuk masuk pertama & WA)</label><input id="uH" inputmode="tel" value="' + esc(u.hp ? '+' + u.hp : '') + '" placeholder="+62 8…"><label>Email (opsional, untuk notifikasi)</label><input id="uE" type="email" value="' + esc(u.email) + '">' +
+    '<label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Penyetuju/Manajer)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
+    '<label class="chk"><input type="checkbox" id="uK"' + (u.kuasa ? ' checked' : '') + '> Pemberi ACC (YA / TIDAK)</label>' +
     '<label>Status</label><select id="uA"><option value="ya">Aktif</option><option value="tidak"' + (u.aktif === 'tidak' ? ' selected' : '') + '>Nonaktif</option></select>' +
     '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="uS">Simpan</button></div>');
-  m.querySelector('#uS').onclick = async () => { try { await call('saveUser', { user: { id: u.id, nama: $('#uN').value, peran: $('#uR').value, email: $('#uE').value, pin: $('#uP').value, aktif: $('#uA').value } }); closeModal(); toast('Tersimpan'); await refresh(); } catch (e) { toast(e.message, true); } };
+  m.querySelector('#uS').onclick = async () => { try { await call('saveUser', { user: { id: u.id, nama: $('#uN').value, peran: $('#uR').value, hp: $('#uH').value, email: $('#uE').value, pin: $('#uP').value, kuasa: $('#uK').checked, aktif: $('#uA').value } }); closeModal(); toast('Tersimpan'); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 function vSelf(el) {
-  el.innerHTML = '<div class="card" style="max-width:520px"><h3 style="margin:0 0 6px">Daftarkan wajah Anda</h3><div class="small mut">' + (S.me.hasFace ? 'Wajah Anda sudah terdaftar. Tambah sampel bila sering gagal dikenali.' : 'Setelah ini, Anda masuk dengan pindai wajah + PIN. Masuk dengan PIN saja tidak berlaku lagi.') + '</div><button id="selfGo" style="margin-top:12px">📷 ' + (S.me.hasFace ? 'Tambah sampel wajah' : 'Daftarkan wajah sekarang') + '</button></div>';
+  el.innerHTML = '<div class="card" style="max-width:520px"><h3 style="margin:0 0 6px">Daftarkan wajah Anda</h3><div class="small mut">' + (S.me.hasFace ? 'Wajah Anda sudah terdaftar. Tambah sampel bila sering gagal dikenali.' : 'Setelah ini, Anda masuk dengan pindai wajah + PIN. Masuk dengan nomor HP/PIN saja tidak berlaku lagi.') + '</div><button id="selfGo" style="margin-top:12px">📷 ' + (S.me.hasFace ? 'Tambah sampel wajah' : 'Daftarkan wajah sekarang') + '</button></div>';
   $('#selfGo').onclick = () => enrollModal({ id: S.me.id, nama: S.me.nama });
 }
 function enrollModal(u) {
-  const m = modal('<div class="row"><h3 class="grow" style="margin:0">Wajah · ' + esc(u.nama) + '</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Satu orang, wajah lurus, tanpa masker, cahaya cukup. Ambil 2–3 sampel agar lebih andal.</div>' +
+  const m = modal('<div class="row"><h3 class="grow" style="margin:0">Wajah · ' + esc(u.nama) + '</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Satu orang, wajah lurus, tanpa masker, cahaya cukup. Ambil 2–3 sampel dari kamera agar lebih andal.</div>' +
     '<div class="cam"><video id="eV" playsinline muted style="transform:scaleX(-1)"></video><img id="eI" class="hide" style="width:100%;height:100%;object-fit:cover"></div><div id="eMsg" class="small" style="margin:8px 0">Membuka kamera…</div>' +
     '<div class="row"><button class="grow" id="eSnap" disabled>Ambil sampel</button><button class="ghost" id="eFile">Dari foto</button></div><input type="file" id="eIn" accept="image/*" class="hide">');
   let st = null; const msg = t => m.querySelector('#eMsg').textContent = t;
