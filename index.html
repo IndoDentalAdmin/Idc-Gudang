@@ -75,6 +75,7 @@ td input{padding:8px;width:84px;text-align:center}
 .lbl .q{width:112px;height:112px;flex:none}.lbl .q img,.lbl .q canvas{width:112px!important;height:112px!important}
 .lbl .t{font-size:12px;line-height:1.3}.lbl .t b{font-size:13px;display:block;margin-bottom:3px}.lbl .k{font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:12px;margin-top:4px}
 .lbl .cold{display:inline-block;margin-top:4px;background:#0b4ea2;color:#fff;font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px}
+.opBell{display:flex;gap:10px;align-items:center;width:100%;text-align:left;margin:0 0 10px;background:var(--warn2);color:var(--ink);border:1px solid var(--warn);border-radius:14px;padding:12px 14px;font-weight:400}.opBell span{flex:1;min-width:0}.opBell u{color:var(--warn);font-weight:700}
 .badge{display:inline-flex;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;align-items:center;justify-content:center;margin-left:4px}
 .rsBanner{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:var(--bad);color:#fff;border-radius:14px;padding:12px 14px;margin:2px 0 12px;font-weight:500;font-size:14px}
 .rsBanner b{font-weight:800;letter-spacing:.02em}.rsBanner span{flex:1;min-width:0}.rsBanner u{font-weight:700;white-space:nowrap}
@@ -179,7 +180,7 @@ body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 const API_URL = 'https://script.google.com/macros/s/AKfycbyyJ4tqjuM8wjao0eZK_w1CE5Uo6zedH_Zn3wYFWtwvcgTPZ9NpUN-LwQL9Jja9fD_sVw/exec';
 const FACE_LIB = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/';
 const POLL_MS = 10000;
-const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {}, restock: [], pending: [], myReqs: [], approvers: [], alertQty: 3, accBatas: 5 };
+const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {}, restock: [], pending: [], myReqs: [], approvers: [], hitung: [], myHitung: [], lapReq: [], alertQty: 3, accBatas: 5 };
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtT = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
@@ -316,13 +317,20 @@ function apply(d, first) {
   if (!d || d.same) return false;
   const old = {}; S.items.forEach(i => old[i.kode] = i.stok);
   const oldPend = new Set((S.pending || []).map(p => p.id)), oldMine = {}; (S.myReqs || []).forEach(r => oldMine[r.id] = r.status);
+  const oldH = new Set((S.hitung || []).map(h => h.id)), oldMyH = {}; (S.myHitung || []).forEach(h => oldMyH[h.id] = h.status), oldLR = new Set((S.lapReq || []).map(l => l.periode + l.requestAt));
   S.items = d.items; S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver; S.restock = d.restock || []; S.pending = d.pending || []; S.myReqs = d.myReqs || [];
+  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || [];
   S.settings = d.settings || null; S.approvers = d.approvers || []; S.alertQty = d.alertQty || 3; S.accBatas = d.accBatas === undefined ? 5 : d.accBatas;
   if (d.me) S.me = Object.assign(S.me, d.me);
   S.changed = first ? [] : S.items.filter(i => old[i.kode] !== undefined && old[i.kode] !== i.stok).map(i => i.kode);
   if (!first) {
     const baru = S.me.kuasa ? S.pending.filter(p => !oldPend.has(p.id)) : [];
     if (baru.length) { beep(true); toast('🔔 Perlu ACC: ' + baru[0].user + ' · ' + baru[0].nama + (baru.length > 1 ? ' (+' + (baru.length - 1) + ')' : '')); }
+    const hb = S.hitung.filter(h => !oldH.has(h.id));
+    if (hb.length) { beep(true); toast('🔔 Cocokkan Stok Opname: ' + hb[0].user + ' · ' + hb[0].jumlah + ' barang, ' + hb[0].beda + ' selisih'); }
+    const lr = S.lapReq.filter(l => !oldLR.has(l.periode + l.requestAt));
+    if (lr.length) { beep(true); toast('📨 ' + lr[0].requestBy + ' meminta PUBLISH laporan ' + (lr[0].judul || lr[0].periode)); }
+    S.myHitung.forEach(h => { if (oldMyH[h.id] === 'MENUNGGU' && h.status !== 'MENUNGGU') { beep(h.status === 'DITERAPKAN'); toast(h.status === 'DITERAPKAN' ? '✓ Hitungan Anda sudah dicocokkan ' + h.oleh : '↩ ' + h.oleh + ' minta hitung ulang' + (h.alasan ? ': ' + h.alasan : ''), h.status !== 'DITERAPKAN'); } });
     S.myReqs.forEach(r => { if (oldMine[r.id] === 'MENUNGGU' && r.status !== 'MENUNGGU') { beep(r.status === 'DISETUJUI'); toast((r.status === 'DISETUJUI' ? '✓ Disetujui ' : '✕ Ditolak ') + r.oleh + ' · ' + r.nama, r.status !== 'DISETUJUI'); } });
   }
   return true;
@@ -345,7 +353,8 @@ function tabsFor() {
   if (can('scan')) t.push(['scan', '📷 Scan ambil']);
   if (can('keluar')) t.push(['keluar', 'Barang keluar']);
   if (can('masuk')) t.push(['masuk', 'Barang masuk']);
-  if (can('opname')) t.push(['opname', 'Stock opname']);
+  const opN = can('opname') ? S.hitung.length + (can('publish') ? S.lapReq.length : 0) : 0;
+  if (can('hitung') || can('rekap')) t.push(['opname', 'Stock opname' + (opN ? ' <span class="badge">' + opN + '</span>' : '')]);
   t.push(['stok', 'Stok']);
   if (can('scan')) t.push(['mine', 'Ambilan saya']);
   if (can('barang')) t.push(['barang', 'Barang & QR']);
@@ -363,9 +372,10 @@ function hpNav() {
   const nav = $('#hpNav'); if (!isHP()) { nav.innerHTML = ''; document.body.classList.remove('hp'); return; }
   document.body.classList.add('hp');
   const T = tabsFor(), has = k => T.some(t => t[0] === k);
-  const pick = ['home', can('scan') ? 'scan' : 'stok', S.me.kuasa ? 'acc' : can('scan') ? 'mine' : 'stok', can('laporan') ? 'laporan' : 'stok'].filter((k, i, a) => has(k) && a.indexOf(k) === i);
-  const lab = { home: 'Beranda', scan: 'Scan', acc: 'ACC', mine: 'Ambilan', stok: 'Stok', laporan: 'Laporan' };
-  nav.innerHTML = pick.map(k => '<button data-t="' + k + '" class="' + (S.tab === k ? 'on' : '') + '"><i>' + ICON[k] + (k === 'acc' && S.pending.length ? '<b>' + S.pending.length + '</b>' : '') + '</i><span>' + lab[k] + '</span></button>').join('') +
+  const pick = ['home', can('scan') ? 'scan' : 'stok', S.me.kuasa ? 'acc' : can('scan') ? 'mine' : 'stok', can('opname') || !can('laporan') ? 'opname' : 'laporan'].filter((k, i, a) => has(k) && a.indexOf(k) === i);
+  const lab = { home: 'Beranda', scan: 'Scan', acc: 'ACC', mine: 'Ambilan', stok: 'Stok', laporan: 'Laporan', opname: 'Opname' };
+  const opN = can('opname') ? S.hitung.length + (can('publish') ? S.lapReq.length : 0) : 0;
+  nav.innerHTML = pick.map(k => '<button data-t="' + k + '" class="' + (S.tab === k ? 'on' : '') + '"><i>' + ICON[k] + (k === 'acc' && S.pending.length ? '<b>' + S.pending.length + '</b>' : '') + (k === 'opname' && opN ? '<b>' + opN + '</b>' : '') + '</i><span>' + lab[k] + '</span></button>').join('') +
     '<button data-menu="1" class="' + (pick.indexOf(S.tab) < 0 ? 'on' : '') + '"><i>☰</i><span>Menu</span></button>';
   nav.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); window.scrollTo(0, 0); if (b.dataset.t === 'scan' && !lastResult) setTimeout(() => $('#bScan') && $('#bScan').click(), 50); });
   nav.querySelector('[data-menu]').onclick = () => { const m = modal('<div class="row"><h3 class="grow" style="margin:0">Semua menu</h3><button class="ghost sm" data-x>Tutup</button></div>' + menuTiles()); wireTiles(m); };
@@ -420,12 +430,15 @@ function vHome(el) {
     (can('scan') ? '<button class="scanBtn" id="hScan" style="max-width:260px;padding:16px">📷 Scan ambil barang</button>' : '') + '</div>';
   h += '<div class="tiles"><div class="tile"><b>' + it.length + '</b><span>Jenis barang</span></div><div class="tile' + (low ? ' tRed' : '') + '"><b>' + low + '</b><span>Segera restock (≤ ' + S.alertQty + ')</span></div>' +
     '<div class="tile"><b>' + keluarT + '</b><span>Keluar hari ini</span></div><div class="tile"><b>' + (S.me.kuasa ? S.pending.length : masukT) + '</b><span>' + (S.me.kuasa ? 'Menunggu ACC Anda' : 'Masuk hari ini') + '</span></div></div>';
+  if (can('opname') && S.hitung.length) h += '<button class="opBell" data-gop="cocok">🔔 <span><b>Cocokkan Stok Opname</b> · ' + S.hitung.map(x => esc(x.user) + ' (' + x.jumlah + ' barang, ' + x.beda + ' selisih)').join(', ') + '</span><u>Buka</u></button>';
+  if (can('publish') && S.lapReq.length) h += '<button class="opBell" data-gop="rekap">📨 <span><b>Request PUBLISH</b> · ' + S.lapReq.map(x => esc(x.requestBy) + ': ' + esc(x.judul || x.periode)).join(', ') + '</span><u>Buka</u></button>';
   if (S.me.kuasa) h += '<h3 class="sec">Perlu ACC (' + S.pending.length + ')</h3><div id="hAcc"></div>';
   const myP = (S.myReqs || []).filter(r => r.status === 'MENUNGGU');
   if (myP.length) h += '<h3 class="sec">Permintaan saya yang menunggu ACC</h3><div class="card list">' + myP.map(reqLine).join('') + '</div>';
   if (low) h += '<h3 class="sec" style="color:var(--bad)">Segera restock</h3><div class="items">' + S.items.filter(i => i.rendah).sort((a, b) => a.stok - b.stok).slice(0, 6).map(itemCard).join('') + '</div>';
   el.innerHTML = h;
   if ($('#hScan')) $('#hScan').onclick = () => { S.tab = 'scan'; render(); $('#bScan').click(); };
+  el.querySelectorAll('[data-gop]').forEach(b => b.onclick = () => { S.tab = 'opname'; OP.sub = b.dataset.gop; if (b.dataset.gop === 'rekap' && S.lapReq[0]) { OP.per = S.lapReq[0].periode; OP.tahun = perInfo(OP.per).tahun; } render(); window.scrollTo(0, 0); });
   if ($('#hAcc')) accList($('#hAcc'), S.pending.slice(0, 5));
   wireReqLines(el);
 }
@@ -621,28 +634,197 @@ function deleteModal(m) {
   md.querySelector('#dGo').onclick = async () => { try { await call('deleteReq', { mutasiId: m.id, alasan: md.querySelector('#dA').value, foto }); closeModal(); toast('Terkirim — menunggu ACC ' + accNames()); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 
-/* ---- STOCK OPNAME ---- */
+/* ---- STOCK OPNAME: hitung fisik (Rizki dkk) → Cocokkan (HANYA Annisa ubah stok) · rekap bulanan / kuartal / tahunan · PUBLISH ---- */
+const OP = { sub: null, tahun: new Date().getFullYear(), per: null, open: {}, fix: {} };
+const BLN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+const BLN_L = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const pad2 = n => String(n).padStart(2, '0');
+const sgn = n => (n > 0 ? '+' : '') + n;
+const HST = { MENUNGGU: ['warn', 'Menunggu dicocokkan Annisa'], DITERAPKAN: ['', 'Sudah dicocokkan'], DITOLAK: ['bad', 'Diminta hitung ulang'] };
+function dlB64(r) { if (!r || !r.b64) return toast('Unduh Excel tersedia di aplikasi asli', true); const a = document.createElement('a'); a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + r.b64; a.download = r.name; a.click(); }
+async function dlCall(btn, fn, data) { const t = btn.textContent; btn.disabled = true; btn.textContent = 'Menyiapkan…'; try { dlB64(await call(fn, data)); } catch (e) { toast(e.message, true); } btn.disabled = false; btn.textContent = t; }
+function perInfo(p) {
+  let m;
+  if ((m = /^(\d{4})-(\d{2})$/.exec(p))) return { jenis: 'BULAN', tahun: +m[1], months: [+m[2]], judul: BLN_L[+m[2] - 1] + ' ' + m[1] };
+  if ((m = /^(\d{4})-Q([1-4])$/.exec(p))) { const q = +m[2]; return { jenis: 'KUARTAL', tahun: +m[1], months: [q * 3 - 2, q * 3 - 1, q * 3], judul: 'Kuartal ' + q + ' ' + m[1] }; }
+  return { jenis: 'TAHUN', tahun: +p, months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], judul: 'Tahun ' + p };
+}
+function aggC(it, months) {
+  const c = months.map(m => it.m[m - 1]).filter(Boolean); if (!c.length) return null;
+  const s = k => c.reduce((a, x) => a + x[k], 0);
+  return { awal: c[0][0], inn: s(1), out: s(2), sel: s(3), akhir: c[c.length - 1][4], pakai: s(5), op: s(6) };
+}
 function vOpname(el) {
-  const C = S.opCounts;
-  el.innerHTML = '<div class="card"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Stock opname</h3><div class="small mut">Hitung fisik di rak. Isi angkanya, atau <b>scan QR tiap barang</b> (1 scan = +1). Selisih dicatat & dikirim ke Sheet (STOCK AKHIR).</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
+  const subs = [];
+  if (can('hitung')) subs.push(['hitung', '🧮 Hitung fisik']);
+  if (can('opname')) subs.push(['cocok', '✅ Cocokkan' + (S.hitung.length ? ' <span class="badge">' + S.hitung.length + '</span>' : '')]);
+  if (can('rekap')) subs.push(['rekap', '📊 Rekap & laporan' + (can('publish') && S.lapReq.length ? ' <span class="badge">' + S.lapReq.length + '</span>' : '')]);
+  if (!subs.length) { el.innerHTML = '<div class="card mut">Tidak ada akses stock opname.</div>'; return; }
+  if (!subs.some(s => s[0] === OP.sub)) OP.sub = can('opname') && S.hitung.length ? 'cocok' : subs[0][0];
+  el.innerHTML = (subs.length > 1 ? '<div class="seg" id="opSeg">' + subs.map(s => '<button data-op="' + s[0] + '" class="' + (OP.sub === s[0] ? 'on' : '') + '">' + s[1] + '</button>').join('') + '</div>' : '') + '<div id="opBody" style="margin-top:12px"></div>';
+  el.querySelectorAll('[data-op]').forEach(b => b.onclick = () => { OP.sub = b.dataset.op; vOpname(el); });
+  ({ hitung: opHitung, cocok: opCocok, rekap: opRekap })[OP.sub]($('#opBody'));
+}
+
+/* Hitung fisik: Rizki / PJ Gudang kirim ke Annisa; Annisa bisa langsung terapkan. */
+function opHitung(el) {
+  const C = S.opCounts, boss = can('opname');
+  el.innerHTML = '<div class="card"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Hitung fisik · Gudang HT (Hangtuah)</h3><div class="small mut">' +
+    (boss ? 'Isi jumlah fisik, lalu terapkan ke stok. Hanya Anda yang bisa mengubah stok.' : 'Isi jumlah fisik di rak, atau <b>scan QR tiap barang</b> (1 scan = +1). Stok <b>tidak</b> berubah sampai Annisa mencocokkan.') +
+    '</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
     '<input id="oF" placeholder="Saring nama barang…" style="margin-top:10px"><div style="overflow-x:auto;margin-top:6px"><table><thead><tr><th>Barang</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>' +
-    S.items.map(i => '<tr data-k="' + esc(i.kode) + '" data-n="' + esc(i.nama.toLowerCase()) + '"><td><div class="nm" style="font-size:14px">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + '</div></td><td><b>' + i.stok + '</b></td><td><input type="number" min="0" inputmode="numeric" data-c="' + esc(i.kode) + '" value="' + (C[i.kode] ?? '') + '"></td><td class="sel"></td></tr>').join('') +
-    '</tbody></table></div><label>Catatan opname</label><input id="oN" placeholder="mis. opname akhir bulan"><button id="oGo" style="width:100%;margin-top:12px">Simpan opname</button></div>';
+    S.items.map(i => '<tr data-k="' + esc(i.kode) + '" data-n="' + esc(i.nama.toLowerCase()) + '"><td><div class="nm" style="font-size:14px">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + (i.lokasi ? ' · ' + esc(i.lokasi) : '') + '</div></td><td><b>' + i.stok + '</b></td><td><input type="number" min="0" inputmode="numeric" data-c="' + esc(i.kode) + '" value="' + (C[i.kode] ?? '') + '"></td><td class="sel"></td></tr>').join('') +
+    '</tbody></table></div><label>Catatan</label><input id="oN" placeholder="mis. opname akhir bulan, rak 1–3">' +
+    '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="ghost" id="oDl">⬇ Download lembar hitung</button><div class="grow"></div>' +
+    (boss ? '<button id="oGo">Simpan & terapkan ke stok</button>' : '<button id="oSend">📨 Cocokkan dengan Purchasing</button>') + '</div></div>' +
+    '<h3 class="sec">Hitungan saya</h3><div class="card list" id="oMine"></div>';
   const upd = () => el.querySelectorAll('tr[data-k]').forEach(tr => { const k = tr.dataset.k, v = C[k], i = itemBy(k), c = tr.querySelector('.sel');
     if (v === undefined || v === '') { c.innerHTML = '<span class="mut">–</span>'; return; } const d = Number(v) - i.stok;
-    c.innerHTML = d === 0 ? '<span class="chip">cocok</span>' : '<span class="chip ' + (d < 0 ? 'bad' : 'blue') + '">' + (d > 0 ? '+' : '') + d + '</span>'; });
+    c.innerHTML = d === 0 ? '<span class="chip">cocok</span>' : '<span class="chip ' + (d < 0 ? 'bad' : 'blue') + '">' + sgn(d) + '</span>'; });
   el.querySelectorAll('input[data-c]').forEach(inp => inp.oninput = () => { C[inp.dataset.c] = inp.value; upd(); });
   $('#oF').oninput = e => { const q = e.target.value.toLowerCase(); el.querySelectorAll('tr[data-k]').forEach(tr => tr.style.display = !q || tr.dataset.n.includes(q) ? '' : 'none'); };
   upd();
   $('#oScan').onclick = () => openScanner('Scan tiap barang di rak (1 scan = 1 unit)', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal', true);
     C[k] = String((Number(C[k]) || 0) + 1); const inp = el.querySelector('input[data-c="' + k + '"]'); if (inp) inp.value = C[k]; upd(); toast(itemBy(k).nama + ' · fisik ' + C[k]); return 'keep'; });
-  $('#oGo').onclick = async () => {
-    const counts = {}; Object.keys(C).forEach(k => { if (C[k] !== '' && C[k] !== undefined) counts[k] = Number(C[k]); });
-    try { const r = await call('opname', { counts, catatan: $('#oN').value }); S.opCounts = {}; await refresh();
-      $('#view').insertAdjacentHTML('beforeend', '<div class="card" style="margin-top:12px;border-color:var(--pri)"><b>Opname tersimpan</b> · ' + r.cocok + ' cocok, ' + r.beda + ' selisih' +
-        '<div class="list" style="margin-top:6px">' + r.rows.map(x => '<div class="li"><div class="grow">' + esc(x.nama) + '</div><span class="small mut">sistem ' + x.sistem + ' → fisik ' + x.fisik + '</span> ' + (x.selisih ? '<span class="chip ' + (x.selisih < 0 ? 'bad' : 'blue') + '">' + (x.selisih > 0 ? '+' : '') + x.selisih + '</span>' : '<span class="chip">cocok</span>') + '</div>').join('') + '</div></div>');
-    } catch (e) { toast(e.message, true); }
+  const counts = () => { const o = {}; Object.keys(C).forEach(k => { if (C[k] !== '' && C[k] !== undefined) o[k] = Number(C[k]); }); return o; };
+  $('#oDl').onclick = () => dlCall($('#oDl'), 'exportHitung', { counts: counts() });
+  if ($('#oSend')) $('#oSend').onclick = async () => {
+    const n = Object.keys(counts()).length; if (!n) return toast('Isi minimal satu jumlah fisik', true);
+    $('#oSend').disabled = true;
+    try { const r = await call('submitHitung', { counts: counts(), catatan: $('#oN').value }); S.opCounts = {}; beep(true); toast('📨 Terkirim ke Annisa · ' + r.jumlah + ' barang, ' + r.beda + ' selisih'); await refresh(); }
+    catch (e) { toast(e.message, true); $('#oSend').disabled = false; }
   };
+  if ($('#oGo')) $('#oGo').onclick = async () => {
+    try { const r = await call('opname', { counts: counts(), catatan: $('#oN').value }); S.opCounts = {}; await refresh();
+      toast('✓ Opname diterapkan · ' + r.cocok + ' cocok, ' + r.beda + ' selisih'); } catch (e) { toast(e.message, true); }
+  };
+  const mine = S.myHitung || [];
+  $('#oMine').innerHTML = mine.length ? mine.map(h => '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + h.jumlah + ' barang · ' + h.beda + ' selisih</div><div class="meta">' + fmtT(h.at) +
+    (h.oleh ? ' · ' + esc(h.oleh) : '') + (h.alasan ? ' · "' + esc(h.alasan) + '"' : '') + (h.catatan ? ' · ' + esc(h.catatan) : '') + '</div></div><span class="chip ' + (HST[h.status] || ['gray'])[0] + '">' + (HST[h.status] || [0, h.status])[1] + '</span>' +
+    '<button class="ghost sm" data-hdl="' + h.id + '">⬇</button></div>').join('') : '<div class="small mut">Belum ada hitungan yang dikirim.</div>';
+  el.querySelectorAll('[data-hdl]').forEach(b => b.onclick = () => dlCall(b, 'exportHitung', { id: b.dataset.hdl }));
+}
+
+/* Cocokkan: HANYA Annisa. Bisa koreksi angka fisik sebelum diterapkan. */
+function opCocok(el) {
+  if (!S.hitung.length) { el.innerHTML = '<div class="card mut">Tidak ada hitungan yang menunggu dicocokkan.</div>'; return; }
+  el.innerHTML = S.hitung.map(h => {
+    const F = OP.fix[h.id] || (OP.fix[h.id] = {});
+    const rows = h.rows.slice().sort((a, b) => Math.abs(b.f - b.s) - Math.abs(a.f - a.s));
+    return '<div class="card" style="margin-bottom:12px;border-color:var(--warn)"><div class="row" style="flex-wrap:wrap;align-items:flex-start"><div class="grow"><span class="chip warn">🔔 Cocokkan Stok Opname</span>' +
+      '<div class="nm" style="font-size:16px;margin-top:6px">' + esc(h.user) + ' <span class="mut">(' + esc(h.peran) + ')</span></div><div class="meta">' + fmtT(h.at) + ' · ' + h.jumlah + ' barang · <b>' + h.beda + ' selisih</b>' + (h.catatan ? ' · "' + esc(h.catatan) + '"' : '') + '</div></div>' +
+      '<button class="ghost sm" data-hdl="' + h.id + '">⬇ Excel</button></div>' +
+      '<div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Barang</th><th>Sistem saat hitung</th><th>Fisik</th><th>Selisih</th><th>Stok sekarang → baru</th></tr></thead><tbody>' +
+      rows.map(r => { const it = itemBy(r.kode) || { stok: r.s }; return '<tr data-h="' + h.id + '" data-k="' + esc(r.kode) + '" data-s="' + r.s + '" data-now="' + it.stok + '"><td><div class="nm" style="font-size:14px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + '</div></td><td>' + r.s +
+        '</td><td><input type="number" min="0" inputmode="numeric" style="width:90px" data-fx="' + esc(r.kode) + '" value="' + (F[r.kode] ?? r.f) + '"></td><td class="sel"></td><td class="nw"></td></tr>'; }).join('') +
+      '</tbody></table></div><div class="small mut" style="margin-top:6px">Stok baru = stok sekarang + (fisik − sistem saat hitung), supaya pengambilan setelah dihitung tidak hilang.</div>' +
+      '<div class="yn" style="margin-top:10px"><button class="yes" data-hy="' + h.id + '">✓ Cocok — terapkan ke stok</button><button class="no" data-hn="' + h.id + '">↩ Minta hitung ulang</button></div>' +
+      '<div class="noBox hide" data-hb="' + h.id + '"><input placeholder="Alasan, mis. rak 2 belum dihitung" data-ha="' + h.id + '"><button class="bad sm" data-hn2="' + h.id + '">Kirim ke ' + esc(h.user) + '</button></div></div>';
+  }).join('');
+  const upd = () => el.querySelectorAll('tr[data-h]').forEach(tr => {
+    const f = Number(tr.querySelector('input').value), s = Number(tr.dataset.s), now = Number(tr.dataset.now), d = f - s;
+    tr.querySelector('.sel').innerHTML = d === 0 ? '<span class="chip">cocok</span>' : '<span class="chip ' + (d < 0 ? 'bad' : 'blue') + '">' + sgn(d) + '</span>';
+    tr.querySelector('.nw').innerHTML = now + ' → <b>' + Math.max(0, now + d) + '</b>';
+  });
+  el.querySelectorAll('input[data-fx]').forEach(inp => inp.oninput = () => { OP.fix[inp.closest('tr').dataset.h][inp.dataset.fx] = inp.value; upd(); });
+  upd();
+  el.querySelectorAll('[data-hdl]').forEach(b => b.onclick = () => dlCall(b, 'exportHitung', { id: b.dataset.hdl }));
+  el.querySelectorAll('[data-hy]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try { const r = await call('decideHitung', { id: b.dataset.hy, ya: true, counts: OP.fix[b.dataset.hy] || {} }); delete OP.fix[b.dataset.hy]; beep(true); toast('✓ Stok opname diterapkan · ' + r.beda + ' selisih masuk ke stok & Sheet'); await refresh(); }
+    catch (e) { toast(e.message, true); b.disabled = false; }
+  });
+  el.querySelectorAll('[data-hn]').forEach(b => b.onclick = () => el.querySelector('[data-hb="' + b.dataset.hn + '"]').classList.remove('hide'));
+  el.querySelectorAll('[data-hn2]').forEach(b => b.onclick = async () => {
+    try { await call('decideHitung', { id: b.dataset.hn2, ya: false, alasan: el.querySelector('[data-ha="' + b.dataset.hn2 + '"]').value }); toast('Diminta hitung ulang'); await refresh(); } catch (e) { toast(e.message, true); }
+  });
+}
+
+/* Rekap: VIEW untuk semua (termasuk Mamat). Unduh: Rizki/PJ/Annisa kapan saja; Mamat setelah PUBLISH. */
+async function opRekap(el) {
+  el.innerHTML = '<div class="card mut">Memuat rekap stock opname…</div>';
+  let R; try { R = await call('rekap', { tahun: OP.tahun }); } catch (e) { el.innerHTML = '<div class="card">' + esc(e.message) + '</div>'; return; }
+  const ba = R.bulanAktif;
+  if (!OP.per || OP.per.indexOf(String(R.tahun)) !== 0) OP.per = ba ? R.tahun + '-' + pad2(ba) : String(R.tahun);
+  const opts = [];
+  for (let m = 1; m <= ba; m++) opts.push([R.tahun + '-' + pad2(m), BLN_L[m - 1] + ' ' + R.tahun + (m === ba && R.tahun === new Date().getFullYear() ? ' · berjalan' : '')]);
+  for (let q = 1; q <= Math.ceil(ba / 3); q++) opts.push([R.tahun + '-Q' + q, 'Kuartal ' + q + ' (' + BLN[q * 3 - 3] + '–' + BLN[q * 3 - 1] + ')' + (q * 3 > ba ? ' · berjalan' : '')]);
+  if (ba) opts.push([String(R.tahun), 'Tahunan ' + R.tahun + (ba < 12 ? ' · berjalan' : '')]);
+  const P = perInfo(OP.per), months = P.months.filter(m => m <= ba);
+  const rows = R.items.map(it => Object.assign({ kode: it.kode, nama: it.nama, satuan: it.satuan }, aggC(it, months) || {})).filter(r => r.awal !== undefined);
+  const T = rows.reduce((t, r) => { t.inn += r.inn; t.out += r.out; t.pakai += r.pakai; if (r.sel) t.selN++; t.sel += r.sel; return t; }, { inn: 0, out: 0, pakai: 0, sel: 0, selN: 0 });
+  const monthly = BLN.map((b, i) => i < ba ? R.items.reduce((s, it) => s + (it.m[i] ? it.m[i][5] : 0), 0) : null);
+  const qTot = [1, 2, 3, 4].map(q => monthly.slice(q * 3 - 3, q * 3).reduce((s, v) => s + (v || 0), 0));
+  const L = R.laporan[OP.per] || {}, pub = L.status === 'PUBLISH', dl = can('rekapDl') || pub;
+  const req = (S.lapReq || []);
+  let h = '';
+  if (can('publish') && req.length) h += '<div class="card" style="border-color:var(--warn);background:var(--warn2);margin-bottom:12px">📨 <b>Request PUBLISH</b> dari ' + req.map(x => esc(x.requestBy) + ' untuk <a href="#" data-goper="' + esc(x.periode) + '">' + esc(x.judul || x.periode) + '</a>').join(', ') + '</div>';
+  h += '<div class="card"><div class="row" style="flex-wrap:wrap"><select id="rkY" style="width:auto">' + R.tahunList.map(y => '<option' + (y === R.tahun ? ' selected' : '') + '>' + y + '</option>').join('') + '</select>' +
+    '<select id="rkP" style="width:auto;min-width:200px">' + opts.map(o => '<option value="' + o[0] + '"' + (o[0] === OP.per ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select><div class="grow"></div>' +
+    (pub ? '<span class="chip">✓ PUBLISH · ' + esc(L.publishBy || '') + '</span>' : '<span class="chip warn">Belum di-PUBLISH</span>') + (L.requestAt && !pub ? ' <span class="chip blue">Diminta ' + esc(L.requestBy) + '</span>' : '') + '</div>' +
+    '<div class="row" style="flex-wrap:wrap;margin-top:10px;gap:8px">' +
+    (dl ? (P.jenis === 'BULAN' ? '<button class="ghost sm" data-xl="awal">⬇ Excel awal bulan</button><button class="ghost sm" data-xl="akhir">⬇ Excel akhir bulan</button>' : '<button class="ghost sm" data-xl="akhir">⬇ Excel ' + (P.jenis === 'KUARTAL' ? 'kuartal' : 'tahunan') + '</button>') + '<button class="ghost sm" id="rkPng">⬇ Grafik (PNG)</button>'
+      : '<button class="soft sm" id="rkReq"' + (L.requestAt ? ' disabled' : '') + '>' + (L.requestAt ? '📨 Sudah diminta ' + fmtT(L.requestAt) : '📨 Request PUBLISH ke Annisa') + '</button>') +
+    (can('publish') ? '<div class="grow"></div>' + (pub ? '<button class="ghost sm" id="rkUnpub">Batalkan publish</button>' : '<button class="sm" id="rkPub">✅ Boleh di-PUBLISH</button>') +
+      '<button class="ghost sm" id="rkGen">Buat laporan ' + (P.jenis === 'BULAN' ? 'akhir bulan' : '') + ' sekarang</button>' : '') + '</div>' +
+    (!dl ? '<div class="small mut" style="margin-top:8px">Anda bisa <b>VIEW</b> semua angka di bawah. Unduh Excel & grafik terbuka setelah Annisa menekan <b>Boleh di-PUBLISH</b>.</div>' : '') +
+    (can('publish') && (L.fileAwal || L.fileAkhir || L.file) ? '<div class="small mut" style="margin-top:8px">Arsip Drive: ' + [['fileAwal', 'awal bulan'], ['fileAkhir', 'akhir bulan'], ['file', 'laporan']].filter(x => L[x[0]]).map(x => '<a href="' + esc(L[x[0]]) + '" target="_blank">' + x[1] + '</a>').join(' · ') + (L.dibuat ? ' · dibuat ' + fmtT(L.dibuat) : '') + '</div>' : '') +
+    '<div class="small mut" style="margin-top:6px">Laporan otomatis: tanggal 1 pagi (stock awal) dan hari terakhir bulan malam (stock akhir), plus kuartal & tahunan. Annisa diberi tahu untuk cek & publish.</div></div>';
+  h += '<div class="tiles" style="margin-top:12px"><div class="tile"><b>' + T.pakai + '</b><span>Pemakaian ' + esc(P.judul) + '</span></div><div class="tile"><b>' + T.inn + '</b><span>IN (masuk + kembali)</span></div><div class="tile"><b>' + T.out + '</b><span>OUT (keluar)</span></div><div class="tile' + (T.selN ? ' tRed' : '') + '"><b>' + T.selN + '</b><span>Barang selisih opname (' + sgn(T.sel) + ')</span></div></div>';
+  h += '<div class="card chartCard"><canvas id="rkC"></canvas></div>';
+  if (P.jenis === 'BULAN') h += '<div class="card chartCard" style="margin-top:12px"><canvas id="rkC2"></canvas><div class="small mut" id="rkC2n"></div></div>';
+  h += '<div class="card" style="margin-top:12px"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Stock opname · ' + esc(P.judul) + '</h3><div class="small mut">Stock akhir = stock awal + IN − OUT + selisih opname</div></div><input id="rkF" placeholder="Saring barang…" style="width:auto;max-width:220px"></div>' +
+    '<div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Barang</th><th>Stock awal</th><th>IN</th><th>OUT</th><th>Stock akhir</th><th>Selisih</th><th>Pemakaian</th></tr></thead><tbody>' +
+    rows.map(r => '<tr data-n="' + esc(r.nama.toLowerCase()) + '"><td><div class="nm" style="font-size:14px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · ' + esc(r.satuan || '') + '</div></td><td>' + r.awal + '</td><td>' + r.inn + '</td><td>' + r.out + '</td><td><b>' + r.akhir + '</b></td><td>' +
+      (r.sel ? '<span class="chip ' + (r.sel < 0 ? 'bad' : 'blue') + '">' + sgn(r.sel) + '</span>' : r.op ? '<span class="chip">cocok</span>' : '<span class="mut">–</span>') + '</td><td>' + r.pakai + '</td></tr>').join('') +
+    '<tr><td><b>Total</b></td><td></td><td><b>' + T.inn + '</b></td><td><b>' + T.out + '</b></td><td></td><td><b>' + sgn(T.sel) + '</b></td><td><b>' + T.pakai + '</b></td></tr></tbody></table></div></div>';
+  el.innerHTML = h;
+  colChart($('#rkC'), BLN.map((b, i) => ({ label: b, value: monthly[i], hi: months.indexOf(i + 1) >= 0, tip: BLN_L[i] + ' ' + R.tahun + (monthly[i] === null ? ': belum berjalan' : ': ' + monthly[i] + ' unit terpakai') })),
+    { title: 'Pemakaian per bulan · ' + R.tahun, sub: 'Gudang HT (Hangtuah) · unit keluar − kembali · disorot: ' + P.judul, q: qTot.map((v, i) => 'Q' + (i + 1) + ': ' + v), total: 'Tahun ' + R.tahun + ': ' + qTot.reduce((a, b) => a + b, 0) + ' unit' });
+  if ($('#rkC2')) { const top = rows.filter(r => r.pakai > 0).sort((a, b) => b.pakai - a.pakai).slice(0, 10);
+    barChart($('#rkC2'), top.map(r => ({ label: r.nama, value: r.pakai, text: r.pakai + ' ' + (r.satuan || ''), tip: r.nama + '\nAwal ' + r.awal + ' · IN ' + r.inn + ' · OUT ' + r.out + ' · akhir ' + r.akhir })), { title: 'Pemakaian terbanyak · ' + P.judul, sub: 'Gudang HT (Hangtuah)', unit: 'unit' });
+    $('#rkC2n').textContent = top.length ? '' : 'Belum ada pemakaian di bulan ini.'; }
+  $('#rkY').onchange = e => { OP.tahun = Number(e.target.value); OP.per = null; opRekap(el); };
+  $('#rkP').onchange = e => { OP.per = e.target.value; opRekap(el); };
+  $('#rkF').oninput = e => { const q = e.target.value.toLowerCase(); el.querySelectorAll('tr[data-n]').forEach(tr => tr.style.display = !q || tr.dataset.n.includes(q) ? '' : 'none'); };
+  el.querySelectorAll('[data-goper]').forEach(a => a.onclick = ev => { ev.preventDefault(); OP.per = a.dataset.goper; OP.tahun = perInfo(OP.per).tahun; opRekap(el); });
+  el.querySelectorAll('[data-xl]').forEach(b => b.onclick = () => dlCall(b, 'exportRekap', { periode: OP.per, kind: b.dataset.xl }));
+  if ($('#rkPng')) $('#rkPng').onclick = () => { const a = document.createElement('a'); a.href = $('#rkC').toDataURL('image/png'); a.download = 'IDC-Gudang-Pemakaian-' + OP.per + '.png'; a.click(); };
+  if ($('#rkReq')) $('#rkReq').onclick = async () => { try { await call('requestPublish', { periode: OP.per }); toast('📨 Permintaan PUBLISH dikirim ke Annisa'); opRekap(el); } catch (e) { toast(e.message, true); } };
+  if ($('#rkPub')) $('#rkPub').onclick = async () => { try { await call('setPublish', { periode: OP.per, publish: true }); toast('✓ ' + P.judul + ' boleh di-PUBLISH · Mamat diberi tahu'); await refresh(); } catch (e) { toast(e.message, true); } };
+  if ($('#rkUnpub')) $('#rkUnpub').onclick = async () => { try { await call('setPublish', { periode: OP.per, publish: false }); toast('Publish dibatalkan'); await refresh(); } catch (e) { toast(e.message, true); } };
+  if ($('#rkGen')) $('#rkGen').onclick = async () => { const b = $('#rkGen'); b.disabled = true; b.textContent = 'Membuat…'; try { const r = await call('buatLaporan', { periode: OP.per, kind: 'akhir' }); toast('✓ Laporan ' + r.judul + ' tersimpan di Drive'); opRekap(el); } catch (e) { toast(e.message, true); b.disabled = false; } };
+}
+/** Grafik kolom vertikal (12 bulan) — judul, periode & total kuartal ikut tergambar agar PNG bisa dibaca sendiri. */
+function colChart(c, rows, o) {
+  const cs = getComputedStyle(document.documentElement), tok = n => cs.getPropertyValue(n).trim();
+  const dpr = Math.max(2, window.devicePixelRatio || 1), W = Math.max(320, c.parentNode.clientWidth - 2), H = 330, top = 70, bot = 64, left = 40, right = 10;
+  c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px';
+  const x = c.getContext('2d'); x.scale(dpr, dpr);
+  x.fillStyle = tok('--card'); x.fillRect(0, 0, W, H);
+  x.fillStyle = tok('--ink'); x.font = '700 15px system-ui,sans-serif'; x.fillText(o.title, 12, 22);
+  x.fillStyle = tok('--mut'); x.font = '12px system-ui,sans-serif'; x.fillText(o.sub, 12, 40);
+  const vals = rows.map(r => Math.max(0, r.value || 0)), max = Math.max(1, ...vals);
+  const nice = (v => { const p = Math.pow(10, Math.floor(Math.log10(v))); return Math.ceil(v / p) * p; })(max);
+  const y0 = H - bot, ph = y0 - top, bw = (W - left - right) / rows.length;
+  x.strokeStyle = tok('--line'); x.lineWidth = 1; x.font = '11px system-ui,sans-serif';
+  for (let k = 0; k <= 4; k++) { const gy = y0 - ph * k / 4; x.beginPath(); x.moveTo(left, gy); x.lineTo(W - right, gy); x.stroke(); x.fillStyle = tok('--mut'); x.textAlign = 'right'; x.fillText(String(Math.round(nice * k / 4)), left - 6, gy + 4); }
+  c._bars = [];
+  rows.forEach((r, i) => {
+    const cx = left + bw * i + bw / 2, w = Math.min(34, bw * 0.62), v = Math.max(0, r.value || 0), hh = r.value === null ? 0 : Math.max(2, ph * v / nice);
+    if (r.value !== null) { x.fillStyle = r.hi ? tok('--pri') : tok('--pri2'); x.beginPath(); x.moveTo(cx - w / 2, y0); x.lineTo(cx - w / 2, y0 - hh + 4); x.quadraticCurveTo(cx - w / 2, y0 - hh, cx - w / 2 + 4, y0 - hh); x.lineTo(cx + w / 2 - 4, y0 - hh); x.quadraticCurveTo(cx + w / 2, y0 - hh, cx + w / 2, y0 - hh + 4); x.lineTo(cx + w / 2, y0); x.closePath(); x.fill();
+      x.fillStyle = r.hi ? tok('--ink') : tok('--mut'); x.font = (r.hi ? '700 ' : '') + '11px system-ui,sans-serif'; x.textAlign = 'center'; x.fillText(String(r.value), cx, y0 - hh - 5); }
+    x.fillStyle = r.hi ? tok('--ink') : tok('--mut'); x.font = (r.hi ? '700 ' : '') + '11px system-ui,sans-serif'; x.textAlign = 'center'; x.fillText(r.label, cx, y0 + 15);
+    c._bars.push({ x0: left + bw * i, x1: left + bw * (i + 1), tip: r.tip });
+  });
+  if (o.q) { x.font = '600 11px system-ui,sans-serif'; x.fillStyle = tok('--ink'); for (let q = 0; q < 4; q++) { const cx = left + bw * (q * 3 + 1.5); x.textAlign = 'center'; x.fillText(o.q[q], cx, y0 + 36);
+      if (q) { x.strokeStyle = tok('--line'); x.setLineDash([3, 3]); x.beginPath(); x.moveTo(left + bw * q * 3, top - 6); x.lineTo(left + bw * q * 3, y0 + 40); x.stroke(); x.setLineDash([]); } }
+    x.textAlign = 'right'; x.fillStyle = tok('--mut'); x.fillText(o.total || '', W - right, y0 + 56); }
+  x.textAlign = 'left';
+  const tipEl = document.getElementById('chartTip') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'chartTip', className: 'chartTip' }));
+  c.onmousemove = e => { const b = c.getBoundingClientRect(), xx = e.clientX - b.left, bar = c._bars.find(q => xx >= q.x0 && xx < q.x1);
+    if (!bar) { tipEl.style.display = 'none'; return; } tipEl.textContent = bar.tip; tipEl.style.display = 'block'; tipEl.style.left = Math.min(window.innerWidth - 260, e.clientX + 14) + 'px'; tipEl.style.top = (e.clientY + 14) + 'px'; };
+  c.onmouseleave = () => { tipEl.style.display = 'none'; };
 }
 
 /* ---- BARANG & QR ---- */
