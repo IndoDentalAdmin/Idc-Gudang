@@ -429,7 +429,7 @@ function apply(d, first) {
   const oldPend = new Set((S.pending || []).map(p => p.id)), oldMine = {}; (S.myReqs || []).forEach(r => oldMine[r.id] = r.status);
   const oldH = new Set((S.hitung || []).map(h => h.id)), oldMyH = {}; (S.myHitung || []).forEach(h => oldMyH[h.id] = h.status), oldLR = new Set((S.lapReq || []).map(l => l.periode + l.requestAt));
   S.allItems = d.items; S.restockAll = d.restock || []; S.ruang = d.ruang || []; S.cabangs = d.cabangs || []; filterCab(); S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver;  S.pending = d.pending || []; S.myReqs = d.myReqs || [];
-  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || [];
+  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || []; S.opnames = d.opnames || [];
   S.settings = d.settings || null; S.approvers = d.approvers || []; S.alertQty = d.alertQty || 3; S.accBatas = d.accBatas === undefined ? 5 : d.accBatas;
   if (d.me) S.me = Object.assign(S.me, d.me);
   S.changed = first ? [] : S.items.filter(i => old[i.kode] !== undefined && old[i.kode] !== i.stok).map(i => i.kode);
@@ -823,12 +823,13 @@ function vOpname(el) {
   const subs = [];
   if (can('hitung')) subs.push(['hitung', '🧮 Hitung fisik']);
   if (can('opname')) subs.push(['cocok', '✅ Cocokkan' + (S.hitung.length ? ' <span class="badge">' + S.hitung.length + '</span>' : '')]);
+  if (can('opname')) subs.push(['riwayat', '🗂 Riwayat opname']);
   if (can('rekap')) subs.push(['rekap', '📊 Rekap & laporan' + (can('publish') && S.lapReq.length ? ' <span class="badge">' + S.lapReq.length + '</span>' : '')]);
   if (!subs.length) { el.innerHTML = '<div class="card mut">Tidak ada akses stock opname.</div>'; return; }
   if (!subs.some(s => s[0] === OP.sub)) OP.sub = can('opname') && S.hitung.length ? 'cocok' : subs[0][0];
   el.innerHTML = (subs.length > 1 ? '<div class="seg" id="opSeg">' + subs.map(s => '<button data-op="' + s[0] + '" class="' + (OP.sub === s[0] ? 'on' : '') + '">' + s[1] + '</button>').join('') + '</div>' : '') + '<div id="opBody" style="margin-top:12px"></div>';
   el.querySelectorAll('[data-op]').forEach(b => b.onclick = () => { OP.sub = b.dataset.op; vOpname(el); });
-  ({ hitung: opHitung, cocok: opCocok, rekap: opRekap })[OP.sub]($('#opBody'));
+  ({ hitung: opHitung, cocok: opCocok, riwayat: opRiwayat, rekap: opRekap })[OP.sub]($('#opBody'));
 }
 
 /* Hitung fisik: Rizki / PJ Gudang kirim ke Annisa; Annisa bisa langsung terapkan. */
@@ -902,6 +903,36 @@ function opCocok(el) {
   el.querySelectorAll('[data-hn]').forEach(b => b.onclick = () => el.querySelector('[data-hb="' + b.dataset.hn + '"]').classList.remove('hide'));
   el.querySelectorAll('[data-hn2]').forEach(b => b.onclick = async () => {
     try { await call('decideHitung', { id: b.dataset.hn2, ya: false, alasan: el.querySelector('[data-ha="' + b.dataset.hn2 + '"]').value }); toast('Diminta hitung ulang'); await refresh(); } catch (e) { toast(e.message, true); }
+  });
+}
+
+/* Riwayat opname (HANYA Annisa): batalkan opname yang salah. Alasan wajib & tersimpan; catatan asli tetap ada, ditandai DIBATALKAN. */
+function opRiwayat(el) {
+  const L = (S.opnames || []).filter(m => !curCab() || curCab() === 'SEMUA' || !m.cabang || m.cabang === curCab());
+  const cabN = c => ((S.cabangs || []).find(x => x.kode === c) || {}).nama || c || '';
+  el.innerHTML = '<div class="card"><div class="small mut" style="margin-bottom:10px">Opname yang salah bisa <b>dibatalkan</b>: stok dikembalikan sebesar selisihnya, <b>alasan wajib diisi</b> dan tersimpan. Catatan asli tidak dihapus — tetap tampil dengan tanda DIBATALKAN, dan pembatalannya tercatat di Laporan Stock Opname.</div>' +
+    (L.length ? L.map(m => {
+      const d = (Number(m.stokSesudah) - Number(m.stokSebelum)) || 0, bt = m.jenis === 'BATAL OPNAME';
+      return '<div class="li" style="align-items:flex-start' + (m.batal ? ';opacity:.7' : '') + '"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) +
+        (bt ? ' <span class="chip warn">↩ pembatalan</span>' : m.batal ? ' <span class="chip gray">DIBATALKAN</span>' : '') + '</div>' +
+        '<div class="meta">' + fmtT(m.at) + ' · ' + esc(cabN(m.cabang)) + ' · ' + esc(m.user) + ' · stok ' + m.stokSebelum + ' → <b>' + m.stokSesudah + '</b> (' + (d ? sgn(d) : 'cocok') + ')</div>' +
+        (m.catatan ? '<div class="small mut">' + esc(m.catatan) + '</div>' : '') +
+        (m.batal ? '<div class="small" style="color:var(--bad);margin-top:2px">' + esc(m.batal) + '</div>' : '') + '</div>' +
+        (!bt && !m.batal ? '<button class="bad sm" data-bo="' + esc(m.id) + '">Batalkan</button>' : '') + '</div>';
+    }).join('') : '<div class="mut small">Belum ada catatan stock opname.</div>') + '</div>';
+  el.querySelectorAll('[data-bo]').forEach(b => b.onclick = () => {
+    const m = L.find(x => x.id === b.dataset.bo), d = (Number(m.stokSesudah) - Number(m.stokSebelum)) || 0, it = itemBy(m.kode), now = it ? Number(it.stok) : null;
+    const md = modal('<h3 style="margin:0">Batalkan opname ' + esc(m.nama) + '?</h3><div class="small mut" style="margin:6px 0 12px">Opname ' + fmtT(m.at) + ' oleh ' + esc(m.user) + ': ' + m.stokSebelum + ' → ' + m.stokSesudah + ' (' + (d ? sgn(d) : 'cocok') + ').' +
+      (now !== null ? '<br>Stok sekarang <b>' + now + '</b> → menjadi <b>' + Math.max(0, now - d) + '</b>.' : '') + '<br>Catatan asli tetap tersimpan dengan tanda DIBATALKAN beserta alasan Anda.</div>' +
+      '<label class="small">Alasan pembatalan (wajib)<textarea id="boA" rows="3" style="width:100%;margin-top:4px" placeholder="mis. salah hitung rak 2, salah ketik 72 harusnya 27"></textarea></label>' +
+      '<div class="row" style="margin-top:12px"><button class="ghost grow" data-x>Tutup</button><button class="bad grow" id="boY">Batalkan opname</button></div>');
+    md.querySelector('#boY').onclick = async () => {
+      const al = md.querySelector('#boA').value.trim();
+      if (al.length < 3) { toast('Tulis alasan pembatalan dulu', true); md.querySelector('#boA').focus(); return; }
+      const y = md.querySelector('#boY'); y.disabled = true;
+      try { const r = await call('batalOpname', { id: m.id, alasan: al }); closeModal(); beep(true); toast('✓ Opname ' + r.nama + ' dibatalkan · stok ' + r.before + ' → ' + r.after); await refresh(); }
+      catch (e) { toast(e.message, true); y.disabled = false; }
+    };
   });
 }
 
@@ -1293,7 +1324,7 @@ function openScanner(title, onCode) {
 
 /* ================= RAPID STOCK · Tentang & tema (crafted by STV) ================= */
 const RP_VERSI = 'v1.3';
-const RP_CATATAN = [['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi.'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
+const RP_CATATAN = [['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi. Stock opname → Riwayat opname: Batalkan opname dengan alasan wajib (tetap tercatat).'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
 const RP_HURUF = [['R', 'Reliable', 'Andal', 'Stok di aplikasi sama dengan di rak'], ['A', 'Actual', 'Terkini', 'Semua cabang melihat stok saat ini'], ['P', 'Precise', 'Presisi', 'Tepat barang, jumlah, dan ruangan'],
   ['I', 'Intuitive', 'Mudah', 'Pindai wajah, pindai QR, selesai'], ['D', 'Detectable', 'Terlacak', 'Setiap ambil, masuk, dan opname ada jejaknya']];
 const RP_STV = [['S', 'Standard', 'Satu cara kerja', 'Pindai wajah lalu QR untuk setiap pengambilan; aturan ACC dan batas restock yang sama di Hangtuah dan Pluit.'],
