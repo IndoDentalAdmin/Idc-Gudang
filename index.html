@@ -4,13 +4,28 @@
 <base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>IDC Gudang</title>
+<title>RAPID Stock · IDC Gudang</title>
+<!-- RAPID Stock · aplikasi yang bisa dipasang di HP (PWA). File pendamping di repo GitHub: manifest.webmanifest, sw.js, ikon PNG -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0E4A42">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RAPID Stock">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
-:root{--bg:#f4f6f5;--card:#fff;--ink:#14201b;--mut:#5d6b65;--line:#dde4e0;--pri:#0d7a5f;--pri2:#e3f3ed;--warn:#b45309;--warn2:#fdf1e2;--bad:#b42318;--bad2:#fdecea;--blue:#1d4ed8;--blue2:#e8eefc;--sh:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05)}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1513;--card:#17201c;--ink:#e6eeea;--mut:#98a69f;--line:#2a3631;--pri:#34c08f;--pri2:#16352a;--warn:#f0a44b;--warn2:#3a2a14;--bad:#f2786d;--bad2:#3b1b18;--blue:#7ea2ff;--blue2:#1b2540;--sh:none}}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root{--bg:#F7F6F2;--card:#fff;--sunken:#EEF2F7;--ink:#15203A;--mut:#5E6A82;--line:#E3E3DE;--pri:#1F3A68;--pri-fill:#1F3A68;--on-pri:#fff;--pri2:#E8EEF7;--brand:#1F3A68;--mark:#0E4A42;--gold:#B8914A;
+  --warn:#9a5b00;--warn2:#fdf0d9;--bad:#b3261e;--bad2:#fbe4e2;--blue:#2C6CB0;--blue2:#e6f0fa;--sh:0 1px 2px rgba(20,32,58,.05),0 6px 20px rgba(20,32,58,.05)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1220;--card:#131C2E;--sunken:#1B2640;--ink:#E8EDF6;--mut:#A9B4C8;--line:#24304A;--pri:#D9B872;--pri-fill:#2B4C86;--on-pri:#fff;--pri2:#2A2718;--brand:#1F3A68;--mark:#0E4A42;--gold:#D9B872;
+  --warn:#f0b65a;--warn2:#36290f;--bad:#f2948d;--bad2:#3a1a19;--blue:#8FB4F0;--blue2:#16253f;--sh:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1220;--card:#131C2E;--sunken:#1B2640;--ink:#E8EDF6;--mut:#A9B4C8;--line:#24304A;--pri:#D9B872;--pri-fill:#2B4C86;--on-pri:#fff;--pri2:#2A2718;--brand:#1F3A68;--mark:#0E4A42;--gold:#D9B872;
+  --warn:#f0b65a;--warn2:#36290f;--bad:#f2948d;--bad2:#3a1a19;--blue:#8FB4F0;--blue2:#16253f;--sh:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:-.005em}
 button,input,select,textarea{font:inherit;color:inherit}
-button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:600;background:var(--pri);color:#fff}
+button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;font-weight:600;background:var(--pri-fill);color:var(--on-pri)}
 button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}button.soft{background:var(--pri2);color:var(--pri)}
 button.bad{background:var(--bad2);color:var(--bad)}button.sm{padding:7px 11px;font-size:13px;border-radius:10px}button:disabled{opacity:.5;cursor:default}
 input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--card)}
@@ -31,11 +46,11 @@ label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
 @keyframes pulse{50%{box-shadow:0 0 0 10px rgba(13,122,95,.12)}}
 .faceIcon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6f8a80;font-size:13px;flex-direction:column;gap:8px}
 #gMsg{min-height:44px;margin:6px 0 12px}
-.steps{display:flex;justify-content:center;gap:6px;margin-top:4px;font-size:12px;color:var(--mut)}.steps span{padding:3px 8px;border-radius:99px;border:1px solid var(--line)}.steps span.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.steps{display:flex;justify-content:center;gap:6px;margin-top:4px;font-size:12px;color:var(--mut)}.steps span{padding:3px 8px;border-radius:99px;border:1px solid var(--line)}.steps span.on{background:var(--pri-fill);border-color:var(--pri);color:#fff}
 /* app */
 header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
 header .wrap{display:flex;align-items:center;gap:10px;height:58px}
-.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mut)}.live i{width:8px;height:8px;border-radius:50%;background:var(--pri);box-shadow:0 0 0 3px var(--pri2)}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mut)}.live i{width:8px;height:8px;border-radius:50%;background:var(--pri-fill);box-shadow:0 0 0 3px var(--pri2)}
 .live.off i{background:var(--warn);box-shadow:0 0 0 3px var(--warn2)}
 nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
 nav.tabs button{background:transparent;color:var(--mut);border:1px solid var(--line);white-space:nowrap;padding:8px 13px;font-size:14px}
@@ -47,7 +62,7 @@ main{padding-bottom:110px}
 .item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;gap:12px;align-items:center;transition:background .6s}
 .item.low{border-color:var(--warn)}.item.zero{border-color:var(--bad)}.item.flash{background:var(--pri2)}
 .qty{text-align:right;min-width:64px}.qty b{font-size:26px;display:block;line-height:1}.qty span{font-size:11px;color:var(--mut)}
-.bar{height:5px;border-radius:9px;background:var(--line);margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri)}
+.bar{height:5px;border-radius:9px;background:var(--line);margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri-fill)}
 .item.low .bar i{background:var(--warn)}.item.zero .bar i{background:var(--bad)}
 .nm{font-weight:650;line-height:1.25}.meta{font-size:12px;color:var(--mut);margin-top:2px}
 /* scan */
@@ -76,6 +91,19 @@ td input{padding:8px;width:84px;text-align:center}
 .lbl .t{font-size:12px;line-height:1.3}.lbl .t b{font-size:13px;display:block;margin-bottom:3px}.lbl .k{font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:12px;margin-top:4px}
 .lbl .cold{display:inline-block;margin-top:4px;background:#0b4ea2;color:#fff;font-weight:700;font-size:10px;padding:2px 6px;border-radius:4px}
 .opBell{display:flex;gap:10px;align-items:center;width:100%;text-align:left;margin:0 0 10px;background:var(--warn2);color:var(--ink);border:1px solid var(--warn);border-radius:14px;padding:12px 14px;font-weight:400}.opBell span{flex:1;min-width:0}.opBell u{color:var(--warn);font-weight:700}
+/* v2.5: cabang, ruangan, daftar rapi */
+.cabBar{margin:0 0 12px}.cabBar button{flex:0 1 auto}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.room{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;text-align:left;color:var(--ink);display:flex;flex-direction:column;gap:4px;font-weight:400}
+.room b{font-size:15px}.room .meta{font-size:12px;color:var(--mut)}
+.room.on{border-color:var(--pri);background:var(--pri2)}
+.rmChips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.rmChips button{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:7px 12px;border-radius:99px;font-size:13px;font-weight:600}
+.rmChips button.on{background:var(--pri-fill);border-color:var(--pri);color:#fff}
+.dayH{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;padding:12px 2px 4px}
+.li .act{display:flex;gap:6px;align-items:center;flex-shrink:0}
+button.hideBtn{background:transparent;color:var(--mut);border:1px solid var(--line);padding:6px 10px;font-size:12px;border-radius:9px}
+button.hideBtn:hover{color:var(--bad);border-color:var(--bad)}
+.secRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 8px}.secRow h3{margin:0;font-size:16px;flex:1;min-width:0}
 .badge{display:inline-flex;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;align-items:center;justify-content:center;margin-left:4px}
 .rsBanner{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:var(--bad);color:#fff;border-radius:14px;padding:12px 14px;margin:2px 0 12px;font-weight:500;font-size:14px}
 .rsBanner b{font-weight:800;letter-spacing:.02em}.rsBanner span{flex:1;min-width:0}.rsBanner u{font-weight:700;white-space:nowrap}
@@ -89,7 +117,7 @@ h3.sec{margin:18px 0 8px;font-size:16px}
 .acc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;border-left:5px solid var(--warn)}.acc-KEMBALI{border-left-color:var(--blue)}.acc-HAPUS{border-left-color:var(--bad)}
 .accFoto{width:84px;height:84px;object-fit:cover;border-radius:10px;cursor:zoom-in;flex:none;background:#000}
 .yn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.yn button{padding:14px;font-size:16px;font-weight:800;border-radius:12px}
-.yn .yes{background:var(--pri);color:#fff}.yn .no{background:var(--bad2);color:var(--bad)}
+.yn .yes{background:var(--pri-fill);color:#fff}.yn .no{background:var(--bad2);color:var(--bad)}
 .noBox{display:flex;gap:6px;margin-top:8px}
 .result.wait{border-color:var(--warn);background:var(--warn2)}
 .seg{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px;overflow-x:auto}.seg button{flex:1;background:transparent;color:var(--mut);white-space:nowrap;padding:9px 12px;font-size:14px}.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
@@ -116,14 +144,91 @@ body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 @media print{body>*:not(#printArea){display:none!important}#printArea{display:flex!important;flex-wrap:wrap}}
 @media (max-width:640px){.tiles{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}header .who{display:none}}
 </style>
+<style id="rapidStok">
+/* ===== RAPID Stock · tampilan (crafted by STV) — navy + emas, sama dengan RAPID System ===== */
+button{border-radius:999px;transition:background .15s,border-color .15s,transform .1s}button:active{transform:scale(.98)}button.sm{border-radius:999px}
+button:not(.ghost):not(.soft):not(.bad):not(.hideBtn):not(.room):not(.opBell):not(.rsBanner):not(.kpi):not([class*="hp"]){box-shadow:0 2px 8px color-mix(in srgb,var(--pri-fill) 25%,transparent)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px var(--pri2)}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.card{border-radius:16px;box-shadow:var(--sh)}
+header{background:var(--card)}
+header .wrap{height:62px}
+.rp-brand{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);box-shadow:none!important;text-align:left}
+.rp-mark{width:36px;height:36px;border-radius:12px;background:var(--mark);display:inline-flex;align-items:center;justify-content:center;flex:none}.rp-mark img{height:58%;width:auto;display:block}
+.rp-name{display:block;font-size:17px;font-weight:800;letter-spacing:.14em;line-height:1.15}.rp-name i{font-style:normal;font-weight:600;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-left:6px}
+.rp-brand small{display:block;font-size:11.5px;color:var(--mut);font-weight:500;letter-spacing:0}
+nav.tabs{background:var(--sunken);border-radius:999px;padding:4px;gap:4px;margin:12px 0 14px;scrollbar-width:none}nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{border:0!important;border-radius:999px;padding:7px 14px;font-weight:600;box-shadow:none!important}
+nav.tabs button.on{background:var(--card)!important;color:var(--pri)!important;box-shadow:0 1px 3px rgba(20,32,58,.12)!important}
+.seg{border-radius:999px!important;background:var(--sunken)!important;border:0!important}.seg button{border-radius:999px!important;box-shadow:none!important;background:transparent}.seg button.on{background:var(--card)!important;color:var(--pri)!important;box-shadow:0 1px 3px rgba(20,32,58,.12)!important}
+.chip{font-weight:600}
+.toast{border-radius:999px;padding:11px 20px}
+.tiles .tile,.kpi,.item,.room,.acc{border-radius:16px;box-shadow:var(--sh)}
+.hello h2{font-weight:800;letter-spacing:-.01em}
+.hello{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 18px;box-shadow:var(--sh);overflow:hidden}
+.hello::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gold)}
+/* layar masuk */
+#gate{background:var(--bg)}
+.rp-login{width:100%;max-width:410px;background:var(--card);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 10px 40px rgba(20,32,58,.10)}
+.rp-hero{position:relative;overflow:hidden;background:var(--brand);color:#fff;padding:22px 24px 46px;text-align:left}
+.rp-hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(217,184,114,.35);box-shadow:0 0 0 26px rgba(255,255,255,.04),0 0 0 52px rgba(255,255,255,.03)}
+.rp-top{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative}
+.rp-org{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700}
+.rp-org .lg{width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}.rp-org .lg img{height:62%;width:auto}
+.rp-chip{font-size:11px;font-weight:600;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.16);white-space:nowrap}
+.rp-word{position:relative;display:flex;align-items:baseline;gap:9px;margin-top:22px}
+.rp-word b{font-size:36px;font-weight:800;letter-spacing:.14em;line-height:1.1}.rp-word span{font-size:12px;font-weight:600;letter-spacing:.28em;color:#D9B872}
+.rp-tags{position:relative;display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.rp-tags span{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.15)}.rp-tags span b{color:#D9B872}
+#gate .rp-body{position:relative;margin-top:-24px;background:var(--card);border-radius:24px 24px 0 0;padding:20px 22px 10px;text-align:center}
+.rp-sig{display:flex;justify-content:center;align-items:center;gap:8px;padding:6px 16px 18px;font-size:11px;color:var(--mut);flex-wrap:wrap}
+.rp-sig .dot{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.6}
+.stv{font:inherit;background:none!important;cursor:pointer;display:inline-block;border:1px solid var(--line);border-radius:6px!important;padding:1px 6px;letter-spacing:.18em;font-weight:700;color:var(--ink);font-size:10.5px;box-shadow:none!important}
+.rp-foot{margin:6px 0 0}
+[hidden]{display:none!important}
+.rp-inst{display:block;margin:0 auto 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;font:600 13px inherit;box-shadow:none!important}.rp-inst:hover{border-color:var(--pri)}
+.rp-foot .rp-inst{display:inline-block;margin:0;padding:4px 12px;font-size:11.5px}
+.rp-steps{margin:0;padding-left:20px;font-size:14px;line-height:1.6}.rp-steps li{margin:0 0 6px}.rp-steps .k{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:0 5px;font-size:12px}body.hp .rp-foot{margin-bottom:70px}
+/* Tentang RAPID Stock */
+.rp-ab{position:fixed;inset:0;z-index:40;background:rgba(14,19,29,.55);display:grid;place-items:center;padding:16px}
+.rp-ab .bx{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--card);color:var(--ink);border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.rp-ab .hd{background:var(--brand);color:#fff;padding:20px 22px 18px;position:relative}
+.rp-ab .hd b{font-size:24px;font-weight:800;letter-spacing:.14em}.rp-ab .hd span{font-size:11px;letter-spacing:.28em;color:#D9B872;margin-left:8px;font-weight:600}
+.rp-ab .hd small{display:block;opacity:.85;font-size:12px;margin-top:4px}
+.rp-ab .x{position:absolute;right:12px;top:12px;width:32px;height:32px;padding:0;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:18px;box-shadow:none!important}
+.rp-ab .ct{padding:16px 22px 20px;font-size:14px}
+.rp-ab .ar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:2px 0 18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rp-ab .ar>div{padding:12px 2px;text-align:center}.rp-ab .ar>div+div{border-left:1px solid var(--line)}
+.rp-ab .ar b{display:block;font:700 38px/1 Georgia,'Times New Roman',serif;color:var(--pri);border-bottom:2px solid var(--gold);width:36px;margin:0 auto 8px;padding-bottom:6px}
+.rp-ab .ar strong{display:block;font-size:11.5px}.rp-ab .ar i{display:block;font-style:normal;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+.rp-ab .ar small{display:block;font-size:10.5px;line-height:1.35;color:var(--mut);margin-top:5px;padding:0 3px}
+.rp-ab .tg{text-align:center;font:700 22px/1.2 Georgia,'Times New Roman',serif;margin:0 0 6px}.rp-ab .tg span{display:block;font:italic 400 13.5px Georgia,serif;color:var(--mut);margin-top:4px}
+.rp-ab .te2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 12px}.rp-ab .te2>div{border-top:2px solid var(--gold);padding-top:8px}
+.rp-ab .te2 small{display:block;font:700 10.5px system-ui;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}.rp-ab .te2 p{margin:0;font-size:12.8px;line-height:1.55}
+.rp-ab .flw{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 6px;margin:0 0 16px;font-size:11.5px}
+.rp-ab .flw span{border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--mut);white-space:nowrap}.rp-ab .flw span.end{border-color:var(--gold);color:var(--ink);font-weight:600}.rp-ab .flw i{font-style:normal;color:var(--gold)}
+.rp-ab .sv{display:grid;gap:10px}.rp-ab .sv>div{display:grid;grid-template-columns:34px minmax(0,1fr);gap:2px 10px;align-items:start}
+.rp-ab .sv b{grid-row:1/3;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--pri);color:var(--pri);font:700 15px Georgia,serif}
+.rp-ab .sv strong{font-size:14px}.rp-ab .sv strong i{font-style:normal;font-weight:500;color:var(--mut);font-size:12.5px;margin-left:4px}.rp-ab .sv small{color:var(--mut);font-size:12.5px;line-height:1.5}
+.rp-ab .own{background:var(--sunken);border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.55;margin:14px 0 0}
+.rp-ab .md{display:flex;gap:3px;padding:3px;margin:14px 0 0;background:var(--sunken);border-radius:999px}.rp-ab .md button{flex:1;background:none;color:var(--mut);padding:7px 0;font-size:12.5px;box-shadow:none!important}.rp-ab .md button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(20,32,58,.12)!important}
+.rp-ab details{margin-top:12px}.rp-ab summary{cursor:pointer;font-size:12px;font-weight:700;color:var(--mut)}
+.rp-ab .vl{list-style:none;margin:6px 0 0;padding:0;font-size:13px}.rp-ab .vl li{display:grid;grid-template-columns:52px 70px minmax(0,1fr);gap:8px;padding:6px 0;border-top:1px solid var(--line)}.rp-ab .vl b{color:var(--pri)}.rp-ab .vl span{color:var(--mut)}
+@media (max-width:470px){.rp-ab .ar{grid-template-columns:1fr}.rp-ab .ar>div{display:grid;grid-template-columns:44px minmax(0,1fr);text-align:left;column-gap:10px;padding:8px 4px}.rp-ab .ar>div+div{border-left:0;border-top:1px solid var(--line)}.rp-ab .ar b{grid-row:1/4;border:0;border-right:2px solid var(--gold);width:auto;margin:0;padding:0 8px 0 0;font-size:28px}.rp-ab .te2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
 
 <!-- ========== GERBANG WAJAH ========== -->
 <section id="gate">
-  <div class="card">
-    <div class="brand">IDC <b>Gudang</b></div>
-    <div class="mut small">Klinik Utama Indo Dental Center</div>
+  <div class="rp-login">
+  <div class="rp-hero">
+    <div class="rp-top"><div class="rp-org"><span class="lg"><img src="data:image/png;base64,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" alt="Indo Dental Center"></span>Indo Dental Center</div><span class="rp-chip">Gudang Cerdas</span></div>
+    <div class="rp-word"><b>RAPID</b><span>STOCK</span></div>
+    <div class="rp-tags"><span><b>R</b>eliable</span><span><b>A</b>ctual</span><span><b>P</b>recise</span><span><b>I</b>ntuitive</span><span><b>D</b>etectable</span></div>
+  </div>
+  <div class="rp-body">
     <div class="steps"><span class="on" id="st1">1 · Pindai wajah</span><span id="st2">2 · Pindai QR barang</span></div>
     <div class="faceBox" id="faceBox">
       <video id="gVideo" playsinline muted class="hide"></video><img id="gImg" class="hide" alt="">
@@ -154,12 +259,15 @@ body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
       <div class="small mut" style="margin-top:6px">Hanya berlaku sampai wajah akun itu didaftarkan. Perawat & PJ Gudang cukup pindai wajah.</div>
     </details>
   </div>
+  <div class="rp-sig">RAPID Stock <span id="rpVer1"></span><span class="dot"></span>crafted by <button type="button" class="stv" data-rpabout title="Standard · Trace · Verify">STV</button></div>
+  <button type="button" class="rp-inst" data-rpinstall hidden>📲 Pasang RAPID Stock di HP</button>
+  </div>
 </section>
 
 <!-- ========== APLIKASI ========== -->
 <section id="app" class="hide">
   <header><div class="wrap">
-    <div class="brand" style="font-size:18px">IDC <b>Gudang</b></div>
+    <button class="rp-brand" id="rpHome" type="button" title="Beranda"><span class="rp-mark"><img src="data:image/png;base64,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" alt="Indo Dental Center"></span><span><b class="rp-name">RAPID<i>STOCK</i></b><small>IDC Gudang · gudang cerdas</small></span></button>
     <span class="live" id="live"><i></i><span id="liveTxt">Live</span></span>
     <div class="grow"></div>
     <div class="who small" style="text-align:right"><div id="whoName" style="font-weight:650"></div><div class="mut" id="whoRole"></div></div>
@@ -167,6 +275,7 @@ body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
   </div></header>
   <div class="wrap"><nav class="tabs" id="tabs"></nav></div>
   <main class="wrap" id="view"></main>
+  <footer class="rp-sig rp-foot">RAPID Stock <span id="rpVer2"></span><span class="dot"></span>bagian dari RAPID System<span class="dot"></span>crafted by <button type="button" class="stv" data-rpabout title="Standard · Trace · Verify">STV</button><button type="button" class="rp-inst" data-rpinstall hidden>📲 Pasang di HP</button></footer>
   <nav id="hpNav" class="hpNav"></nav>
 </section>
 
@@ -180,7 +289,7 @@ body.hp .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 const API_URL = 'https://script.google.com/macros/s/AKfycbyyJ4tqjuM8wjao0eZK_w1CE5Uo6zedH_Zn3wYFWtwvcgTPZ9NpUN-LwQL9Jja9fD_sVw/exec';
 const FACE_LIB = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/';
 const POLL_MS = 10000;
-const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {}, restock: [], pending: [], myReqs: [], approvers: [], hitung: [], myHitung: [], lapReq: [], alertQty: 3, accBatas: 5 };
+const S = { token: null, me: null, items: [], recent: [], users: [], ver: 0, tab: null, lastQr: '', lastQrAt: 0, opCounts: {}, inForm: {}, restock: [], pending: [], myReqs: [], approvers: [], hitung: [], myHitung: [], lapReq: [], allItems: [], ruang: [], cabangs: [], restockAll: [], cab: (() => { try { return localStorage.getItem('idcg-cab') || 'SEMUA'; } catch (e) { return 'SEMUA'; } })(), room: (() => { try { return localStorage.getItem('idcg-room') || ''; } catch (e) { return ''; } })(), alertQty: 3, accBatas: 5 };
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtT = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
@@ -306,8 +415,9 @@ async function enter(r) {
   S.token = r.token; S.me = r.user;
   try { sessionStorage.setItem('idcg', S.token); } catch (e) {}
   $('#gate').classList.add('hide'); $('#app').classList.remove('hide');
-  $('#whoName').textContent = S.me.nama; $('#whoRole').textContent = S.me.peran + (S.me.kuasa ? ' · pemberi ACC' : '') + (r.cara === 'wajah' ? ' · wajah ✓' : '');
+  $('#whoName').textContent = S.me.nama; $('#whoRole').textContent = (S.me.jabatan || S.me.peran) + (S.me.kuasa ? ' · pemberi ACC' : '') + (r.cara === 'wajah' ? ' · wajah ✓' : '');
   apply(await call('bootstrap'), true);
+  $('#whoRole').textContent += ' · ' + (S.me.cabang === 'SEMUA' ? 'semua cabang' : 'Gudang ' + cabNm(S.me.cabang));
   S.tab = r.mustEnroll ? 'self' : 'home';
   render();
   if (!r.mustEnroll) restockPopup(true);
@@ -318,7 +428,7 @@ function apply(d, first) {
   const old = {}; S.items.forEach(i => old[i.kode] = i.stok);
   const oldPend = new Set((S.pending || []).map(p => p.id)), oldMine = {}; (S.myReqs || []).forEach(r => oldMine[r.id] = r.status);
   const oldH = new Set((S.hitung || []).map(h => h.id)), oldMyH = {}; (S.myHitung || []).forEach(h => oldMyH[h.id] = h.status), oldLR = new Set((S.lapReq || []).map(l => l.periode + l.requestAt));
-  S.items = d.items; S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver; S.restock = d.restock || []; S.pending = d.pending || []; S.myReqs = d.myReqs || [];
+  S.allItems = d.items; S.restockAll = d.restock || []; S.ruang = d.ruang || []; S.cabangs = d.cabangs || []; filterCab(); S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver;  S.pending = d.pending || []; S.myReqs = d.myReqs || [];
   S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || [];
   S.settings = d.settings || null; S.approvers = d.approvers || []; S.alertQty = d.alertQty || 3; S.accBatas = d.accBatas === undefined ? 5 : d.accBatas;
   if (d.me) S.me = Object.assign(S.me, d.me);
@@ -335,6 +445,22 @@ function apply(d, first) {
   }
   return true;
 }
+/* ---- CABANG: staf terkunci di cabangnya; Annisa / Mamat / Finance bisa pilih Semua · Hangtuah · Pluit ---- */
+const curCab = () => S.me && S.me.cabang && S.me.cabang !== 'SEMUA' ? S.me.cabang : S.cab;
+const cabNm = c => ((S.cabangs || []).find(x => x.kode === c) || {}).nama || (c === 'SEMUA' ? 'Semua cabang' : c || 'Hangtuah');
+const multiCab = () => S.me && S.me.cabang === 'SEMUA';
+function filterCab() {
+  const c = curCab(); S.items = c === 'SEMUA' ? S.allItems : S.allItems.filter(i => i.cabang === c);
+  const ok = new Set(S.items.map(i => i.kode)); S.restock = (S.restockAll || []).filter(x => ok.has(x.kode));
+}
+function setCab(c) { S.cab = c; try { localStorage.setItem('idcg-cab', c); } catch (e) {} filterCab(); OP.per = OP.per; render(); }
+function cabBar() {
+  if (!multiCab() || (S.cabangs || []).length < 2) return '';
+  return '<div class="seg cabBar">' + [{ kode: 'SEMUA', nama: 'Semua cabang' }].concat(S.cabangs).map(c => '<button data-cab="' + c.kode + '" class="' + (S.cab === c.kode ? 'on' : '') + '">' + esc(c.nama) + '</button>').join('') + '</div>';
+}
+const roomsOf = c => (S.ruang || []).filter(r => c === 'SEMUA' || r.cabang === c);
+const roomBy = id => (S.ruang || []).find(r => r.id === id);
+const roomLbl = r => (multiCab() && curCab() === 'SEMUA' ? cabNm(r.cabang) + ' · ' : '') + r.nama;
 async function poll() {
   if (!S.token || document.hidden) return;
   try { const d = await call('poll', { ver: S.ver }); $('#live').classList.remove('off'); $('#liveTxt').textContent = 'Live · ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -357,15 +483,16 @@ function tabsFor() {
   if (can('hitung') || can('rekap')) t.push(['opname', 'Stock opname' + (opN ? ' <span class="badge">' + opN + '</span>' : '')]);
   t.push(['stok', 'Stok']);
   if (can('scan')) t.push(['mine', 'Ambilan saya']);
+  t.push(['ruang', 'Ruangan']);
   if (can('barang')) t.push(['barang', 'Barang & QR']);
   if (can('laporan')) t.push(['laporan', 'Laporan']);
-  if (can('users')) t.push(['users', 'Pengguna & wajah']);
+  if (can('users') || can('staf')) t.push(['users', 'Pengguna & wajah']);
   if (can('sync') || can('users')) t.push(['set', 'Pengaturan']);
   if (S.tab === 'self' || !S.me.hasFace) t.push(['self', 'Wajah saya']);
   return t;
 }
 /* ---- TAMPILAN HP: menu bawah + semua menu satu ketuk di Beranda ---- */
-const ICON = { home: '🏠', acc: '✅', scan: '📷', keluar: '📤', masuk: '📥', opname: '🧮', stok: '📦', mine: '🧾', barang: '🏷️', laporan: '📊', users: '👤', set: '⚙️', self: '🙂' };
+const ICON = { home: '🏠', acc: '✅', scan: '📷', keluar: '📤', masuk: '📥', opname: '🧮', stok: '📦', mine: '🧾', ruang: '🚪', barang: '🏷️', laporan: '📊', users: '👤', set: '⚙️', self: '🙂' };
 const isHP = () => window.matchMedia('(max-width: 700px)').matches;
 const plain = h => String(h).replace(/<[^>]+>/g, '').replace(/^\S+\s/, m => /[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(m) ? '' : m).trim();
 function hpNav() {
@@ -388,15 +515,16 @@ window.addEventListener('resize', () => { if (S.me) { const w = document.body.cl
 function render() {
   $('#tabs').innerHTML = tabsFor().map(t => '<button data-t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
   $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); });
-  const V = { home: vHome, acc: vAcc, scan: vScan, keluar: vKeluar, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, barang: vBarang, laporan: vLaporan, users: vUsers, set: vSet, self: vSelf }[S.tab] || vHome;
-  $('#view').innerHTML = restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  const V = { home: vHome, acc: vAcc, scan: vScan, keluar: vKeluar, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, ruang: vRuang, barang: vBarang, laporan: vLaporan, users: vUsers, set: vSet, self: vSelf }[S.tab] || vHome;
+  $('#view').innerHTML = cabBar() + restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  $('#view').querySelectorAll('[data-cab]').forEach(b => b.onclick = () => setCab(b.dataset.cab));
   const rb = $('#rsBanner'); if (rb) rb.onclick = () => restockPopup(false);
   (S.changed || []).forEach(k => { const el = document.querySelector('[data-item="' + k + '"]'); if (el) { el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); } });
   S.changed = [];
   hpNav();
   if (isHP() && S.tab === 'home') { const h = document.querySelector('.hello'); if (h) { h.insertAdjacentHTML('afterend', '<div class="small mut" style="margin:-4px 0 6px">Semua menu — satu ketuk</div>' + menuTiles()); wireTiles($('#view')); } }
 }
-const itemBy = k => S.items.find(i => i.kode === k);
+const itemBy = k => (S.allItems && S.allItems.length ? S.allItems : S.items).find(i => i.kode === k);
 const stCls = i => i.stok <= 0 ? 'zero' : i.rendah ? 'low' : '';
 const stChip = i => i.stok <= 0 ? '<span class="chip bad">Habis</span>' : i.rendah ? '<span class="chip bad">Segera restock</span>' : '';
 const cold = i => /2\s*[–-]\s*10|kulkas|refriger/i.test((i.suhu || '') + (i.lokasi || ''));
@@ -426,7 +554,7 @@ function vHome(el) {
   const it = S.items, low = (S.restock || []).length;
   const keluarT = S.recent.filter(m => m.jenis === 'KELUAR' && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
   const masukT = S.recent.filter(m => m.jenis === 'MASUK' && !m.batal && today(m.at)).reduce((s, m) => s + Number(m.qty), 0);
-  let h = '<div class="hello"><div><div class="small mut">Selamat bertugas</div><h2 style="margin:0">' + esc(S.me.nama) + '</h2><div class="small mut">' + esc(S.me.peran) + (S.me.kuasa ? ' · pemberi ACC' : '') + ' · Gudang HT</div></div>' +
+  let h = '<div class="hello"><div><div class="small mut">Selamat bertugas</div><h2 style="margin:0">' + esc(S.me.nama) + '</h2><div class="small mut">' + esc(S.me.peran) + (S.me.kuasa ? ' · pemberi ACC' : '') + ' · ' + esc(curCab() === 'SEMUA' ? 'Hangtuah & Pluit' : 'Gudang ' + cabNm(curCab())) + '</div></div>' +
     (can('scan') ? '<button class="scanBtn" id="hScan" style="max-width:260px;padding:16px">📷 Scan ambil barang</button>' : '') + '</div>';
   h += '<div class="tiles"><div class="tile"><b>' + it.length + '</b><span>Jenis barang</span></div><div class="tile' + (low ? ' tRed' : '') + '"><b>' + low + '</b><span>Segera restock (≤ ' + S.alertQty + ')</span></div>' +
     '<div class="tile"><b>' + keluarT + '</b><span>Keluar hari ini</span></div><div class="tile"><b>' + (S.me.kuasa ? S.pending.length : masukT) + '</b><span>' + (S.me.kuasa ? 'Menunggu ACC Anda' : 'Masuk hari ini') + '</span></div></div>';
@@ -443,12 +571,29 @@ function vHome(el) {
   wireReqLines(el);
 }
 function reqLine(r) {
-  return '<div class="li" data-rq="' + r.id + '"><div class="grow"><div class="nm" style="font-size:14px">' + esc(r.nama) + ' × ' + r.qty + '</div><div class="meta">' + JN[r.jenis] + ' · ' + fmtT(r.at) + (r.tujuan ? ' · ' + esc(r.tujuan) : '') +
-    (r.oleh && r.status !== 'MENUNGGU' ? ' · ' + (r.status === 'BATAL' ? 'oleh ' : 'ACC: ') + esc(r.oleh) : '') + (r.alasan ? ' · "' + esc(r.alasan) + '"' : '') + '</div></div>' + stBadge(r.status) +
-    (r.status === 'MENUNGGU' && r.userId === S.me.id ? '<button class="ghost sm" data-cancel="' + r.id + '">Batalkan</button>' : '') + '</div>';
+  const rg = r.ruangId && roomBy(r.ruangId), own = r.userId === S.me.id;
+  return '<div class="li" data-rq="' + r.id + '"><div class="grow"><div class="nm" style="font-size:14px">' + esc(r.nama) + ' × ' + r.qty + '</div><div class="meta">' + JN[r.jenis] + ' · ' + fmtT(r.at) +
+    (multiCab() && r.cabang ? ' · ' + esc(cabNm(r.cabang)) : '') + (rg ? ' · ' + esc(rg.nama) : r.tujuan ? ' · ' + esc(r.tujuan) : '') +
+    (r.oleh && r.status !== 'MENUNGGU' ? ' · ' + (r.status === 'BATAL' ? 'oleh ' : 'ACC: ') + esc(r.oleh) : '') + (r.alasan ? ' · "' + esc(r.alasan) + '"' : '') + '</div></div><div class="act">' + stBadge(r.status) +
+    (r.status === 'MENUNGGU' && own ? '<button class="ghost sm" data-cancel="' + r.id + '">Batalkan</button>' : '') +
+    (r.status !== 'MENUNGGU' && own ? '<button class="hideBtn" data-hide="' + r.id + '" title="Hapus dari daftar — data tetap tersimpan di Laporan">Hapus</button>' : '') + '</div></div>';
 }
 function wireReqLines(el) {
   el.querySelectorAll('[data-cancel]').forEach(b => b.onclick = async () => { try { await call('cancelReq', { id: b.dataset.cancel }); toast('Permintaan dibatalkan'); lastResult = null; await refresh(); } catch (e) { toast(e.message, true); } });
+  el.querySelectorAll('[data-hide]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.hide, li = b.closest('.li'); b.disabled = true;
+    try { await call('hideReq', { ids: [id] }); S.myReqs = S.myReqs.filter(r => r.id !== id); if (li) li.remove(); toast('Dihapus dari daftar · data tetap tersimpan di Laporan'); refresh().catch(() => {}); }
+    catch (e) { b.disabled = false; toast(e.message, true); }
+  });
+}
+/** Riwayat permintaan dikelompokkan per hari. */
+function reqHistory(list) {
+  if (!list.length) return '<div class="mut small">Tidak ada.</div>';
+  let h = '', last = '';
+  const lbl = iso => { const d = new Date(iso), t = new Date(); t.setHours(0, 0, 0, 0); const dd = new Date(d); dd.setHours(0, 0, 0, 0); const k = Math.round((t - dd) / 864e5);
+    return k === 0 ? 'Hari ini' : k === 1 ? 'Kemarin' : d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' }); };
+  list.forEach(r => { const l = lbl(r.at); if (l !== last) { h += '<div class="dayH">' + l + '</div>'; last = l; } h += reqLine(r); });
+  return h;
 }
 
 /* ---- ACC (Annisa & Mamat) ---- */
@@ -461,7 +606,7 @@ function accList(box, list) {
   box.innerHTML = '<div class="accGrid">' + list.map(r => {
     const it = itemBy(r.kode) || {}, own = r.userId === S.me.id;
     const eff = r.jenis === 'KELUAR' ? 'Stok ' + it.stok + ' → ' + (it.stok - r.qty) : r.jenis === 'KEMBALI' ? 'Stok ' + it.stok + ' → ' + (it.stok + Number(r.qty)) : 'Stok ' + it.stok + ' → ' + (it.stok - r.qty);
-    return '<div class="acc acc-' + r.jenis + '" data-acc="' + r.id + '"><div class="row" style="align-items:flex-start"><div class="grow"><span class="chip ' + (r.jenis === 'KELUAR' ? 'warn' : r.jenis === 'KEMBALI' ? 'blue' : 'bad') + '">' + JN[r.jenis] + '</span>' +
+    return '<div class="acc acc-' + r.jenis + '" data-acc="' + r.id + '"><div class="row" style="align-items:flex-start"><div class="grow"><span class="chip ' + (r.jenis === 'KELUAR' ? 'warn' : r.jenis === 'KEMBALI' ? 'blue' : 'bad') + '">' + JN[r.jenis] + '</span>' + (r.cabang ? ' <span class="chip gray">' + esc(cabNm(r.cabang)) + '</span>' : '') +
       '<div class="nm" style="font-size:16px;margin-top:6px">' + esc(r.nama) + ' <span class="mut">× ' + r.qty + '</span></div><div class="meta">' + esc(r.user) + ' (' + esc(r.peran) + ') · ' + fmtT(r.at) + '</div>' +
       (r.tujuan ? '<div class="small" style="margin-top:4px">📍 ' + esc(r.tujuan) + '</div>' : '') + (r.catatan ? '<div class="small mut">“' + esc(r.catatan) + '”</div>' : '') +
       '<div class="small" style="margin-top:4px"><b>' + eff + '</b></div></div>' + (r.foto ? '<img class="accFoto" src="' + esc(r.foto) + '" alt="Foto barang" data-zoom="' + esc(r.foto) + '">' : '') + '</div>' +
@@ -474,23 +619,34 @@ function accList(box, list) {
   box.querySelectorAll('[data-zoom]').forEach(i => i.onclick = () => modal('<img src="' + esc(i.dataset.zoom) + '" style="width:100%;border-radius:12px"><button class="ghost" style="width:100%;margin-top:10px" data-x>Tutup</button>'));
 }
 
+/* ---- PILIH RUANGAN (untuk scan & barang keluar) ---- */
+function roomChips() {
+  const c = curCab(), R = roomsOf(c); if (!R.length) return '';
+  if (S.room && !R.some(r => r.id === S.room)) S.room = '';
+  return '<div style="width:100%;text-align:left"><div class="small mut">Langkah 1 · untuk ruangan</div><div class="rmChips">' + R.map(r => '<button data-rm="' + r.id + '" class="' + (S.room === r.id ? 'on' : '') + '">' + esc(roomLbl(r)) + '</button>').join('') +
+    '<button data-rm="" class="' + (!S.room ? 'on' : '') + '">Lainnya</button></div></div>';
+}
+function wireRoomChips(el, redraw) { el.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { S.room = b.dataset.rm; try { localStorage.setItem('idcg-room', S.room); } catch (e) {} redraw(); }); }
+
 /* ---- SCAN AMBIL ---- */
 let lastResult = null;
 function vScan(el) {
   el.innerHTML = '<div class="card scanBig">' +
+    roomChips() +
     '<div class="small mut">Langkah 2 dari 2 · arahkan kamera ke QR pada barang</div>' +
     '<button class="scanBtn" id="bScan"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>Scan QR barang</button>' +
     '<div class="small mut">Tanpa mengetik — stok langsung berkurang. ACC ' + esc(accNames()) + ' hanya bila stok ≤ ' + S.accBatas + ' atau barang ditandai sulit didapat.</div>' +
     '<div id="res" style="width:100%;display:flex;justify-content:center"></div></div>' +
     '<h3 class="sec">Ambilan saya hari ini</h3><div class="card list" id="todayList"></div>';
-  $('#bScan').onclick = () => openScanner('Scan QR barang yang diambil', takeItem);
+  wireRoomChips(el, () => vScan(el));
+  $('#bScan').onclick = () => openScanner('Scan QR barang yang diambil' + (roomBy(S.room) ? ' · untuk ' + roomBy(S.room).nama : ''), takeItem);
   showResult();
   const rows = (S.myReqs || []).filter(r => today(r.at));
   $('#todayList').innerHTML = rows.length ? rows.map(reqLine).join('') : '<div class="mut small">Belum ada.</div>';
   wireReqLines(el);
 }
 async function takeItem(qr, qty) {
-  try { lastResult = await call('scanOut', { qr, qty: qty || 1 }); beep(true); await refresh().catch(() => {}); }
+  try { lastResult = await call('scanOut', { qr, qty: qty || 1, ruangId: roomBy(S.room) ? S.room : '' }); beep(true); await refresh().catch(() => {}); }
   catch (e) { beep(false); lastResult = { err: e.message }; }
   S.tab = 'scan'; render();
 }
@@ -501,7 +657,7 @@ function showResult() {
   const live = (S.myReqs || []).find(x => x.id === r.id) || r, it = itemBy(r.kode) || {}, st = live.status;
   if (r.langsung) {
     box.innerHTML = '<div class="result"><div class="small mut">✓ Tercatat atas nama ' + esc(S.me.nama) + ' · ' + fmtT(r.at) + '</div>' +
-      '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diambil ' + r.qty + ' ' + esc(r.satuan || '') + '</div>' +
+      '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diambil ' + r.qty + ' ' + esc(r.satuan || '') + (r.ruang ? ' · untuk ' + esc(r.ruang) : '') + '</div>' +
       '<div class="big" style="margin:6px 0">Stok ' + r.before + ' → ' + r.after + '</div>' +
       (r.after <= S.alertQty ? '<div class="chip bad" style="margin-bottom:6px">SEGERA RESTOCK — Purchase diberi tahu</div>' : '') +
       (cold(r) ? '<div class="small">❄ ' + esc(r.suhu) + (r.catatan ? ' · ' + esc(r.catatan) : '') + '</div>' : '') +
@@ -523,11 +679,19 @@ function vMine(el) {
   const taken = S.recent.filter(m => m.jenis === 'KELUAR' && m.userId === S.me.id);
   const ret = {}; (S.myReqs || []).filter(r => r.jenis === 'KEMBALI' && (r.status === 'MENUNGGU' || r.status === 'DISETUJUI')).forEach(r => ret[r.refId] = (ret[r.refId] || 0) + Number(r.qty));
   el.innerHTML = '<h3 class="sec" style="margin-top:4px">Barang yang sudah saya ambil</h3><div class="small mut" style="margin-bottom:8px">Tidak jadi dipakai? Tekan <b>Kembalikan</b>, foto barangnya dengan QR terlihat, lalu tunggu ACC.</div><div class="card list" id="tk"></div>' +
-    '<h3 class="sec">Riwayat permintaan</h3><div class="card list" id="ml"></div>';
+    '<h3 class="sec">Permintaan saya · menunggu ACC</h3><div id="ml"></div>';
   $('#tk').innerHTML = taken.length ? taken.map(m => { const sisa = Number(m.qty) - (ret[m.id] || 0);
     return '<div class="li"><div class="grow"><div class="nm" style="font-size:14px">' + esc(m.nama) + ' × ' + m.qty + '</div><div class="meta">' + fmtT(m.at) + ' · ACC ' + esc(m.disetujui || '-') + (ret[m.id] ? ' · ' + ret[m.id] + ' dikembalikan/diproses' : '') + '</div></div>' +
       (sisa > 0 ? '<button class="soft sm" data-ret="' + m.id + '">↩ Kembalikan</button>' : '<span class="chip gray">Selesai</span>') + '</div>'; }).join('') : '<div class="mut small">Belum ada barang yang disetujui.</div>';
-  $('#ml').innerHTML = (S.myReqs || []).length ? S.myReqs.map(reqLine).join('') : '<div class="mut small">Belum ada.</div>';
+  const P = (S.myReqs || []).filter(r => r.status === 'MENUNGGU'), F = S.mineF || 'all';
+  const H = (S.myReqs || []).filter(r => r.status !== 'MENUNGGU' && (F === 'all' || r.status === F));
+  $('#ml').outerHTML = (P.length ? '<div class="card list" style="border-color:var(--warn)">' + P.map(reqLine).join('') + '</div>' : '<div class="card mut small">Tidak ada permintaan yang menunggu ACC.</div>') +
+    '<div class="secRow"><h3>Riwayat</h3><div class="seg" id="mF" style="flex:0 1 auto">' + [['all', 'Semua'], ['DISETUJUI', 'Disetujui'], ['DITOLAK', 'Ditolak'], ['BATAL', 'Dibatalkan']].map(x => '<button data-mf="' + x[0] + '" class="' + (F === x[0] ? 'on' : '') + '">' + x[1] + '</button>').join('') + '</div>' +
+    (H.length ? '<button class="hideBtn" id="mHideAll">Hapus semua dari daftar</button>' : '') + '</div>' +
+    '<div class="small mut" style="margin:-2px 0 8px">"Hapus" hanya merapikan daftar ini. Data tetap tersimpan rapi di Laporan.</div><div class="card list">' + reqHistory(H) + '</div>';
+  el.querySelectorAll('[data-mf]').forEach(b => b.onclick = () => { S.mineF = b.dataset.mf; vMine(el); });
+  if ($('#mHideAll')) $('#mHideAll').onclick = () => { const m = modal('<h3 style="margin:0">Hapus ' + H.length + ' permintaan dari daftar?</h3><div class="small mut" style="margin:6px 0 12px">Yang masih menunggu ACC tidak ikut. Semua data tetap tersimpan di Laporan & bisa diunduh.</div><div class="row"><button class="ghost grow" data-x>Batal</button><button class="bad grow" id="mhY">Hapus dari daftar</button></div>');
+    m.querySelector('#mhY').onclick = async () => { try { const r = await call('hideReq', S.mineF && S.mineF !== 'all' ? { ids: H.map(x => x.id) } : { semua: true }); closeModal(); toast(r.n + ' dihapus dari daftar · data tetap di Laporan'); await refresh(); } catch (e) { toast(e.message, true); } }; };
   el.querySelectorAll('[data-ret]').forEach(b => b.onclick = () => returnModal(S.recent.find(m => m.id === b.dataset.ret), ret[b.dataset.ret] || 0));
   wireReqLines(el);
 }
@@ -564,7 +728,7 @@ let stokQ = '', stokF = 'all';
 function itemCard(i) {
   const pct = Math.min(100, Math.round(i.stok / Math.max(1, i.minStok * 4) * 100));
   return '<div class="item ' + stCls(i) + '" data-item="' + esc(i.kode) + '"><div class="grow"><div class="nm">' + esc(i.nama) + '</div>' +
-    '<div class="meta">' + esc(i.kode) + (i.lokasi ? ' · ' + esc(i.lokasi) : '') + (cold(i) ? ' · ❄ ' + esc(i.suhu) : '') + (i.dariExcel ? ' · ⇄ Sheet' : '') + '</div>' +
+    '<div class="meta">' + (multiCab() && curCab() === 'SEMUA' ? '<b>' + esc(cabNm(i.cabang)) + '</b> · ' : '') + esc(i.kode) + (i.lokasi ? ' · ' + esc(i.lokasi) : '') + (cold(i) ? ' · ❄ ' + esc(i.suhu) : '') + (i.dariExcel ? ' · ⇄ Sheet' : '') + '</div>' +
     '<div class="bar"><i style="width:' + pct + '%"></i></div><div class="meta">restock bila ≤ ' + i.minStok + ' ' + stChip(i) + (i.perluAcc ? ' <span class="chip blue" title="' + esc(i.alasanAcc) + '">perlu ACC</span>' : '') + (i.ditahan ? ' <span class="chip warn">' + i.ditahan + ' menunggu ACC</span>' : '') + '</div></div>' +
     '<div class="qty"><b>' + i.stok + '</b><span>' + esc(i.satuan) + '</span></div></div>';
 }
@@ -580,21 +744,22 @@ function itemPicker(id, sel) {
 }
 
 /* ---- BARANG KELUAR (input manual, perlu ACC) ---- */
-const TUJUAN = ['Ruang praktik 1', 'Ruang praktik 2', 'Ruang praktik 3', 'Sterilisasi', 'Kirim ke cabang Pluit', 'Rusak / kedaluwarsa'];
+const TUJUAN = ['Sterilisasi', 'Kirim ke cabang lain', 'Rusak / kedaluwarsa'];
 function vKeluar(el) {
   const f = S.outForm || (S.outForm = {});
   el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Barang keluar</h3><div class="small mut">Untuk pengeluaran di luar scan perawat (kirim ke ruang/cabang, rusak, kedaluwarsa). Stok langsung berkurang; ACC hanya bila stok ≤ ' + S.accBatas + ' atau barang sulit didapat.</div>' +
     '<div class="row" style="margin-top:12px">' + itemPicker('oK', f.kode) + '<button class="soft" id="oScan2">📷 Scan</button></div>' +
     '<div class="grid2"><div><label>Jumlah</label><input id="oQ" type="number" min="1" inputmode="numeric" value="' + esc(f.qty || 1) + '"></div><div><label>Tujuan / keperluan</label><input id="oT" list="tjl" value="' + esc(f.tujuan || '') + '" placeholder="pilih atau ketik"><datalist id="tjl">' + TUJUAN.map(t => '<option value="' + t + '">').join('') + '</datalist></div></div>' +
-    '<div class="chips">' + TUJUAN.map(t => '<button class="ghost sm" data-tj="' + esc(t) + '">' + esc(t) + '</button>').join('') + '</div>' +
+    '<div class="chips">' + roomsOf(curCab()).map(r => '<button class="' + (f.ruangId === r.id ? 'sm' : 'ghost sm') + '" data-tr="' + r.id + '">' + esc(roomLbl(r)) + '</button>').join('') + TUJUAN.map(t => '<button class="ghost sm" data-tj="' + esc(t) + '">' + esc(t) + '</button>').join('') + '</div>' +
     '<label>Catatan</label><input id="oC" placeholder="mis. untuk pasien a.n. … / no. batch rusak">' +
     '<button id="oGo" style="width:100%;margin-top:14px">Simpan barang keluar</button></div>' +
     '<h3 class="sec">Barang keluar terakhir</h3><div class="card list" id="okl"></div>';
-  el.querySelectorAll('[data-tj]').forEach(b => b.onclick = () => { $('#oT').value = b.dataset.tj; f.tujuan = b.dataset.tj; });
-  $('#oK').onchange = e => f.kode = e.target.value; $('#oQ').oninput = e => f.qty = e.target.value; $('#oT').oninput = e => f.tujuan = e.target.value;
+  el.querySelectorAll('[data-tj]').forEach(b => b.onclick = () => { $('#oT').value = b.dataset.tj; f.tujuan = b.dataset.tj; f.ruangId = ''; vKeluar(el); });
+  el.querySelectorAll('[data-tr]').forEach(b => b.onclick = () => { const r = roomBy(b.dataset.tr); f.ruangId = r.id; f.tujuan = r.nama; vKeluar(el); });
+  $('#oK').onchange = e => f.kode = e.target.value; $('#oQ').oninput = e => f.qty = e.target.value; $('#oT').oninput = e => { f.tujuan = e.target.value; f.ruangId = ''; };
   $('#oScan2').onclick = () => openScanner('Scan QR barang yang keluar', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal: ' + k, true); f.kode = k; render(); });
   $('#oGo').onclick = async () => {
-    try { const r = await call('outManual', { kode: $('#oK').value, qty: $('#oQ').value, tujuan: $('#oT').value, catatan: $('#oC').value }); beep(true); toast(r.langsung ? '✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after : 'Perlu ACC (' + r.alasanAcc + ') — terkirim ke ' + accNames()); S.outForm = {}; await refresh(); }
+    try { const r = await call('outManual', { kode: $('#oK').value, qty: $('#oQ').value, tujuan: $('#oT').value, ruangId: f.ruangId || '', catatan: $('#oC').value }); beep(true); toast(r.langsung ? '✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after : 'Perlu ACC (' + r.alasanAcc + ') — terkirim ke ' + accNames()); S.outForm = {}; await refresh(); }
     catch (e) { beep(false); toast(e.message, true); }
   };
   const rows = S.recent.filter(m => m.jenis === 'KELUAR').slice(0, 12);
@@ -669,7 +834,7 @@ function vOpname(el) {
 /* Hitung fisik: Rizki / PJ Gudang kirim ke Annisa; Annisa bisa langsung terapkan. */
 function opHitung(el) {
   const C = S.opCounts, boss = can('opname');
-  el.innerHTML = '<div class="card"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Hitung fisik · Gudang HT (Hangtuah)</h3><div class="small mut">' +
+  el.innerHTML = '<div class="card"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Hitung fisik · ' + esc(curCab() === 'SEMUA' ? 'semua cabang' : 'Gudang ' + cabNm(curCab())) + '</h3><div class="small mut">' +
     (boss ? 'Isi jumlah fisik, lalu terapkan ke stok. Hanya Anda yang bisa mengubah stok.' : 'Isi jumlah fisik di rak, atau <b>scan QR tiap barang</b> (1 scan = +1). Stok <b>tidak</b> berubah sampai Annisa mencocokkan.') +
     '</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
     '<input id="oF" placeholder="Saring nama barang…" style="margin-top:10px"><div style="overflow-x:auto;margin-top:6px"><table><thead><tr><th>Barang</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>' +
@@ -687,11 +852,11 @@ function opHitung(el) {
   $('#oScan').onclick = () => openScanner('Scan tiap barang di rak (1 scan = 1 unit)', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal', true);
     C[k] = String((Number(C[k]) || 0) + 1); const inp = el.querySelector('input[data-c="' + k + '"]'); if (inp) inp.value = C[k]; upd(); toast(itemBy(k).nama + ' · fisik ' + C[k]); return 'keep'; });
   const counts = () => { const o = {}; Object.keys(C).forEach(k => { if (C[k] !== '' && C[k] !== undefined) o[k] = Number(C[k]); }); return o; };
-  $('#oDl').onclick = () => dlCall($('#oDl'), 'exportHitung', { counts: counts() });
+  $('#oDl').onclick = () => dlCall($('#oDl'), 'exportHitung', { counts: counts(), cabang: curCab() });
   if ($('#oSend')) $('#oSend').onclick = async () => {
     const n = Object.keys(counts()).length; if (!n) return toast('Isi minimal satu jumlah fisik', true);
     $('#oSend').disabled = true;
-    try { const r = await call('submitHitung', { counts: counts(), catatan: $('#oN').value }); S.opCounts = {}; beep(true); toast('📨 Terkirim ke Annisa · ' + r.jumlah + ' barang, ' + r.beda + ' selisih'); await refresh(); }
+    try { const r = await call('submitHitung', { counts: counts(), catatan: $('#oN').value, cabang: curCab() }); S.opCounts = {}; beep(true); toast('📨 Terkirim ke Annisa · ' + r.jumlah + ' barang, ' + r.beda + ' selisih'); await refresh(); }
     catch (e) { toast(e.message, true); $('#oSend').disabled = false; }
   };
   if ($('#oGo')) $('#oGo').onclick = async () => {
@@ -743,7 +908,7 @@ function opCocok(el) {
 /* Rekap: VIEW untuk semua (termasuk Mamat). Unduh: Rizki/PJ/Annisa kapan saja; Mamat setelah PUBLISH. */
 async function opRekap(el) {
   el.innerHTML = '<div class="card mut">Memuat rekap stock opname…</div>';
-  let R; try { R = await call('rekap', { tahun: OP.tahun }); } catch (e) { el.innerHTML = '<div class="card">' + esc(e.message) + '</div>'; return; }
+  let R; try { R = await call('rekap', { tahun: OP.tahun }); R.items = R.items.filter(it => curCab() === 'SEMUA' || it.cabang === curCab()); } catch (e) { el.innerHTML = '<div class="card">' + esc(e.message) + '</div>'; return; }
   const ba = R.bulanAktif;
   if (!OP.per || OP.per.indexOf(String(R.tahun)) !== 0) OP.per = ba ? R.tahun + '-' + pad2(ba) : String(R.tahun);
   const opts = [];
@@ -780,9 +945,9 @@ async function opRekap(el) {
     '<tr><td><b>Total</b></td><td></td><td><b>' + T.inn + '</b></td><td><b>' + T.out + '</b></td><td></td><td><b>' + sgn(T.sel) + '</b></td><td><b>' + T.pakai + '</b></td></tr></tbody></table></div></div>';
   el.innerHTML = h;
   colChart($('#rkC'), BLN.map((b, i) => ({ label: b, value: monthly[i], hi: months.indexOf(i + 1) >= 0, tip: BLN_L[i] + ' ' + R.tahun + (monthly[i] === null ? ': belum berjalan' : ': ' + monthly[i] + ' unit terpakai') })),
-    { title: 'Pemakaian per bulan · ' + R.tahun, sub: 'Gudang HT (Hangtuah) · unit keluar − kembali · disorot: ' + P.judul, q: qTot.map((v, i) => 'Q' + (i + 1) + ': ' + v), total: 'Tahun ' + R.tahun + ': ' + qTot.reduce((a, b) => a + b, 0) + ' unit' });
+    { title: 'Pemakaian per bulan · ' + R.tahun, sub: (curCab() === 'SEMUA' ? 'Hangtuah & Pluit' : 'Gudang ' + cabNm(curCab())) + ' · unit keluar − kembali · disorot: ' + P.judul, q: qTot.map((v, i) => 'Q' + (i + 1) + ': ' + v), total: 'Tahun ' + R.tahun + ': ' + qTot.reduce((a, b) => a + b, 0) + ' unit' });
   if ($('#rkC2')) { const top = rows.filter(r => r.pakai > 0).sort((a, b) => b.pakai - a.pakai).slice(0, 10);
-    barChart($('#rkC2'), top.map(r => ({ label: r.nama, value: r.pakai, text: r.pakai + ' ' + (r.satuan || ''), tip: r.nama + '\nAwal ' + r.awal + ' · IN ' + r.inn + ' · OUT ' + r.out + ' · akhir ' + r.akhir })), { title: 'Pemakaian terbanyak · ' + P.judul, sub: 'Gudang HT (Hangtuah)', unit: 'unit' });
+    barChart($('#rkC2'), top.map(r => ({ label: r.nama, value: r.pakai, text: r.pakai + ' ' + (r.satuan || ''), tip: r.nama + '\nAwal ' + r.awal + ' · IN ' + r.inn + ' · OUT ' + r.out + ' · akhir ' + r.akhir })), { title: 'Pemakaian terbanyak · ' + P.judul, sub: curCab() === 'SEMUA' ? 'Hangtuah & Pluit' : 'Gudang ' + cabNm(curCab()), unit: 'unit' });
     $('#rkC2n').textContent = top.length ? '' : 'Belum ada pemakaian di bulan ini.'; }
   $('#rkY').onchange = e => { OP.tahun = Number(e.target.value); OP.per = null; opRekap(el); };
   $('#rkP').onchange = e => { OP.per = e.target.value; opRekap(el); };
@@ -827,6 +992,52 @@ function colChart(c, rows, o) {
   c.onmouseleave = () => { tipEl.style.display = 'none'; };
 }
 
+/* ---- RUANGAN: 7 ruang per cabang, isi barang + jumlah standar (Annisa / Finance), pemakaian bulan ini ---- */
+function vRuang(el) {
+  const c = curCab(), R = roomsOf(c), ed = can('edit');
+  const open = S.roomOpen && roomBy(S.roomOpen);
+  if (open) return ruangDetail(el, open);
+  const tot = r => Object.values(r.pakai || {}).reduce((a, b) => a + b, 0);
+  const grp = c === 'SEMUA' ? S.cabangs.map(x => x.kode) : [c];
+  el.innerHTML = '<div class="row" style="margin-bottom:10px;flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Ruangan</h3><div class="small mut">Barang apa saja yang ada di tiap ruangan. Saat mengambil barang, pilih ruangannya agar pemakaian per ruangan tercatat.' + (ed ? ' Isi bisa lewat aplikasi atau tab <b>RUANGAN</b> di Sheet IN OUT HT.' : '') + '</div></div>' +
+    (ed ? '<button class="sm" id="nRg">+ Ruangan</button>' : '') + '</div>' +
+    grp.map(g => { const L = R.filter(r => r.cabang === g); return '<div class="dayH">Gudang ' + esc(cabNm(g)) + ' · ' + L.length + ' ruangan</div><div class="rooms">' +
+      L.map(r => '<button class="room" data-ro="' + r.id + '"><b>' + esc(r.nama) + '</b><span class="meta">' + r.items.length + ' jenis barang' + (tot(r) ? ' · ' + tot(r) + ' unit dipakai bulan ini' : '') + '</span>' + (r.catatan ? '<span class="meta">' + esc(r.catatan) + '</span>' : '') + '</button>').join('') + '</div>'; }).join('');
+  el.querySelectorAll('[data-ro]').forEach(b => b.onclick = () => { S.roomOpen = b.dataset.ro; vRuang(el); window.scrollTo(0, 0); });
+  if ($('#nRg')) $('#nRg').onclick = () => ruangModal(null);
+}
+function ruangDetail(el, r) {
+  const ed = can('edit'), Ic = S.allItems.filter(i => i.cabang === r.cabang), inRoom = new Set(r.items.map(x => x.kode));
+  const rows = r.items.map(x => Object.assign({ it: itemBy(x.kode) }, x)).filter(x => x.it).sort((a, b) => a.it.nama.localeCompare(b.it.nama));
+  const others = roomsOf(r.cabang).filter(o => o.id !== r.id && o.items.length);
+  el.innerHTML = '<div class="row" style="margin-bottom:10px;flex-wrap:wrap"><button class="ghost sm" id="rgBack">← Semua ruangan</button><div class="grow"><h3 style="margin:0">' + esc(r.nama) + ' <span class="chip gray">' + esc(cabNm(r.cabang)) + '</span></h3>' + (r.catatan ? '<div class="small mut">' + esc(r.catatan) + '</div>' : '') + '</div>' +
+    (can('scan') ? '<button class="soft sm" id="rgTake">📷 Ambil untuk ruangan ini</button>' : '') + (ed ? '<button class="ghost sm" id="rgEd">Ubah nama</button>' : '') + '</div>' +
+    '<div class="card" style="overflow-x:auto"><table><thead><tr><th>Barang</th><th>Jumlah standar</th><th>Dipakai bulan ini</th><th>Stok gudang</th>' + (ed ? '<th></th>' : '') + '</tr></thead><tbody>' +
+    (rows.length ? rows.map(x => '<tr><td><div class="nm" style="font-size:14px">' + esc(x.it.nama) + '</div><div class="meta">' + esc(x.kode) + ' · ' + esc(x.it.satuan || '') + '</div></td><td>' +
+      (ed ? '<input type="number" min="0" style="width:90px" data-st="' + esc(x.kode) + '" value="' + (x.standar === '' ? '' : x.standar) + '" placeholder="–">' : (x.standar === '' ? '–' : x.standar)) + '</td><td>' + ((r.pakai || {})[x.kode] || 0) + '</td><td' + (x.it.rendah ? ' style="color:var(--bad);font-weight:700"' : '') + '>' + x.it.stok + '</td>' +
+      (ed ? '<td><button class="hideBtn" data-rmv="' + esc(x.kode) + '">Keluarkan</button></td>' : '') + '</tr>').join('') : '<tr><td colspan="5" class="mut">Belum ada barang di ruangan ini.' + (ed ? ' Tambahkan di bawah.' : '') + '</td></tr>') + '</tbody></table></div>' +
+    (ed ? '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 6px">Tambah barang ke ' + esc(r.nama) + '</h3><div class="row" style="flex-wrap:wrap"><select id="rgK" class="grow"><option value="">— pilih barang gudang ' + esc(cabNm(r.cabang)) + ' —</option>' +
+      Ic.filter(i => !inRoom.has(i.kode)).sort((a, b) => a.nama.localeCompare(b.nama)).map(i => '<option value="' + esc(i.kode) + '">' + esc(i.nama) + '</option>').join('') + '</select><input id="rgQ" type="number" min="0" placeholder="Jumlah standar" style="width:150px"><button id="rgAdd">Tambah</button></div>' +
+      (others.length ? '<div class="row" style="margin-top:10px;flex-wrap:wrap"><span class="small mut">Atau salin semua barang dari</span><select id="rgFrom" style="width:auto">' + others.map(o => '<option value="' + o.id + '">' + esc(o.nama) + ' (' + o.items.length + ')</option>').join('') + '</select><button class="ghost sm" id="rgCopy">Salin</button></div>' : '') +
+      '<div class="small mut" style="margin-top:8px">Lewat Sheet: tab <b>RUANGAN</b> dengan kolom CABANG · RUANGAN · NAMA BARANG · JUMLAH. Baris baru otomatis masuk saat sinkron.</div></div>' : '');
+  $('#rgBack').onclick = () => { S.roomOpen = null; vRuang(el); };
+  if ($('#rgTake')) $('#rgTake').onclick = () => { S.room = r.id; try { localStorage.setItem('idcg-room', r.id); } catch (e) {} S.roomOpen = null; S.tab = 'scan'; render(); };
+  if ($('#rgEd')) $('#rgEd').onclick = () => ruangModal(r);
+  const save = async (items, msg) => { try { await call('ruangItem', { ruangId: r.id, items }); toast(msg); await refresh(); if (S.tab === 'ruang') vRuang(el); } catch (e) { toast(e.message, true); } };
+  el.querySelectorAll('[data-st]').forEach(i => i.onchange = () => save([{ kode: i.dataset.st, standar: i.value }], 'Jumlah standar disimpan'));
+  el.querySelectorAll('[data-rmv]').forEach(b => b.onclick = () => save([{ kode: b.dataset.rmv, hapus: true }], 'Barang dikeluarkan dari ' + r.nama));
+  if ($('#rgAdd')) $('#rgAdd').onclick = () => { const k = $('#rgK').value; if (!k) return toast('Pilih barang dulu', true); save([{ kode: k, standar: $('#rgQ').value }], 'Ditambahkan ke ' + r.nama); };
+  if ($('#rgCopy')) $('#rgCopy').onclick = () => { const o = roomBy($('#rgFrom').value); const add = o.items.filter(x => !inRoom.has(x.kode)); if (!add.length) return toast('Semua barang ' + o.nama + ' sudah ada di sini'); save(add.map(x => ({ kode: x.kode, standar: x.standar })), add.length + ' barang disalin dari ' + o.nama); };
+}
+function ruangModal(r) {
+  const n = !r, c0 = curCab() === 'SEMUA' ? 'HT' : curCab();
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah ruangan' : 'Ubah ' + esc(r.nama)) + '</h3>' + (n ? '<label>Cabang</label><select id="rgC">' + S.cabangs.map(c => '<option value="' + c.kode + '"' + (c.kode === c0 ? ' selected' : '') + '>' + esc(c.nama) + '</option>').join('') + '</select>' : '') +
+    '<label>Nama ruangan</label><input id="rgN" value="' + esc(n ? '' : r.nama) + '" placeholder="mis. Ruang 1 · drg. Sari"><label>Catatan (opsional)</label><input id="rgT" value="' + esc(n ? '' : r.catatan || '') + '" placeholder="mis. ruang bedah, lantai 2">' +
+    '<div class="row" style="margin-top:14px">' + (n ? '' : '<button class="bad" id="rgDel">Nonaktifkan</button>') + '<button class="ghost grow" data-x>Batal</button><button class="grow" id="rgS">Simpan</button></div>');
+  m.querySelector('#rgS').onclick = async () => { try { await call('ruangSave', { ruang: n ? { cabang: m.querySelector('#rgC').value, nama: m.querySelector('#rgN').value, catatan: m.querySelector('#rgT').value } : { id: r.id, nama: m.querySelector('#rgN').value, catatan: m.querySelector('#rgT').value } }); closeModal(); toast('Ruangan disimpan'); await refresh(); } catch (e) { toast(e.message, true); } };
+  if (m.querySelector('#rgDel')) m.querySelector('#rgDel').onclick = async () => { try { await call('ruangSave', { ruang: { id: r.id, aktif: 'tidak' } }); closeModal(); S.roomOpen = null; toast(r.nama + ' dinonaktifkan · riwayatnya tetap tersimpan'); await refresh(); } catch (e) { toast(e.message, true); } };
+}
+
 /* ---- BARANG & QR ---- */
 function vBarang(el) {
   el.innerHTML = '<div class="row" style="margin-bottom:10px;flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Barang & label QR</h3><div class="small mut">Tempel label QR di kemasan / rak. Isi QR: <code>IDCG:KODE</code>. Barang dari Sheet memakai kode di kolom KODE QR.</div></div><button class="ghost sm" id="pAll">🖨 Label (' + S.items.length + ')</button>' + (can('edit') ? '<button class="sm" id="nItem">+ Barang</button>' : '') + '</div>' +
@@ -850,13 +1061,13 @@ function labelModal(list) {
   m.querySelector('#lPrint').onclick = () => { const p = $('#printArea'); p.innerHTML = list.map(labelHtml).join(''); drawQrs(p); setTimeout(() => window.print(), 300); };
 }
 function itemModal(i) {
-  const n = !i; i = i || { kode: '', nama: '', kategori: '', satuan: '', stok: 0, minStok: S.alertQty, lokasi: 'Gudang HT', suhu: '', catatan: '' };
+  const n = !i, c0 = curCab() === 'SEMUA' ? 'HT' : curCab(); i = i || { kode: '', nama: '', kategori: '', satuan: '', stok: 0, minStok: S.alertQty, lokasi: 'Gudang ' + cabNm(c0), suhu: '', catatan: '', cabang: c0 };
   const f = (k, l, t) => '<div><label>' + l + '</label><input id="m_' + k + '" ' + (t || '') + ' value="' + esc(i[k]) + '"></div>';
-  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah barang' : 'Ubah barang') + '</h3>' + (i.dariExcel ? '<div class="small mut">Nama & stok barang ini mengikuti Sheet IN OUT HT.</div>' : '') + '<div class="grid2">' + f('kode', 'Kode (jadi isi QR)', n ? '' : 'disabled') + f('nama', 'Nama barang') + f('kategori', 'Kategori') + f('satuan', 'Satuan') +
+  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah barang' : 'Ubah barang') + '</h3>' + (i.dariExcel ? '<div class="small mut">Nama & stok barang ini mengikuti Sheet IN OUT HT.</div>' : '') + '<div class="grid2">' + (n ? '<div><label>Cabang / gudang</label><select id="m_cabang">' + S.cabangs.map(c => '<option value="' + c.kode + '"' + (c.kode === i.cabang ? ' selected' : '') + '>' + esc(c.nama) + '</option>').join('') + '</select></div>' : '') + f('kode', 'Kode (jadi isi QR)', n ? 'placeholder="mis. ' + ((S.cabangs.find(c => c.kode === i.cabang) || {}).prefix || 'HT') + '-0101"' : 'disabled') + f('nama', 'Nama barang') + f('kategori', 'Kategori') + f('satuan', 'Satuan') +
     (n ? f('stok', 'Stok awal', 'type=number min=0') : '') + f('minStok', 'Peringatan restock bila stok ≤', 'type=number min=0') + f('lokasi', 'Lokasi simpan') + f('suhu', 'Suhu simpan') + '</div>' + f('catatan', 'Catatan (mis. Rx, umur setelah dibuka)') +
     '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="mSave">Simpan</button></div>');
   m.querySelector('#mSave').onclick = async () => {
-    const it = {}; ['kode', 'nama', 'kategori', 'satuan', 'stok', 'minStok', 'lokasi', 'suhu', 'catatan'].forEach(k => { const e = m.querySelector('#m_' + k); if (e) it[k] = e.value; });
+    const it = {}; ['cabang', 'kode', 'nama', 'kategori', 'satuan', 'stok', 'minStok', 'lokasi', 'suhu', 'catatan'].forEach(k => { const e = m.querySelector('#m_' + k); if (e) it[k] = e.value; });
     try { const r = await call('saveItem', { item: it }); closeModal(); toast(r.baru ? 'Barang ditambahkan · QR ' + r.qr : 'Tersimpan'); await refresh(); if (r.baru) labelModal([itemBy(r.kode)]); } catch (e) { toast(e.message, true); }
   };
 }
@@ -865,6 +1076,7 @@ function itemModal(i) {
 const RPT = [['statistik', '📊 Statistik'], ['masuk', 'Barang Masuk'], ['keluar', 'Barang Keluar'], ['opname', 'Stock Opname'], ['kembali', 'Pengembalian & Hapus']];
 const L = { type: 'statistik', from: '', to: '', user: '' };
 async function vLaporan(el) {
+  L.cabang = curCab() === 'SEMUA' ? '' : curCab();
   if (!L.from) { const d = new Date(), ymd = x => x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); L.to = ymd(d); d.setDate(1); L.from = ymd(d); }
   el.innerHTML = '<div class="seg" id="rT">' + RPT.map(r => '<button data-r="' + r[0] + '" class="' + (L.type === r[0] ? 'on' : '') + '">' + r[1] + '</button>').join('') + '</div>' +
     '<div class="row" style="margin:10px 0;flex-wrap:wrap"><label style="margin:0">Dari</label><input type="date" id="rF" value="' + L.from + '" style="width:auto"><label style="margin:0">s/d</label><input type="date" id="rTo" value="' + L.to + '" style="width:auto"><div class="grow"></div><button class="ghost sm" id="xls">⬇ Excel laporan ini</button></div>' +
@@ -893,10 +1105,10 @@ async function vStat(el) {
   $('#sU2').onchange = e => { L.user = e.target.value; vLaporan(el); };
   const top = st.barang.filter(b => b.hariHabis !== null).slice(0, 10);
   barChart($('#c1'), top.map(b => ({ label: b.nama, value: b.hariHabis, text: (b.hariHabis <= 7 ? '⚠ ' : '') + b.hariHabis + ' hari · ' + b.perHari + '/hari', bad: b.hariHabis <= 7, tip: b.nama + '\nStok ' + b.stok + ' · terpakai ' + b.pakai + ' (' + b.perHari + '/hari)\nHabis dalam ±' + b.hariHabis + ' hari' })),
-    { title: 'Barang paling cepat habis' + (st.user ? ' · ' + st.user : ''), sub: 'Gudang HT · ' + (L.from || '') + ' s/d ' + (L.to || '') + ' · merah = habis ≤ 7 hari', unit: 'hari' });
+    { title: 'Barang paling cepat habis' + (st.user ? ' · ' + st.user : ''), sub: (L.cabang ? 'Gudang ' + cabNm(L.cabang) : 'Semua cabang') + ' · ' + (L.from || '') + ' s/d ' + (L.to || '') + ' · merah = habis ≤ 7 hari', unit: 'hari' });
   $('#c1n').textContent = top.length ? '' : 'Belum ada data pemakaian.';
   barChart($('#c2'), ppl.map(p => ({ label: p.nama + ' (' + p.peran + ')', value: p.total, text: p.total + ' unit', tip: p.nama + ' · ' + p.total + ' unit\n' + p.top.map(x => '• ' + x.nama + ': ' + x.qty).join('\n') })),
-    { title: 'Pengambilan per orang', sub: 'Gudang HT · ' + (L.from || '') + ' s/d ' + (L.to || ''), unit: 'unit' });
+    { title: 'Pengambilan per orang', sub: (L.cabang ? 'Gudang ' + cabNm(L.cabang) : 'Semua cabang') + ' · ' + (L.from || '') + ' s/d ' + (L.to || ''), unit: 'unit' });
   wrap.querySelectorAll('[data-png]').forEach(b => b.onclick = () => { const c = $('#' + b.dataset.png); const a = document.createElement('a'); a.href = c.toDataURL('image/png'); a.download = 'IDC-Gudang-' + (b.dataset.png === 'c1' ? 'paling-cepat-habis' : 'per-pengambil') + '-' + (L.to || 'periode') + '.png'; a.click(); if (window.DEMO_API) toast('Unduh grafik berjalan di aplikasi asli (di simulasi Claude unduhan diblokir)'); });
 }
 /** Grafik batang horizontal di <canvas> — judul & periode ikut tergambar agar PNG yang diunduh bisa dibaca sendiri. */
@@ -933,13 +1145,14 @@ function barChart(c, rows, o) {
 function vSet(el) {
   const s = S.settings || {};
   el.innerHTML = '<div class="card"><h3 style="margin:0 0 4px">Sheet stok keseluruhan · IN OUT HT</h3><div class="small mut">Annisa mengubah stok di Sheet → otomatis masuk sistem (tiap diedit & tiap 5 menit). Transaksi di sistem → otomatis ditambahkan ke kolom IN / OUT.</div>' +
-    '<div class="syncSt ' + (s.syncErr ? 'bad' : s.lastSync ? 'ok' : '') + '">' + (s.syncErr ? '✕ ' + esc(s.syncErr) : s.lastSync ? '✓ Tersambung · sinkron terakhir ' + fmtT(s.lastSync) : 'Belum tersambung') + '</div>' +
-    (can('users') ? '<label>Link Google Sheet (format Google Spreadsheet, bukan .xlsx)</label><input id="sU" value="' + esc(s.masterUrl || '') + '" placeholder="https://docs.google.com/spreadsheets/d/…/edit"><label>Nama tab</label><input id="sT" value="' + esc(s.masterTab || 'STOCK GUDANG') + '">' +
+    '<div class="syncSt ' + (s.syncErr ? 'bad' : s.lastSync ? 'ok' : '') + '">' + (s.syncErr ? '✕ ' + esc(s.syncErr) : s.lastSync ? '✓ Tersambung · sinkron terakhir ' + fmtT(s.lastSync) : 'Belum tersambung') + '</div>' + (s.info ? '<div class="small mut" style="margin-top:6px">' + esc(s.info) + '</div>' : '') +
+    (can('users') ? '<label>Link Google Sheet (format Google Spreadsheet, bukan .xlsx)</label><input id="sU" value="' + esc(s.masterUrl || '') + '" placeholder="https://docs.google.com/spreadsheets/d/…/edit"><div class="grid2"><div><label>Tab Hangtuah</label><input id="sT" value="' + esc(s.masterTab || 'STOCK GUDANG') + '"></div><div><label>Tab Pluit (opsional)</label><input id="sTP" value="' + esc(s.tabPluit || 'STOCK GUDANG PLUIT') + '"></div></div>' +
+      '<label>Tab barang per ruangan (opsional)</label><input id="sTR" value="' + esc(s.tabRuang || 'RUANGAN') + '"><div class="small mut" style="margin-top:4px">Kolom tab ruangan: <b>CABANG</b> (Hangtuah / Pluit) · <b>RUANGAN</b> (mis. Ruang 1) · <b>NAMA BARANG</b> atau <b>KODE QR</b> · <b>JUMLAH</b> (jumlah standar). Tab Pluit memakai kolom yang sama dengan tab Hangtuah; kode QR Pluit otomatis PL-0001 dst.</div>' +
       '<button id="sGo2" style="width:100%;margin-top:12px">Hubungkan & tarik data</button>' : '') +
     '<button class="ghost" id="sNow" style="width:100%;margin-top:8px"' + (s.masterUrl ? '' : ' disabled') + '>⇄ Sinkron sekarang</button></div>' +
     (can('users') ? '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 4px">WhatsApp ke Annisa & Mamat (opsional)</h3><div class="small mut">Kirim pesan WA otomatis setiap ada permintaan ACC baru. Perlu akun gateway Fonnte (berbayar). Kosongkan untuk mematikan.</div><label>Token Fonnte</label><input id="wT" placeholder="' + (s.waOn ? '•••••• (aktif)' : 'belum diisi') + '"><button class="ghost" id="wGo" style="width:100%;margin-top:10px">Simpan</button></div>' : '');
   if (can('edit')) accRulesCard(el);
-  if ($('#sGo2')) $('#sGo2').onclick = async () => { $('#sGo2').disabled = true; $('#sGo2').textContent = 'Menghubungkan…'; try { const r = await call('setMaster', { url: $('#sU').value, tab: $('#sT').value }); toast('✓ Tersambung · ' + r.baru + ' barang baru, ' + r.ubah + ' diperbarui' + (r.disembunyikan ? ', ' + r.disembunyikan + ' barang contoh disembunyikan' : '')); await refresh(); } catch (e) { toast(e.message, true); render(); } };
+  if ($('#sGo2')) $('#sGo2').onclick = async () => { $('#sGo2').disabled = true; $('#sGo2').textContent = 'Menghubungkan…'; try { const r = await call('setMaster', { url: $('#sU').value, tab: $('#sT').value, tabPluit: $('#sTP').value, tabRuang: $('#sTR').value }); toast('✓ Tersambung · ' + r.baru + ' barang baru, ' + r.ubah + ' diperbarui' + (r.disembunyikan ? ', ' + r.disembunyikan + ' barang contoh disembunyikan' : '')); await refresh(); } catch (e) { toast(e.message, true); render(); } };
   $('#sNow').onclick = async () => { try { const r = await call('syncNow'); toast('⇄ ' + (r.skip ? r.pesan : r.ubah + ' diperbarui dari Sheet · ' + r.kirim + ' dikirim ke Sheet · ' + r.baru + ' baru')); await refresh(); } catch (e) { toast(e.message, true); } };
   if ($('#wGo')) $('#wGo').onclick = async () => { try { const r = await call('saveWa', { token: $('#wT').value }); toast(r.waOn ? 'WA aktif' : 'WA dimatikan'); await refresh(); } catch (e) { toast(e.message, true); } };
 }
@@ -960,29 +1173,64 @@ function accRulesCard(el) {
   $('#aGo').onclick = async () => { try { const r = await call('setAccRules', { batas: $('#aB').value, items: ch }); toast('✓ Aturan ACC tersimpan · batas stok ' + r.batas + (r.diubah ? ' · ' + r.diubah + ' barang diubah' : '')); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 
-/* ---- PENGGUNA & WAJAH (Finance) ---- */
+/* ---- PENGGUNA & WAJAH (Finance: semua · Annisa: Perawat & PJ Gudang) ---- */
+const canFaceU = u => can('users') || u.peran !== 'Finance';
+const canEditU = u => can('users') || ['Perawat', 'PJ Gudang'].indexOf(u.peran) >= 0;
 function vUsers(el) {
-  el.innerHTML = '<div class="row" style="margin-bottom:10px"><div class="grow"><h3 style="margin:0">Pengguna & wajah</h3><div class="small mut">Yang disimpan hanya sidik wajah (128 angka), bukan foto. Minta persetujuan tertulis karyawan sebelum mendaftarkan wajahnya.</div></div><button class="sm" id="nU">+ Pengguna</button></div>' +
-    '<div class="card list">' + S.users.map(u => '<div class="li" style="flex-wrap:wrap"><div class="grow"><div class="nm">' + esc(u.nama) + ' <span class="chip gray">' + esc(u.peran) + '</span>' + (u.kuasa ? ' <span class="chip">pemberi ACC</span>' : '') + (u.aktif !== 'ya' ? ' <span class="chip bad">nonaktif</span>' : '') + '</div>' +
+  const full = can('users'), c = curCab(), groups = [['SEMUA', 'Semua cabang']].concat(S.cabangs.map(x => [x.kode, 'Gudang ' + x.nama]));
+  const L = (S.users || []).filter(u => c === 'SEMUA' || u.cabang === c || u.cabang === 'SEMUA');
+  const row = u => '<div class="li" style="flex-wrap:wrap"><div class="grow"><div class="nm">' + esc(u.nama) + ' <span class="chip gray" title="Wewenang: ' + esc(u.peran) + '">' + esc(u.jabatan || u.peran) + '</span>' + (u.jabatan ? ' <span class="small mut">wewenang ' + esc(u.peran) + '</span>' : '') + (u.kuasa ? ' <span class="chip">pemberi ACC</span>' : '') + (u.aktif !== 'ya' ? ' <span class="chip bad">nonaktif</span>' : '') + '</div>' +
       '<div class="meta">' + (u.faces ? '✓ wajah terdaftar (' + u.faces + ' sampel)' : '<span style="color:var(--warn)">Wajah belum terdaftar — belum bisa masuk</span>') + (u.hp ? ' · +' + esc(u.hp) : '') + (u.email ? ' · ' + esc(u.email) : '') + '</div></div>' +
-      '<div class="row" style="flex-wrap:wrap;justify-content:flex-end;gap:6px"><button class="soft sm" data-en="' + u.id + '">📷 ' + (u.faces ? 'Tambah sampel' : 'Daftarkan wajah') + '</button>' + (u.faces ? '<button class="bad sm" data-cl="' + u.id + '">Hapus wajah</button>' : '') + '<button class="ghost sm" data-ue="' + u.id + '">Ubah</button></div></div>').join('') + '</div>';
+      '<div class="act" style="flex-wrap:wrap;justify-content:flex-end">' + (!canFaceU(u) ? '<span class="small mut">diatur Finance</span>' : u.faces ? '<button class="soft sm" data-en="' + u.id + '">📷 Tambah sampel</button><button class="bad sm" data-cl="' + u.id + '">Hapus wajah</button>' : '<button class="sm" data-en="' + u.id + '">📸 Foto wajah sekarang</button>') + (canEditU(u) && ['Perawat', 'PJ Gudang'].indexOf(u.peran) >= 0 && u.aktif === 'ya' ? '<button class="soft sm" data-rl="' + u.id + '">' + (u.peran === 'Perawat' ? '⬆ Jadikan PJ' : '⬇ Jadikan Perawat') + '</button>' : '') +
+      (canEditU(u) ? '<button class="ghost sm" data-ue="' + u.id + '">Ubah</button>' : '') + (canEditU(u) && u.id !== S.me.id ? '<button class="' + (u.aktif === 'ya' ? 'hideBtn' : 'soft sm') + '" data-ak="' + u.id + '">' + (u.aktif === 'ya' ? 'Nonaktifkan' : 'Aktifkan lagi') + '</button>' : '') + '</div></div>';
+  el.innerHTML = '<div class="row" style="margin-bottom:10px;flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Pengguna & wajah</h3><div class="small mut">' + (full ? '' : 'Anda menentukan siapa yang didaftarkan biometrik (wajah): <b>semua pengguna kecuali akun Finance</b> — daftarkan, tambah sampel, atau hapus wajah. Menambah & mengubah data: <b>Perawat & PJ Gudang</b>. ') +
+      'Saat difoto, sidik wajah (128 angka) langsung tersimpan — fotonya sendiri tidak disimpan. Minta persetujuan karyawan sebelum mendaftarkan wajahnya.</div></div><button class="sm" id="nU">+ ' + (full ? 'Pengguna' : 'Staf (Perawat / PJ)') + '</button></div>' +
+    groups.map(g => { const U = L.filter(u => u.cabang === g[0]); return U.length ? '<div class="dayH">' + esc(g[1]) + ' · ' + U.length + '</div><div class="card list">' + U.map(row).join('') + '</div>' : ''; }).join('') || '<div class="card mut">Belum ada pengguna di cabang ini.</div>';
   el.querySelectorAll('[data-en]').forEach(b => b.onclick = () => enrollModal(S.users.find(u => u.id === b.dataset.en)));
   el.querySelectorAll('[data-cl]').forEach(b => b.onclick = () => { const u = S.users.find(x => x.id === b.dataset.cl);
     const m = modal('<h3 style="margin:0">Hapus data wajah ' + esc(u.nama) + '?</h3><div class="small mut" style="margin:6px 0 12px">Ia tidak bisa masuk sampai didaftarkan ulang.</div><div class="row"><button class="ghost grow" data-x>Batal</button><button class="bad grow" id="cfY">Hapus</button></div>');
     m.querySelector('#cfY').onclick = async () => { try { await call('clearFace', { userId: u.id }); closeModal(); toast('Data wajah dihapus'); await refresh(); } catch (e) { toast(e.message, true); } }; });
   el.querySelectorAll('[data-ue]').forEach(b => b.onclick = () => userModal(S.users.find(u => u.id === b.dataset.ue)));
+  el.querySelectorAll('[data-rl]').forEach(b => b.onclick = () => { const u = S.users.find(x => x.id === b.dataset.rl), toPJ = u.peran === 'Perawat';
+    const m = modal('<h3 style="margin:0">' + (toPJ ? 'Jadikan ' + esc(u.nama) + ' PJ Gudang?' : 'Kembalikan ' + esc(u.nama) + ' menjadi Perawat?') + '</h3><div class="small mut" style="margin:6px 0 12px">' +
+      (toPJ ? 'Ia bisa mencatat barang masuk, barang keluar manual, mengembalikan barang orang lain, membuka Laporan, dan Barang & QR di Gudang ' + esc(cabNm(u.cabang)) + '. Wajah tetap sama, tidak perlu daftar ulang.'
+            : 'Ia kembali hanya bisa scan ambil, mengembalikan barangnya sendiri, dan menghitung stock opname. Riwayatnya tetap tersimpan.') + '</div>' +
+      '<div class="row"><button class="ghost grow" data-x>Batal</button><button class="grow" id="rlY">' + (toPJ ? '⬆ Jadikan PJ Gudang' : '⬇ Jadikan Perawat') + '</button></div>');
+    m.querySelector('#rlY').onclick = () => quickUser(u, { peran: toPJ ? 'PJ Gudang' : 'Perawat' }, u.nama + (toPJ ? ' sekarang PJ Gudang' : ' sekarang Perawat')); });
+  el.querySelectorAll('[data-ak]').forEach(b => b.onclick = () => { const u = S.users.find(x => x.id === b.dataset.ak), off = u.aktif === 'ya';
+    if (!off) return quickUser(u, { aktif: 'ya' }, u.nama + ' aktif kembali');
+    const m = modal('<h3 style="margin:0">Nonaktifkan ' + esc(u.nama) + '?</h3><div class="small mut" style="margin:6px 0 12px">Ia langsung tidak bisa masuk (wajah ditolak) dan keluar dari aplikasi bila sedang membuka. Semua riwayat ambil, opname, dan laporannya tetap tersimpan. Bisa diaktifkan lagi kapan saja.</div>' +
+      '<div class="row"><button class="ghost grow" data-x>Batal</button><button class="bad grow" id="akY">Nonaktifkan</button></div>');
+    m.querySelector('#akY').onclick = () => quickUser(u, { aktif: 'tidak' }, u.nama + ' dinonaktifkan · riwayat tetap tersimpan'); });
   $('#nU').onclick = () => userModal(null);
 }
+/** Ubah cepat satu pengguna (peran / status) tanpa membuka form. */
+async function quickUser(u, patch, msg) {
+  try { await call('saveUser', { user: Object.assign({ id: u.id, nama: u.nama, peran: u.peran, cabang: u.cabang, jabatan: u.jabatan || '', hp: u.hp || '', email: u.email || '', kuasa: u.kuasa, aktif: u.aktif }, patch) });
+    closeModal(); beep(true); toast('✓ ' + msg); await refresh(); } catch (e) { toast(e.message, true); }
+}
 function userModal(u) {
-  const n = !u; u = u || { nama: '', email: '', hp: '', peran: 'Perawat', aktif: 'ya', kuasa: false };
-  const m = modal('<h3 style="margin:0">' + (n ? 'Tambah pengguna' : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '"><label>Peran</label><select id="uR">' + ['Perawat', 'PJ Gudang', 'Purchase', 'Penyetuju', 'Finance'].map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select>' +
-    '<div class="small mut" style="margin-top:4px">Perawat & PJ Gudang: cukup wajah. Purchase, Penyetuju, Finance: wajah + PIN.</div>' +
-    '<label>Nomor HP (untuk masuk pertama & WA)</label><input id="uH" inputmode="tel" value="' + esc(u.hp ? '+' + u.hp : '') + '" placeholder="+62 8…"><label>Email (opsional, untuk notifikasi)</label><input id="uE" type="email" value="' + esc(u.email) + '">' +
-    '<label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Penyetuju/Finance)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
-    '<label class="chk"><input type="checkbox" id="uK"' + (u.kuasa ? ' checked' : '') + '> Pemberi ACC (YA / TIDAK)</label>' +
+  const full = can('users'), n = !u, c0 = curCab() === 'SEMUA' ? 'HT' : curCab();
+  u = u || { nama: '', email: '', hp: '', peran: 'PJ Gudang', aktif: 'ya', kuasa: false, cabang: c0 };
+  const roles = full ? ['Perawat', 'PJ Gudang', 'Purchase', 'Penyetuju', 'Finance'] : ['Perawat', 'PJ Gudang'];
+  const m = modal('<h3 style="margin:0">' + (n ? (full ? 'Tambah pengguna' : 'Tambah staf') : 'Ubah ' + esc(u.nama)) + '</h3><label>Nama</label><input id="uN" value="' + esc(u.nama) + '">' +
+    '<div class="grid2"><div><label>Peran</label><select id="uR">' + roles.map(r => '<option' + (u.peran === r ? ' selected' : '') + '>' + r + '</option>').join('') + '</select></div>' +
+    '<div id="uCw"><label>Cabang / gudang</label><select id="uC">' + S.cabangs.map(c => '<option value="' + c.kode + '"' + ((u.cabang === 'SEMUA' ? c0 : u.cabang) === c.kode ? ' selected' : '') + '>' + esc(c.nama) + '</option>').join('') + '</select></div></div>' +
+    '<div class="small mut" style="margin-top:4px">Peran = wewenang. Perawat & PJ Gudang: cukup wajah. ' + (full ? 'Purchase, Penyetuju, Finance: wajah + PIN, melihat semua cabang.' : '') + '</div>' +
+    '<label>Jabatan / tugas (opsional)</label><input id="uJ" maxlength="60" value="' + esc(u.jabatan || '') + '" placeholder="mis. Office Girl / General Affair, Asisten Dokter">' +
+    '<label>Nomor HP (opsional, untuk WA)</label><input id="uH" inputmode="tel" value="' + esc(u.hp ? '+' + u.hp : '') + '" placeholder="+62 8…">' +
+    (full ? '<label>Email (opsional, untuk notifikasi)</label><input id="uE" type="email" value="' + esc(u.email) + '">' +
+      '<label>PIN 6 angka ' + (n ? '(wajib untuk Purchase/Penyetuju/Finance)' : '(kosongkan bila tidak diganti)') + '</label><input id="uP" inputmode="numeric" maxlength="6">' +
+      '<label class="chk"><input type="checkbox" id="uK"' + (u.kuasa ? ' checked' : '') + '> Pemberi ACC (YA / TIDAK)</label>' : '') +
     '<label>Status</label><select id="uA"><option value="ya">Aktif</option><option value="tidak"' + (u.aktif === 'tidak' ? ' selected' : '') + '>Nonaktif</option></select>' +
-    '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="uS">Simpan</button></div>');
-  m.querySelector('#uS').onclick = async () => { try { await call('saveUser', { user: { id: u.id, nama: $('#uN').value, peran: $('#uR').value, hp: $('#uH').value, email: $('#uE').value, pin: $('#uP').value, kuasa: $('#uK').checked, aktif: $('#uA').value } }); closeModal(); toast('Tersimpan'); await refresh(); } catch (e) { toast(e.message, true); } };
+    '<div class="row" style="margin-top:14px"><button class="ghost grow" data-x>Batal</button><button class="grow" id="uS">' + (n ? 'Simpan & foto wajah' : 'Simpan') + '</button></div>');
+  const cw = () => { m.querySelector('#uCw').style.visibility = ['Perawat', 'PJ Gudang'].indexOf(m.querySelector('#uR').value) >= 0 ? '' : 'hidden'; };
+  m.querySelector('#uR').onchange = cw; cw();
+  m.querySelector('#uS').onclick = async () => {
+    const v = id => { const e = m.querySelector('#' + id); return e ? (e.type === 'checkbox' ? e.checked : e.value) : undefined; };
+    try { const r = await call('saveUser', { user: { id: u.id, nama: v('uN'), peran: v('uR'), cabang: v('uC'), jabatan: v('uJ'), hp: v('uH'), email: v('uE'), pin: v('uP'), kuasa: v('uK'), aktif: v('uA') } });
+      closeModal(); toast('Tersimpan'); await refresh(); if (n) enrollModal({ id: r.id, nama: r.nama }); } catch (e) { toast(e.message, true); }
+  };
 }
 function vSelf(el) {
   el.innerHTML = '<div class="card" style="max-width:520px"><h3 style="margin:0 0 6px">Daftarkan wajah Anda</h3><div class="small mut">' + (S.me.hasFace ? 'Wajah Anda sudah terdaftar. Tambah sampel bila sering gagal dikenali.' : 'Setelah ini, Anda masuk dengan pindai wajah + PIN. Masuk dengan nomor HP/PIN saja tidak berlaku lagi.') + '</div><button id="selfGo" style="margin-top:12px">📷 ' + (S.me.hasFace ? 'Tambah sampel wajah' : 'Daftarkan wajah sekarang') + '</button></div>';
@@ -991,7 +1239,7 @@ function vSelf(el) {
 function enrollModal(u) {
   const m = modal('<div class="row"><h3 class="grow" style="margin:0">Wajah · ' + esc(u.nama) + '</h3><button class="ghost sm" data-x>Tutup</button></div><div class="small mut" style="margin:4px 0 10px">Satu orang, wajah lurus, tanpa masker, cahaya cukup. Ambil 2–3 sampel dari kamera agar lebih andal.</div>' +
     '<div class="cam"><video id="eV" playsinline muted style="transform:scaleX(-1)"></video><img id="eI" class="hide" style="width:100%;height:100%;object-fit:cover"></div><div id="eMsg" class="small" style="margin:8px 0">Membuka kamera…</div>' +
-    '<div class="row"><button class="grow" id="eSnap" disabled>Ambil sampel</button><button class="ghost" id="eFile">Dari foto</button></div><input type="file" id="eIn" accept="image/*" class="hide">');
+    '<div class="row"><button class="grow" id="eSnap" disabled>📸 Foto & simpan wajah</button><button class="ghost" id="eFile">Pilih dari galeri</button></div><input type="file" id="eIn" accept="image/*" class="hide">');
   let st = null; const msg = t => m.querySelector('#eMsg').textContent = t;
   m._onclose = () => camStop(st);
   loadFace().catch(() => msg('Pengenal wajah gagal dimuat — cek internet.'));
@@ -1042,6 +1290,66 @@ function openScanner(title, onCode) {
   m.querySelector('#qIn').onchange = async e => { const f = e.target.files[0]; if (!f) return; const img = await fileToImg(f); const t = await decode(img); e.target.value = ''; if (t) got(t); else msg('QR tidak terbaca di foto — dekatkan & pastikan fokus.'); };
   return m;
 }
+
+/* ================= RAPID STOCK · Tentang & tema (crafted by STV) ================= */
+const RP_VERSI = 'v1.3';
+const RP_CATATAN = [['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi.'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
+const RP_HURUF = [['R', 'Reliable', 'Andal', 'Stok di aplikasi sama dengan di rak'], ['A', 'Actual', 'Terkini', 'Semua cabang melihat stok saat ini'], ['P', 'Precise', 'Presisi', 'Tepat barang, jumlah, dan ruangan'],
+  ['I', 'Intuitive', 'Mudah', 'Pindai wajah, pindai QR, selesai'], ['D', 'Detectable', 'Terlacak', 'Setiap ambil, masuk, dan opname ada jejaknya']];
+const RP_STV = [['S', 'Standard', 'Satu cara kerja', 'Pindai wajah lalu QR untuk setiap pengambilan; aturan ACC dan batas restock yang sama di Hangtuah dan Pluit.'],
+  ['T', 'Trace', 'Semua tercatat', 'Siapa, kapan, ruangan mana, berapa: dari barang datang, diambil ke ruangan, sampai laporan bulanan.'],
+  ['V', 'Verify', 'Diperiksa dulu', 'Stok tipis & barang sulit di-ACC; hitungan opname dicocokkan Purchasing sebelum mengubah stok. Bila ragu, berhenti dan periksa.']];
+function rpMode() { try { const m = localStorage.getItem('rapid-mode'); if (m === 'light' || m === 'dark') return m; } catch (e) {} return 'auto'; }
+function rpSetMode(m) { try { localStorage.setItem('rapid-mode', m); } catch (e) {} if (m === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', m); }
+rpSetMode(rpMode());
+function rpAbout() {
+  const old = document.getElementById('rpAbout'); if (old) old.remove();
+  const d = document.createElement('div'); d.className = 'rp-ab'; d.id = 'rpAbout'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-label', 'Tentang RAPID Stock');
+  const mode = rpMode();
+  d.innerHTML = '<div class="bx"><div class="hd"><b>RAPID</b><span>STOCK</span><small>Gudang cerdas Indo Dental Center · bagian dari RAPID System, khusus stok</small><button class="x" type="button" aria-label="Tutup">×</button></div><div class="ct">' +
+    '<div class="ar">' + RP_HURUF.map(x => '<div title="' + esc(x[3]) + '"><b>' + x[0] + '</b><strong>' + x[1] + '</strong><i>' + x[2] + '</i><small>' + esc(x[3]) + '</small></div>').join('') + '</div>' +
+    '<div class="tg">Trust &amp; Expertise<span>dari rak gudang, ke ruang praktik, sampai laporan bulanan</span></div>' +
+    '<div class="te2"><div><small>Trust</small><p>Satu angka stok untuk semua. Perawat, PJ Gudang, Purchasing, penyetuju, dan manajemen melihat data yang sama, jadi tidak ada yang menebak.</p></div>' +
+    '<div><small>Expertise</small><p>Setiap peran punya tugasnya: perawat mengambil, PJ menghitung, Purchasing mencocokkan & mengisi stok, penyetuju meng-ACC.</p></div></div>' +
+    '<div class="flw">' + ['Barang masuk', 'Rak gudang', 'Diambil ke ruangan', 'Stock opname', 'Laporan bulanan'].map((x, i) => (i ? '<i aria-hidden="true">→</i>' : '') + '<span' + (i === 4 ? ' class="end"' : '') + '>' + x + '</span>').join('') + '</div>' +
+    '<div class="sv">' + RP_STV.map(x => '<div><b>' + x[0] + '</b><strong>' + x[1] + '<i>' + x[2] + '</i></strong><small>' + x[3] + '</small></div>').join('') + '</div>' +
+    '<p class="own">Milik dan untuk Klinik Utama Indo Dental Center. Dikembangkan oleh drg. Steven (STV) bersama tim Gudang, Purchasing, dan manajemen Indo Dental Center. RAPID Stock berdiri sendiri: khusus gudang, tidak terhubung dengan RAPID Lab.</p>' +
+    '<div class="md" role="group" aria-label="Tema">' + [['auto', 'Otomatis'], ['light', 'Terang'], ['dark', 'Gelap']].map(m => '<button type="button" data-md="' + m[0] + '" class="' + (mode === m[0] ? 'on' : '') + '">' + m[1] + '</button>').join('') + '</div>' +
+    '<button type="button" class="rp-inst" data-rpinstall style="margin-top:14px"' + (rpCanInstall() ? '' : ' hidden') + '>📲 Pasang RAPID Stock di HP</button>' +
+    '<details><summary>Catatan versi</summary><ul class="vl">' + RP_CATATAN.map(v => '<li><b>' + v[0] + '</b><span>' + v[1] + '</span><div>' + esc(v[2]) + '</div></li>').join('') + '</ul></details></div></div>';
+  const close = () => { d.remove(); document.removeEventListener('keydown', k); }, k = e => { if (e.key === 'Escape') close(); };
+  d.onclick = e => { if (e.target === d) close(); }; d.querySelector('.x').onclick = close; document.addEventListener('keydown', k);
+  d.querySelectorAll('[data-md]').forEach(b => b.onclick = () => { rpSetMode(b.dataset.md); d.querySelectorAll('[data-md]').forEach(x => x.classList.toggle('on', x === b)); });
+  document.body.appendChild(d); d.querySelector('.x').focus();
+}
+/* ---- Pasang RAPID Stock di HP (versi GitHub yang punya manifest) ---- */
+let rpPrompt = null;
+const rpStandalone = () => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } };
+const rpCanInstall = () => !!document.querySelector('link[rel="manifest"]') && window.isSecureContext && !/googleusercontent|script\.google/.test(location.host) && !rpStandalone();
+const rpIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function rpInstallBtns() { document.querySelectorAll('[data-rpinstall]').forEach(b => { b.hidden = !rpCanInstall(); }); }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); rpPrompt = e; rpInstallBtns(); });
+window.addEventListener('appinstalled', () => { rpPrompt = null; rpInstallBtns(); try { toast('RAPID Stock sudah terpasang di layar utama.'); } catch (x) {} });
+function rpInstall() {
+  if (rpPrompt) { const p = rpPrompt; rpPrompt = null; p.prompt(); if (p.userChoice) p.userChoice.then(c => { if (c && c.outcome === 'accepted') toast('Memasang RAPID Stock…'); }).catch(() => {}); return; }
+  const ios = rpIOS(), safari = ios && !/crios|fxios|edgios/i.test(navigator.userAgent), hp = /android/i.test(navigator.userAgent);
+  const lang = ios ? (safari ? ['Ketuk tombol <b>Bagikan</b> <span class="k">⬆︎</span> di bawah layar Safari.', 'Gulir, lalu pilih <b>Tambahkan ke Layar Utama</b>.', 'Ketuk <b>Tambah</b>. Ikon RAPID Stock muncul di layar utama.']
+      : ['Di iPhone, pemasangan hanya bisa lewat <b>Safari</b>.', 'Salin alamat ini, buka di Safari, lalu ketuk <b>Bagikan</b> <span class="k">⬆︎</span> → <b>Tambahkan ke Layar Utama</b>.'])
+    : hp ? ['Buka menu <b>⋮</b> di kanan atas Chrome.', 'Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.', 'Ketuk <b>Instal</b>. Ikon RAPID Stock muncul di layar utama.']
+    : ['Di Chrome / Edge komputer: klik ikon <b>Pasang</b> <span class="k">⊕</span> di ujung kanan kolom alamat.', 'Atau buka menu <b>⋮</b> → <b>Simpan dan bagikan</b> → <b>Instal halaman sebagai aplikasi</b>.', 'Untuk HP: buka alamat ini di HP, lalu ketuk tombol ini lagi.'];
+  const d = document.createElement('div'); d.className = 'rp-ab'; d.id = 'rpInstall'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.setAttribute('aria-label', 'Pasang RAPID Stock di HP');
+  d.innerHTML = '<div class="bx" style="width:min(380px,100%)"><div class="hd"><b>RAPID</b><span>STOCK</span><small>Pasang di HP: sekali saja, tanpa toko aplikasi</small><button class="x" type="button" aria-label="Tutup">×</button></div><div class="ct">' +
+    '<div style="display:flex;gap:12px;align-items:center;margin:0 0 12px"><img src="apple-touch-icon.png" alt="" width="52" height="52" style="border-radius:12px;flex:none" onerror="this.remove()"><div style="font-size:13px;color:var(--mut);line-height:1.5">Setelah dipasang, RAPID Stock terbuka seperti aplikasi biasa: layar penuh, tanpa mencari tautan. Kamera untuk wajah & QR tetap berfungsi.</div></div>' +
+    '<ol class="rp-steps">' + lang.map(x => '<li>' + x + '</li>').join('') + '</ol>' +
+    '<p style="margin:10px 0 0;font-size:12px;color:var(--mut)">Setelah dibuka dari ikon, masuk sekali lagi dengan pindai wajah.</p></div></div>';
+  const close = () => d.remove(); d.onclick = e => { if (e.target === d) close(); }; d.querySelector('.x').onclick = close;
+  document.body.appendChild(d); d.querySelector('.x').focus();
+}
+if ('serviceWorker' in navigator && window.isSecureContext && !/googleusercontent|script\.google/.test(location.host) && document.querySelector('link[rel="manifest"]')) window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+rpInstallBtns();
+document.addEventListener('click', e => { if (e.target.closest('[data-rpabout]')) rpAbout(); if (e.target.closest('[data-rpinstall]')) rpInstall(); });
+['rpVer1', 'rpVer2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = RP_VERSI; });
+document.getElementById('rpHome').onclick = () => { if (S.me) { S.tab = 'home'; render(); window.scrollTo(0, 0); } };
 
 /* ================= MULAI ================= */
 (async function init() {
