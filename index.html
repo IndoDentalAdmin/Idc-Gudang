@@ -61,6 +61,8 @@ main{padding-bottom:110px}
 .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
 .item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;display:flex;gap:12px;align-items:center;transition:background .6s}
 .item.low{border-color:var(--warn)}.item.zero{border-color:var(--bad)}.item.flash{background:var(--pri2)}
+.qtyPick{display:flex;gap:8px;align-items:center;margin-top:6px}.qtyPick input{text-align:center;font-size:24px;font-weight:800;max-width:130px}.qtyPick button{min-width:56px;font-size:22px;font-weight:800;padding:8px 0}
+.ambilNote{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--warn);background:var(--warn2);border-radius:14px;padding:12px 14px;margin:0 0 12px}.ambilNote .grow{min-width:0}
 .qty{text-align:right;min-width:64px}.qty b{font-size:26px;display:block;line-height:1}.qty span{font-size:11px;color:var(--mut)}
 .bar{height:5px;border-radius:9px;background:var(--line);margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri-fill)}
 .item.low .bar i{background:var(--warn)}.item.zero .bar i{background:var(--bad)}
@@ -411,6 +413,8 @@ $('#srvGo').onclick = () => { const v = $('#srvIn').value.trim(); if (!/^https:\
 /* ================= SESI & REAL-TIME ================= */
 let pollT = null;
 const can = k => !!(S.me && S.me.can && S.me.can.indexOf(k) >= 0);
+const isOperator = () => !!(S.me && ['Perawat', 'PJ Gudang'].indexOf(S.me.peran) >= 0);
+const AMB = { request: 'Lewat request', langsung: 'Langsung' };
 async function enter(r) {
   S.token = r.token; S.me = r.user;
   try { sessionStorage.setItem('idcg', S.token); } catch (e) {}
@@ -429,7 +433,7 @@ function apply(d, first) {
   const oldPend = new Set((S.pending || []).map(p => p.id)), oldMine = {}; (S.myReqs || []).forEach(r => oldMine[r.id] = r.status);
   const oldH = new Set((S.hitung || []).map(h => h.id)), oldMyH = {}; (S.myHitung || []).forEach(h => oldMyH[h.id] = h.status), oldLR = new Set((S.lapReq || []).map(l => l.periode + l.requestAt));
   S.allItems = d.items; S.restockAll = d.restock || []; S.ruang = d.ruang || []; S.cabangs = d.cabangs || []; filterCab(); S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver;  S.pending = d.pending || []; S.myReqs = d.myReqs || [];
-  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || []; S.opnames = d.opnames || [];
+  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || []; S.opnames = d.opnames || []; S.ambil = d.ambil || { mode: 'request', last: null, log: [] };
   S.settings = d.settings || null; S.approvers = d.approvers || []; S.alertQty = d.alertQty || 3; S.accBatas = d.accBatas === undefined ? 5 : d.accBatas;
   if (d.me) S.me = Object.assign(S.me, d.me);
   S.changed = first ? [] : S.items.filter(i => old[i.kode] !== undefined && old[i.kode] !== i.stok).map(i => i.kode);
@@ -516,7 +520,8 @@ function render() {
   $('#tabs').innerHTML = tabsFor().map(t => '<button data-t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
   $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); });
   const V = { home: vHome, acc: vAcc, scan: vScan, keluar: vKeluar, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, ruang: vRuang, barang: vBarang, laporan: vLaporan, users: vUsers, set: vSet, self: vSelf }[S.tab] || vHome;
-  $('#view').innerHTML = cabBar() + restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  $('#view').innerHTML = cabBar() + ambilBanner() + restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  if ($('#abOk')) $('#abOk').onclick = () => { try { localStorage.setItem('idcg-ambil-' + S.me.id, S.ambil.last.at); } catch (e) {} render(); };
   $('#view').querySelectorAll('[data-cab]').forEach(b => b.onclick = () => setCab(b.dataset.cab));
   const rb = $('#rsBanner'); if (rb) rb.onclick = () => restockPopup(false);
   (S.changed || []).forEach(k => { const el = document.querySelector('[data-item="' + k + '"]'); if (el) { el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); } });
@@ -535,6 +540,15 @@ const stBadge = s => '<span class="chip ' + (ST[s] || ['gray'])[0] + '">' + (ST[
 const accNames = () => (S.approvers.length ? S.approvers.join(' / ') : 'Annisa / Mamat');
 
 /* ---- PERINGATAN RESTOCK (stok ≤ 3) ---- */
+/** Operator: pemberitahuan aturan pengambilan terbaru dari Annisa (tampil sampai ditekan "Mengerti"). */
+function ambilBanner() {
+  const L = S.ambil && S.ambil.last; if (!isOperator() || !L) return '';
+  let seen = ''; try { seen = localStorage.getItem('idcg-ambil-' + S.me.id) || ''; } catch (e) {}
+  if (seen === L.at) return '';
+  return '<div class="ambilNote" role="status"><div style="font-size:22px">📢</div><div class="grow"><b>Aturan pengambilan dari ' + esc(L.oleh) + '</b> <span class="small mut">' + fmtT(L.at) + '</span><div style="margin-top:2px">' + esc(L.teks) + '</div>' +
+    ((L.khusus || []).length ? '<div class="small" style="margin-top:4px">Khusus: ' + esc(L.khusus.join(', ')) + (L.lainnya ? ', +' + L.lainnya + ' lainnya' : '') + '</div>' : '') +
+    (L.catatan ? '<div class="small" style="margin-top:4px">“' + esc(L.catatan) + '”</div>' : '') + '</div><button class="sm" id="abOk">Mengerti</button></div>';
+}
 function restockBanner() {
   const r = S.restock || []; if (!r.length) return '';
   const top = r.slice().sort((a, b) => a.stok - b.stok).slice(0, 4).map(x => esc(x.nama) + ' (' + x.stok + ')').join(', ');
@@ -566,7 +580,7 @@ function vHome(el) {
   if (low) h += '<h3 class="sec" style="color:var(--bad)">Segera restock</h3><div class="items">' + S.items.filter(i => i.rendah).sort((a, b) => a.stok - b.stok).slice(0, 6).map(itemCard).join('') + '</div>';
   el.innerHTML = h;
   if ($('#hScan')) $('#hScan').onclick = () => { S.tab = 'scan'; render(); $('#bScan').click(); };
-  el.querySelectorAll('[data-gop]').forEach(b => b.onclick = () => { S.tab = 'opname'; OP.sub = b.dataset.gop; if (b.dataset.gop === 'rekap' && S.lapReq[0]) { OP.per = S.lapReq[0].periode; OP.tahun = perInfo(OP.per).tahun; } render(); window.scrollTo(0, 0); });
+  el.querySelectorAll('[data-gop]').forEach(b => b.onclick = () => { S.tab = 'opname'; OP.sub = b.dataset.gop; if (b.dataset.gop === 'rekap' && S.lapReq[0]) { OP.per = S.lapReq[0].periode; OP.tahun = perInfo(OP.per).tahun; OP.mode = /-W\d\d$/.test(OP.per) ? 'minggu' : 'bulan'; } render(); window.scrollTo(0, 0); });
   if ($('#hAcc')) accList($('#hAcc'), S.pending.slice(0, 5));
   wireReqLines(el);
 }
@@ -598,7 +612,8 @@ function reqHistory(list) {
 
 /* ---- ACC (Annisa & Mamat) ---- */
 function vAcc(el) {
-  el.innerHTML = '<div class="row" style="margin:4px 0 10px"><div class="grow"><h3 style="margin:0">Perlu ACC</h3><div class="small mut">Muncul hanya untuk stok ≤ ' + S.accBatas + ', barang sulit didapat, pengembalian, dan hapus. Cukup salah satu (' + esc(accNames()) + ').</div></div></div><div id="accL"></div>';
+  el.innerHTML = '<div class="row" style="margin:4px 0 10px"><div class="grow"><h3 style="margin:0">Perlu ACC</h3><div class="small mut">Muncul untuk stok ≤ ' + S.accBatas + ', barang sulit didapat, pengembalian, hapus, dan <b>ajuan jumlah</b> (khusus Annisa). Selain ajuan jumlah, cukup salah satu (' + esc(accNames()) + ').</div></div>' + (can('aturan') ? '<button class="ghost sm" id="goAturan">⚙ Aturan jumlah pengambilan</button>' : '') + '</div><div id="accL"></div>';
+  if ($('#goAturan')) $('#goAturan').onclick = () => { S.tab = 'set'; render(); setTimeout(() => { const c = $('#aturanCard'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }, 60); };
   accList($('#accL'), S.pending);
 }
 function accList(box, list) {
@@ -606,9 +621,9 @@ function accList(box, list) {
   box.innerHTML = '<div class="accGrid">' + list.map(r => {
     const it = itemBy(r.kode) || {}, own = r.userId === S.me.id;
     const eff = r.jenis === 'KELUAR' ? 'Stok ' + it.stok + ' → ' + (it.stok - r.qty) : r.jenis === 'KEMBALI' ? 'Stok ' + it.stok + ' → ' + (it.stok + Number(r.qty)) : 'Stok ' + it.stok + ' → ' + (it.stok - r.qty);
-    return '<div class="acc acc-' + r.jenis + '" data-acc="' + r.id + '"><div class="row" style="align-items:flex-start"><div class="grow"><span class="chip ' + (r.jenis === 'KELUAR' ? 'warn' : r.jenis === 'KEMBALI' ? 'blue' : 'bad') + '">' + JN[r.jenis] + '</span>' + (r.cabang ? ' <span class="chip gray">' + esc(cabNm(r.cabang)) + '</span>' : '') +
+    return '<div class="acc acc-' + r.jenis + '" data-acc="' + r.id + '"><div class="row" style="align-items:flex-start"><div class="grow"><span class="chip ' + (r.jenis === 'KELUAR' ? 'warn' : r.jenis === 'KEMBALI' ? 'blue' : 'bad') + '">' + JN[r.jenis] + '</span>' + (r.sumber === 'ajuan' ? ' <span class="chip bad">Ajuan jumlah · khusus Annisa</span>' : '') + (r.cabang ? ' <span class="chip gray">' + esc(cabNm(r.cabang)) + '</span>' : '') +
       '<div class="nm" style="font-size:16px;margin-top:6px">' + esc(r.nama) + ' <span class="mut">× ' + r.qty + '</span></div><div class="meta">' + esc(r.user) + ' (' + esc(r.peran) + ') · ' + fmtT(r.at) + '</div>' +
-      (r.tujuan ? '<div class="small" style="margin-top:4px">📍 ' + esc(r.tujuan) + '</div>' : '') + (r.catatan ? '<div class="small mut">“' + esc(r.catatan) + '”</div>' : '') +
+      (r.tujuan ? '<div class="small" style="margin-top:4px">📍 ' + esc(r.tujuan) + '</div>' : '') + (r.izin ? '<div class="small" style="margin-top:4px">📝 <b>Izin / alasan:</b> ' + esc(r.izin) + '</div>' : '') + (r.catatan ? '<div class="small mut">“' + esc(r.catatan) + '”</div>' : '') +
       '<div class="small" style="margin-top:4px"><b>' + eff + '</b></div></div>' + (r.foto ? '<img class="accFoto" src="' + esc(r.foto) + '" alt="Foto barang" data-zoom="' + esc(r.foto) + '">' : '') + '</div>' +
       (own ? '<div class="small mut" style="margin-top:10px">Permintaan Anda sendiri — menunggu ACC pemberi ACC yang lain.</div>' :
       '<div class="yn"><button class="yes" data-ya="' + r.id + '">✓ YA</button><button class="no" data-no="' + r.id + '">✕ TIDAK</button></div><div class="noBox hide" data-nb="' + r.id + '"><input placeholder="Alasan (opsional), mis. tidak ada jadwal pasien" data-al="' + r.id + '"><button class="bad sm" data-no2="' + r.id + '">Kirim TIDAK</button></div>') + '</div>';
@@ -635,18 +650,42 @@ function vScan(el) {
     roomChips() +
     '<div class="small mut">Langkah 2 dari 2 · arahkan kamera ke QR pada barang</div>' +
     '<button class="scanBtn" id="bScan"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg>Scan QR barang</button>' +
-    '<div class="small mut">Tanpa mengetik — stok langsung berkurang. ACC ' + esc(accNames()) + ' hanya bila stok ≤ ' + S.accBatas + ' atau barang ditandai sulit didapat.</div>' +
+    '<div class="small mut">Scan → pilih jumlah → Ambil. ' + (isOperator() ? (S.ambil && S.ambil.mode === 'langsung' ? 'Aturan Annisa: jumlah boleh langsung.' : 'Aturan Annisa: ambil <b>lebih dari 1</b> harus diajukan dengan alasan dan disetujui Annisa.') + ' ' : '') + 'ACC ' + esc(accNames()) + ' juga diminta bila stok ≤ ' + S.accBatas + ' atau barang sulit didapat.</div>' +
     '<div id="res" style="width:100%;display:flex;justify-content:center"></div></div>' +
     '<h3 class="sec">Ambilan saya hari ini</h3><div class="card list" id="todayList"></div>';
   wireRoomChips(el, () => vScan(el));
-  $('#bScan').onclick = () => openScanner('Scan QR barang yang diambil' + (roomBy(S.room) ? ' · untuk ' + roomBy(S.room).nama : ''), takeItem);
+  $('#bScan').onclick = () => openScanner('Scan QR barang yang diambil' + (roomBy(S.room) ? ' · untuk ' + roomBy(S.room).nama : ''), qr => { setTimeout(() => askQty(qr), 0); });
   showResult();
   const rows = (S.myReqs || []).filter(r => today(r.at));
   $('#todayList').innerHTML = rows.length ? rows.map(reqLine).join('') : '<div class="mut small">Belum ada.</div>';
   wireReqLines(el);
 }
-async function takeItem(qr, qty) {
-  try { lastResult = await call('scanOut', { qr, qty: qty || 1, ruangId: roomBy(S.room) ? S.room : '' }); beep(true); await refresh().catch(() => {}); }
+/** Setelah scan: pilih jumlah. Operator + aturan "Lewat request" + jumlah > 1 → wajib alasan / izin, diajukan ke Annisa. */
+function askQty(qr) {
+  const k = kodeOf(qr), it = itemBy(k);
+  if (!it) return takeItem(qr, 1);
+  const op = isOperator(), mode = it.ambilMode || (S.ambil && S.ambil.mode) || 'request', rg = roomBy(S.room);
+  const md = modal('<div class="row"><div class="grow"><h3 style="margin:0">' + esc(it.nama) + '</h3><div class="meta">' + esc(it.kode) + ' · stok ' + it.stok + ' ' + esc(it.satuan || '') + (rg ? ' · untuk ' + esc(rg.nama) : '') + '</div></div><button class="ghost sm" data-x>Batal</button></div>' +
+    '<label style="margin-top:14px">Jumlah diambil</label><div class="qtyPick"><button class="ghost" id="qM" type="button" aria-label="Kurangi">−</button><input id="qN" type="number" min="1" inputmode="numeric" value="1" aria-label="Jumlah"><button class="ghost" id="qP" type="button" aria-label="Tambah">+</button></div>' +
+    '<div id="qInfo" class="small" style="margin-top:10px"></div>' +
+    '<div id="qIz" class="hide"><label>Alasan / izin pengambilan (wajib)</label><textarea id="qIzT" rows="2" placeholder="mis. 3 pasien tambal gigi di Ruang 2 hari ini"></textarea></div>' +
+    '<button id="qGo" style="width:100%;margin-top:14px"></button>');
+  const n = md.querySelector('#qN'), get = () => Math.max(1, Math.floor(Number(n.value) || 1));
+  const upd = () => { const q = get(), aj = op && q > 1 && mode === 'request';
+    md.querySelector('#qIz').classList.toggle('hide', !aj);
+    md.querySelector('#qInfo').innerHTML = aj ? '⏳ Lebih dari 1 harus <b>diajukan ke Annisa</b> dengan alasan. Stok baru berkurang setelah Annisa menyetujui.' : q > 1 && op ? 'Aturan untuk barang ini: <b>langsung</b>. Stok berkurang ' + q + ', tercatat atas nama Anda.' : '<span class="mut">Stok berkurang ' + q + ' (kecuali barang perlu ACC).</span>';
+    md.querySelector('#qGo').textContent = aj ? '📨 Ajukan ' + q + ' ke Annisa' : '✓ Ambil ' + q; };
+  md.querySelector('#qM').onclick = () => { n.value = Math.max(1, get() - 1); upd(); };
+  md.querySelector('#qP').onclick = () => { n.value = get() + 1; upd(); };
+  n.oninput = upd; upd();
+  md.querySelector('#qGo').onclick = () => {
+    const q = get(), aj = op && q > 1 && mode === 'request', iz = md.querySelector('#qIzT').value.trim();
+    if (aj && iz.length < 3) { toast('Tulis alasan / izin pengambilan dulu', true); md.querySelector('#qIzT').focus(); return; }
+    closeModal(); takeItem(qr, q, aj ? iz : '');
+  };
+}
+async function takeItem(qr, qty, izin) {
+  try { lastResult = await call('scanOut', { qr, qty: qty || 1, izin: izin || '', ruangId: roomBy(S.room) ? S.room : '' }); beep(true); await refresh().catch(() => {}); }
   catch (e) { beep(false); lastResult = { err: e.message }; }
   S.tab = 'scan'; render();
 }
@@ -664,7 +703,7 @@ function showResult() {
       '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="soft sm" id="bMore">+1 lagi barang ini</button><button class="ghost sm" id="bRet">↩ Salah ambil? Kembalikan</button></div></div>';
     $('#bRet').onclick = () => returnModal({ id: r.mutasiId, kode: r.kode, nama: r.nama, qty: r.qty, at: r.at }, 0);
   } else {
-    box.innerHTML = '<div class="result ' + (st === 'MENUNGGU' ? 'wait' : st === 'DISETUJUI' ? '' : 'err') + '"><div class="small mut">' + (st === 'MENUNGGU' ? '⏳ Perlu ACC ' + esc(accNames()) + ' — ' + esc(r.alasanAcc || '') : st === 'DISETUJUI' ? '✓ Disetujui ' + esc(live.oleh) : '✕ ' + (ST[st] || [0, st])[1] + (live.oleh ? ' · ' + esc(live.oleh) : '')) + '</div>' +
+    box.innerHTML = '<div class="result ' + (st === 'MENUNGGU' ? 'wait' : st === 'DISETUJUI' ? '' : 'err') + '"><div class="small mut">' + (st === 'MENUNGGU' ? ((r.ajuan || live.sumber === 'ajuan') ? '⏳ Ajuan jumlah — menunggu persetujuan Annisa' : '⏳ Perlu ACC ' + esc(accNames()) + ' — ' + esc(r.alasanAcc || '')) : st === 'DISETUJUI' ? '✓ Disetujui ' + esc(live.oleh) : '✕ ' + (ST[st] || [0, st])[1] + (live.oleh ? ' · ' + esc(live.oleh) : '')) + '</div>' +
       '<div class="nm" style="font-size:17px;margin-top:4px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · diminta ' + r.qty + ' ' + esc(r.satuan || it.satuan || '') + '</div>' +
       '<div class="big" style="margin:6px 0">' + (st === 'DISETUJUI' ? 'Stok sekarang ' + it.stok : st === 'MENUNGGU' ? 'Stok ' + it.stok + ' → ' + (it.stok - r.qty) + ' setelah ACC' : 'Stok tetap ' + it.stok) + '</div>' +
       (live.alasan ? '<div class="small">Alasan: ' + esc(live.alasan) + ' — kembalikan barang ke rak.</div>' : '') +
@@ -752,14 +791,19 @@ function vKeluar(el) {
     '<div class="grid2"><div><label>Jumlah</label><input id="oQ" type="number" min="1" inputmode="numeric" value="' + esc(f.qty || 1) + '"></div><div><label>Tujuan / keperluan</label><input id="oT" list="tjl" value="' + esc(f.tujuan || '') + '" placeholder="pilih atau ketik"><datalist id="tjl">' + TUJUAN.map(t => '<option value="' + t + '">').join('') + '</datalist></div></div>' +
     '<div class="chips">' + roomsOf(curCab()).map(r => '<button class="' + (f.ruangId === r.id ? 'sm' : 'ghost sm') + '" data-tr="' + r.id + '">' + esc(roomLbl(r)) + '</button>').join('') + TUJUAN.map(t => '<button class="ghost sm" data-tj="' + esc(t) + '">' + esc(t) + '</button>').join('') + '</div>' +
     '<label>Catatan</label><input id="oC" placeholder="mis. untuk pasien a.n. … / no. batch rusak">' +
+    '<div id="oIz" class="hide"><label>Alasan / izin jumlah (wajib · diajukan ke Annisa)</label><input id="oIzT" value="' + esc(f.izin || '') + '" placeholder="mis. stok Ruang 3 habis, untuk 1 minggu"></div>' +
     '<button id="oGo" style="width:100%;margin-top:14px">Simpan barang keluar</button></div>' +
     '<h3 class="sec">Barang keluar terakhir</h3><div class="card list" id="okl"></div>';
   el.querySelectorAll('[data-tj]').forEach(b => b.onclick = () => { $('#oT').value = b.dataset.tj; f.tujuan = b.dataset.tj; f.ruangId = ''; vKeluar(el); });
   el.querySelectorAll('[data-tr]').forEach(b => b.onclick = () => { const r = roomBy(b.dataset.tr); f.ruangId = r.id; f.tujuan = r.nama; vKeluar(el); });
-  $('#oK').onchange = e => f.kode = e.target.value; $('#oQ').oninput = e => f.qty = e.target.value; $('#oT').oninput = e => { f.tujuan = e.target.value; f.ruangId = ''; };
+  const ajK = () => { const it = itemBy($('#oK').value), q = Math.floor(Number($('#oQ').value) || 1); return isOperator() && q > 1 && it && (it.ambilMode || S.ambil.mode) === 'request'; };
+  const updK = () => { const a = ajK(); $('#oIz').classList.toggle('hide', !a); $('#oGo').textContent = a ? '📨 Ajukan ke Annisa' : 'Simpan barang keluar'; };
+  $('#oK').onchange = e => { f.kode = e.target.value; updK(); }; $('#oQ').oninput = e => { f.qty = e.target.value; updK(); }; $('#oT').oninput = e => { f.tujuan = e.target.value; f.ruangId = ''; };
+  $('#oIzT').oninput = e => f.izin = e.target.value; updK();
   $('#oScan2').onclick = () => openScanner('Scan QR barang yang keluar', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal: ' + k, true); f.kode = k; render(); });
   $('#oGo').onclick = async () => {
-    try { const r = await call('outManual', { kode: $('#oK').value, qty: $('#oQ').value, tujuan: $('#oT').value, ruangId: f.ruangId || '', catatan: $('#oC').value }); beep(true); toast(r.langsung ? '✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after : 'Perlu ACC (' + r.alasanAcc + ') — terkirim ke ' + accNames()); S.outForm = {}; await refresh(); }
+    if (ajK() && $('#oIzT').value.trim().length < 3) { toast('Tulis alasan / izin jumlah dulu', true); $('#oIzT').focus(); return; }
+    try { const r = await call('outManual', { kode: $('#oK').value, qty: $('#oQ').value, tujuan: $('#oT').value, ruangId: f.ruangId || '', catatan: $('#oC').value, izin: ajK() ? $('#oIzT').value : '' }); beep(true); toast(r.langsung ? '✓ ' + r.nama + ': stok ' + r.before + ' → ' + r.after : r.ajuan ? '📨 Ajuan ' + r.qty + ' terkirim ke Annisa' : 'Perlu ACC (' + r.alasanAcc + ') — terkirim ke ' + accNames()); S.outForm = {}; await refresh(); }
     catch (e) { beep(false); toast(e.message, true); }
   };
   const rows = S.recent.filter(m => m.jenis === 'KELUAR').slice(0, 12);
@@ -810,6 +854,7 @@ function dlB64(r) { if (!r || !r.b64) return toast('Unduh Excel tersedia di apli
 async function dlCall(btn, fn, data) { const t = btn.textContent; btn.disabled = true; btn.textContent = 'Menyiapkan…'; try { dlB64(await call(fn, data)); } catch (e) { toast(e.message, true); } btn.disabled = false; btn.textContent = t; }
 function perInfo(p) {
   let m;
+  if ((m = /^(\d{4})-W(\d{2})$/.exec(p))) return { jenis: 'MINGGU', tahun: +m[1], months: [], judul: 'Minggu ' + (+m[2]) + ' ' + m[1] };
   if ((m = /^(\d{4})-(\d{2})$/.exec(p))) return { jenis: 'BULAN', tahun: +m[1], months: [+m[2]], judul: BLN_L[+m[2] - 1] + ' ' + m[1] };
   if ((m = /^(\d{4})-Q([1-4])$/.exec(p))) { const q = +m[2]; return { jenis: 'KUARTAL', tahun: +m[1], months: [q * 3 - 2, q * 3 - 1, q * 3], judul: 'Kuartal ' + q + ' ' + m[1] }; }
   return { jenis: 'TAHUN', tahun: +p, months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], judul: 'Tahun ' + p };
@@ -937,7 +982,59 @@ function opRiwayat(el) {
 }
 
 /* Rekap: VIEW untuk semua (termasuk Mamat). Unduh: Rizki/PJ/Annisa kapan saja; Mamat setelah PUBLISH. */
+/* Rekap & laporan: Per minggu (Senin–Minggu) atau Bulan · kuartal · tahun. */
 async function opRekap(el) {
+  if (OP.per && /-W\d\d$/.test(OP.per)) OP.mode = 'minggu';
+  else if (OP.per && !OP.mode) OP.mode = 'bulan';
+  OP.mode = OP.mode || 'minggu';
+  el.innerHTML = '<div class="seg" id="rkMode" style="margin-bottom:12px">' + [['minggu', '📅 Per minggu'], ['bulan', '🗓 Bulan · kuartal · tahun']].map(x => '<button data-rkm="' + x[0] + '" class="' + (OP.mode === x[0] ? 'on' : '') + '">' + x[1] + '</button>').join('') + '</div><div id="rkBody"></div>';
+  el.querySelectorAll('[data-rkm]').forEach(b => b.onclick = () => { if (OP.mode === b.dataset.rkm) return; OP.mode = b.dataset.rkm; OP.per = null; opRekap(el); });
+  return OP.mode === 'minggu' ? opRekapW(el.querySelector('#rkBody')) : opRekapM(el.querySelector('#rkBody'));
+}
+/* Rekap MINGGUAN: pilih minggu, lihat stock awal/akhir per barang, hitung fisik minggu itu, unduh / publish laporan minggu. */
+async function opRekapW(el) {
+  el.innerHTML = '<div class="card mut">Memuat rekap mingguan…</div>';
+  const want = OP.per && /-W\d\d$/.test(OP.per) ? OP.per : '';
+  let R; try { R = await call('rekapMinggu', { tahun: OP.tahunW || '', minggu: want }); } catch (e) { el.innerHTML = '<div class="card">' + esc(e.message) + '</div>'; return; }
+  if (!R.weeks.length) { el.innerHTML = '<div class="card mut">Belum ada minggu berjalan di tahun ' + R.tahun + '.</div>'; return; }
+  OP.per = R.minggu; OP.tahunW = R.tahun;
+  const cab = curCab(), inCab = c => cab === 'SEMUA' || c === cab;
+  const W = R.weeks, wi = W.findIndex(w => w.key === OP.per), wk = W[wi];
+  const tot = w => Object.keys(w.tot).filter(inCab).reduce((a, c) => a.map((v, i) => v + w.tot[c][i]), [0, 0, 0, 0, 0]);
+  const rows = R.items.filter(it => inCab(it.cabang)).map(it => ({ kode: it.kode, nama: it.nama, satuan: it.satuan, awal: it.s[0], inn: it.s[1], out: it.s[2], sel: it.s[3], akhir: it.s[4], pakai: it.s[5], op: it.s[6] }));
+  const T = rows.reduce((t, r) => { t.inn += r.inn; t.out += r.out; t.pakai += r.pakai; if (r.sel) t.selN++; t.sel += r.sel; t.op += r.op; return t; }, { inn: 0, out: 0, pakai: 0, sel: 0, selN: 0, op: 0 });
+  const hit = wk.hitung.filter(h => inCab(h.cabang));
+  const L = R.laporan[OP.per] || {}, pub = L.status === 'PUBLISH', dl = can('rekapDl') || pub;
+  let h = '<div class="card"><div class="row" style="flex-wrap:wrap"><select id="rwY" style="width:auto">' + R.tahunList.map(y => '<option' + (y === R.tahun ? ' selected' : '') + '>' + y + '</option>').join('') + '</select>' +
+    '<select id="rwP" style="width:auto;min-width:240px">' + W.slice().reverse().map(w => '<option value="' + w.key + '"' + (w.key === OP.per ? ' selected' : '') + '>Minggu ' + w.no + ' · ' + esc(w.label) + (w.berjalan ? ' · berjalan' : '') + '</option>').join('') + '</select><div class="grow"></div>' +
+    (pub ? '<span class="chip">✓ PUBLISH · ' + esc(L.publishBy || '') + '</span>' : '<span class="chip warn">Belum di-PUBLISH</span>') + (L.requestAt && !pub ? ' <span class="chip blue">Diminta ' + esc(L.requestBy) + '</span>' : '') + '</div>' +
+    '<div class="small" style="margin-top:10px">' + (hit.length ? '🧮 Hitung fisik minggu ini: ' + hit.map(x => '<b>' + esc(x.user) + '</b> ' + fmtT(x.at) + ' · ' + x.jumlah + ' barang · ' + x.beda + ' selisih · ' + esc((HST[x.status] || [0, x.status])[1])).join('<br>') : '<span class="chip warn">Belum ada hitung fisik minggu ini</span> <span class="mut">Stock opname dilakukan tiap minggu: PJ Gudang menghitung → Annisa mencocokkan.</span>') + '</div>' +
+    '<div class="row" style="flex-wrap:wrap;margin-top:10px;gap:8px">' +
+    (dl ? '<button class="ghost sm" id="rwXl">⬇ Excel minggu ini</button>' : '<button class="soft sm" id="rwReq"' + (L.requestAt ? ' disabled' : '') + '>' + (L.requestAt ? '📨 Sudah diminta ' + fmtT(L.requestAt) : '📨 Request PUBLISH ke Annisa') + '</button>') +
+    (can('publish') ? '<div class="grow"></div>' + (pub ? '<button class="ghost sm" id="rwUnpub">Batalkan publish</button>' : '<button class="sm" id="rwPub">✅ Boleh di-PUBLISH</button>') + '<button class="ghost sm" id="rwGen">Buat laporan minggu ini sekarang</button>' : '') + '</div>' +
+    (can('publish') && L.file ? '<div class="small mut" style="margin-top:8px">Arsip Drive: <a href="' + esc(L.file) + '" target="_blank">laporan minggu</a>' + (L.dibuat ? ' · ' + fmtT(L.dibuat) : '') + '</div>' : '') +
+    '<div class="small mut" style="margin-top:6px">Minggu = Senin 00:00 – Minggu 24:00 WIB. Laporan mingguan dibuat otomatis tiap Minggu malam. Excel berisi stock awal/akhir, pemakaian per hari, catatan opname, ajuan jumlah, dan aturan pengambilan.</div></div>';
+  h += '<div class="tiles" style="margin-top:12px"><div class="tile"><b>' + T.pakai + '</b><span>Pemakaian minggu ' + wk.no + '</span></div><div class="tile"><b>' + T.inn + '</b><span>IN (masuk + kembali)</span></div><div class="tile"><b>' + T.out + '</b><span>OUT (keluar)</span></div><div class="tile' + (T.selN ? ' tRed' : '') + '"><b>' + sgn(T.sel) + '</b><span>Selisih opname · ' + T.selN + ' barang</span></div></div>';
+  h += '<div class="card chartCard"><canvas id="rwC"></canvas></div>';
+  h += '<div class="card" style="margin-top:12px"><div class="row" style="flex-wrap:wrap"><div class="grow"><h3 style="margin:0">Stock opname · Minggu ' + wk.no + ' (' + esc(wk.label) + ')</h3><div class="small mut">Stock awal = Senin pagi · Stock akhir = Minggu malam' + (wk.berjalan ? ' (minggu berjalan: angka sampai sekarang)' : '') + '</div></div><input id="rwF" placeholder="Saring barang…" style="width:auto;max-width:200px"></div>' +
+    '<div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Barang</th><th>Stock awal</th><th>IN</th><th>OUT</th><th>Stock akhir</th><th>Selisih</th><th>Pemakaian</th></tr></thead><tbody>' +
+    rows.map(r => '<tr data-n="' + esc(r.nama.toLowerCase()) + '"><td><div class="nm" style="font-size:14px">' + esc(r.nama) + '</div><div class="meta">' + esc(r.kode) + ' · ' + esc(r.satuan || '') + '</div></td><td>' + r.awal + '</td><td>' + r.inn + '</td><td>' + r.out + '</td><td><b>' + r.akhir + '</b></td><td>' +
+      (r.sel ? '<span class="chip ' + (r.sel < 0 ? 'bad' : 'blue') + '">' + sgn(r.sel) + '</span>' : r.op ? '<span class="chip">cocok</span>' : '<span class="mut">–</span>') + '</td><td>' + r.pakai + '</td></tr>').join('') +
+    '<tr><td><b>Total</b></td><td></td><td><b>' + T.inn + '</b></td><td><b>' + T.out + '</b></td><td></td><td><b>' + sgn(T.sel) + '</b></td><td><b>' + T.pakai + '</b></td></tr></tbody></table></div></div>';
+  el.innerHTML = h;
+  const last = W.slice(Math.max(0, wi - 11), wi + 1);
+  colChart($('#rwC'), last.map(w => { const t = tot(w); return { label: 'M' + w.no, value: t[0], hi: w.key === OP.per, tip: 'Minggu ' + w.no + ' · ' + w.label + ': ' + t[0] + ' unit terpakai · selisih opname ' + sgn(t[3]) }; }),
+    { title: 'Pemakaian per minggu · ' + last.length + ' minggu terakhir', sub: (cab === 'SEMUA' ? 'Hangtuah & Pluit' : 'Gudang ' + cabNm(cab)) + ' · unit keluar − kembali · disorot: minggu ' + wk.no });
+  $('#rwY').onchange = e => { OP.tahunW = Number(e.target.value); OP.per = null; opRekapW(el); };
+  $('#rwP').onchange = e => { OP.per = e.target.value; opRekapW(el); };
+  $('#rwF').oninput = e => { const q = e.target.value.toLowerCase(); el.querySelectorAll('tr[data-n]').forEach(tr => tr.style.display = !q || tr.dataset.n.includes(q) ? '' : 'none'); };
+  if ($('#rwXl')) $('#rwXl').onclick = () => dlCall($('#rwXl'), 'exportRekap', { periode: OP.per, kind: 'akhir' });
+  if ($('#rwReq')) $('#rwReq').onclick = async () => { try { await call('requestPublish', { periode: OP.per }); toast('📨 Permintaan PUBLISH dikirim ke Annisa'); opRekapW(el); } catch (e) { toast(e.message, true); } };
+  if ($('#rwPub')) $('#rwPub').onclick = async () => { try { await call('setPublish', { periode: OP.per, publish: true }); toast('✓ Minggu ' + wk.no + ' boleh di-PUBLISH · Mamat diberi tahu'); await refresh(); } catch (e) { toast(e.message, true); } };
+  if ($('#rwUnpub')) $('#rwUnpub').onclick = async () => { try { await call('setPublish', { periode: OP.per, publish: false }); toast('Publish dibatalkan'); await refresh(); } catch (e) { toast(e.message, true); } };
+  if ($('#rwGen')) $('#rwGen').onclick = async () => { const b = $('#rwGen'); b.disabled = true; b.textContent = 'Membuat…'; try { const r = await call('buatLaporan', { periode: OP.per, kind: 'akhir' }); toast('✓ Laporan ' + r.judul + ' tersimpan di Drive'); opRekapW(el); } catch (e) { toast(e.message, true); b.disabled = false; b.textContent = 'Buat laporan minggu ini sekarang'; } };
+}
+async function opRekapM(el) {
   el.innerHTML = '<div class="card mut">Memuat rekap stock opname…</div>';
   let R; try { R = await call('rekap', { tahun: OP.tahun }); R.items = R.items.filter(it => curCab() === 'SEMUA' || it.cabang === curCab()); } catch (e) { el.innerHTML = '<div class="card">' + esc(e.message) + '</div>'; return; }
   const ba = R.bulanAktif;
@@ -965,7 +1062,7 @@ async function opRekap(el) {
       '<button class="ghost sm" id="rkGen">Buat laporan ' + (P.jenis === 'BULAN' ? 'akhir bulan' : '') + ' sekarang</button>' : '') + '</div>' +
     (!dl ? '<div class="small mut" style="margin-top:8px">Anda bisa <b>VIEW</b> semua angka di bawah. Unduh Excel & grafik terbuka setelah Annisa menekan <b>Boleh di-PUBLISH</b>.</div>' : '') +
     (can('publish') && (L.fileAwal || L.fileAkhir || L.file) ? '<div class="small mut" style="margin-top:8px">Arsip Drive: ' + [['fileAwal', 'awal bulan'], ['fileAkhir', 'akhir bulan'], ['file', 'laporan']].filter(x => L[x[0]]).map(x => '<a href="' + esc(L[x[0]]) + '" target="_blank">' + x[1] + '</a>').join(' · ') + (L.dibuat ? ' · dibuat ' + fmtT(L.dibuat) : '') + '</div>' : '') +
-    '<div class="small mut" style="margin-top:6px">Laporan otomatis: tanggal 1 pagi (stock awal) dan hari terakhir bulan malam (stock akhir), plus kuartal & tahunan. Annisa diberi tahu untuk cek & publish.</div></div>';
+    '<div class="small mut" style="margin-top:6px">Laporan otomatis: tanggal 1 pagi (stock awal), hari terakhir bulan malam (stock akhir), plus kuartal & tahunan. Excel bulan / kuartal / tahun juga berisi sheet <b>Per minggu</b>, <b>Catatan opname</b>, <b>Ajuan jumlah</b>, dan <b>Aturan pengambilan</b>.</div></div>';
   h += '<div class="tiles" style="margin-top:12px"><div class="tile"><b>' + T.pakai + '</b><span>Pemakaian ' + esc(P.judul) + '</span></div><div class="tile"><b>' + T.inn + '</b><span>IN (masuk + kembali)</span></div><div class="tile"><b>' + T.out + '</b><span>OUT (keluar)</span></div><div class="tile' + (T.selN ? ' tRed' : '') + '"><b>' + T.selN + '</b><span>Barang selisih opname (' + sgn(T.sel) + ')</span></div></div>';
   h += '<div class="card chartCard"><canvas id="rkC"></canvas></div>';
   if (P.jenis === 'BULAN') h += '<div class="card chartCard" style="margin-top:12px"><canvas id="rkC2"></canvas><div class="small mut" id="rkC2n"></div></div>';
@@ -980,16 +1077,16 @@ async function opRekap(el) {
   if ($('#rkC2')) { const top = rows.filter(r => r.pakai > 0).sort((a, b) => b.pakai - a.pakai).slice(0, 10);
     barChart($('#rkC2'), top.map(r => ({ label: r.nama, value: r.pakai, text: r.pakai + ' ' + (r.satuan || ''), tip: r.nama + '\nAwal ' + r.awal + ' · IN ' + r.inn + ' · OUT ' + r.out + ' · akhir ' + r.akhir })), { title: 'Pemakaian terbanyak · ' + P.judul, sub: curCab() === 'SEMUA' ? 'Hangtuah & Pluit' : 'Gudang ' + cabNm(curCab()), unit: 'unit' });
     $('#rkC2n').textContent = top.length ? '' : 'Belum ada pemakaian di bulan ini.'; }
-  $('#rkY').onchange = e => { OP.tahun = Number(e.target.value); OP.per = null; opRekap(el); };
-  $('#rkP').onchange = e => { OP.per = e.target.value; opRekap(el); };
+  $('#rkY').onchange = e => { OP.tahun = Number(e.target.value); OP.per = null; opRekapM(el); };
+  $('#rkP').onchange = e => { OP.per = e.target.value; opRekapM(el); };
   $('#rkF').oninput = e => { const q = e.target.value.toLowerCase(); el.querySelectorAll('tr[data-n]').forEach(tr => tr.style.display = !q || tr.dataset.n.includes(q) ? '' : 'none'); };
-  el.querySelectorAll('[data-goper]').forEach(a => a.onclick = ev => { ev.preventDefault(); OP.per = a.dataset.goper; OP.tahun = perInfo(OP.per).tahun; opRekap(el); });
+  el.querySelectorAll('[data-goper]').forEach(a => a.onclick = ev => { ev.preventDefault(); OP.per = a.dataset.goper; OP.tahun = perInfo(OP.per).tahun; OP.mode = /-W\d\d$/.test(OP.per) ? 'minggu' : 'bulan'; render(); });
   el.querySelectorAll('[data-xl]').forEach(b => b.onclick = () => dlCall(b, 'exportRekap', { periode: OP.per, kind: b.dataset.xl }));
   if ($('#rkPng')) $('#rkPng').onclick = () => { const a = document.createElement('a'); a.href = $('#rkC').toDataURL('image/png'); a.download = 'IDC-Gudang-Pemakaian-' + OP.per + '.png'; a.click(); };
-  if ($('#rkReq')) $('#rkReq').onclick = async () => { try { await call('requestPublish', { periode: OP.per }); toast('📨 Permintaan PUBLISH dikirim ke Annisa'); opRekap(el); } catch (e) { toast(e.message, true); } };
+  if ($('#rkReq')) $('#rkReq').onclick = async () => { try { await call('requestPublish', { periode: OP.per }); toast('📨 Permintaan PUBLISH dikirim ke Annisa'); opRekapM(el); } catch (e) { toast(e.message, true); } };
   if ($('#rkPub')) $('#rkPub').onclick = async () => { try { await call('setPublish', { periode: OP.per, publish: true }); toast('✓ ' + P.judul + ' boleh di-PUBLISH · Mamat diberi tahu'); await refresh(); } catch (e) { toast(e.message, true); } };
   if ($('#rkUnpub')) $('#rkUnpub').onclick = async () => { try { await call('setPublish', { periode: OP.per, publish: false }); toast('Publish dibatalkan'); await refresh(); } catch (e) { toast(e.message, true); } };
-  if ($('#rkGen')) $('#rkGen').onclick = async () => { const b = $('#rkGen'); b.disabled = true; b.textContent = 'Membuat…'; try { const r = await call('buatLaporan', { periode: OP.per, kind: 'akhir' }); toast('✓ Laporan ' + r.judul + ' tersimpan di Drive'); opRekap(el); } catch (e) { toast(e.message, true); b.disabled = false; } };
+  if ($('#rkGen')) $('#rkGen').onclick = async () => { const b = $('#rkGen'); b.disabled = true; b.textContent = 'Membuat…'; try { const r = await call('buatLaporan', { periode: OP.per, kind: 'akhir' }); toast('✓ Laporan ' + r.judul + ' tersimpan di Drive'); opRekapM(el); } catch (e) { toast(e.message, true); b.disabled = false; } };
 }
 /** Grafik kolom vertikal (12 bulan) — judul, periode & total kuartal ikut tergambar agar PNG bisa dibaca sendiri. */
 function colChart(c, rows, o) {
@@ -1182,12 +1279,38 @@ function vSet(el) {
       '<button id="sGo2" style="width:100%;margin-top:12px">Hubungkan & tarik data</button>' : '') +
     '<button class="ghost" id="sNow" style="width:100%;margin-top:8px"' + (s.masterUrl ? '' : ' disabled') + '>⇄ Sinkron sekarang</button></div>' +
     (can('users') ? '<div class="card" style="margin-top:12px"><h3 style="margin:0 0 4px">WhatsApp ke Annisa & Mamat (opsional)</h3><div class="small mut">Kirim pesan WA otomatis setiap ada permintaan ACC baru. Perlu akun gateway Fonnte (berbayar). Kosongkan untuk mematikan.</div><label>Token Fonnte</label><input id="wT" placeholder="' + (s.waOn ? '•••••• (aktif)' : 'belum diisi') + '"><button class="ghost" id="wGo" style="width:100%;margin-top:10px">Simpan</button></div>' : '');
+  if (can('aturan')) aturanCard(el);
   if (can('edit')) accRulesCard(el);
   if ($('#sGo2')) $('#sGo2').onclick = async () => { $('#sGo2').disabled = true; $('#sGo2').textContent = 'Menghubungkan…'; try { const r = await call('setMaster', { url: $('#sU').value, tab: $('#sT').value, tabPluit: $('#sTP').value, tabRuang: $('#sTR').value }); toast('✓ Tersambung · ' + r.baru + ' barang baru, ' + r.ubah + ' diperbarui' + (r.disembunyikan ? ', ' + r.disembunyikan + ' barang contoh disembunyikan' : '')); await refresh(); } catch (e) { toast(e.message, true); render(); } };
   $('#sNow').onclick = async () => { try { const r = await call('syncNow'); toast('⇄ ' + (r.skip ? r.pesan : r.ubah + ' diperbarui dari Sheet · ' + r.kirim + ' dikirim ke Sheet · ' + r.baru + ' baru')); await refresh(); } catch (e) { toast(e.message, true); } };
   if ($('#wGo')) $('#wGo').onclick = async () => { try { const r = await call('saveWa', { token: $('#wT').value }); toast(r.waOn ? 'WA aktif' : 'WA dimatikan'); await refresh(); } catch (e) { toast(e.message, true); } };
 }
 
+/** Annisa: aturan jumlah pengambilan untuk operator (umum + per barang). Disimpan → semua operator diberi tahu. */
+function aturanCard(el) {
+  const box = document.createElement('div'); box.className = 'card'; box.id = 'aturanCard'; box.style.marginTop = '12px';
+  const A = S.ambil || { mode: 'request', log: [] }, ch = {}; let mode = A.mode;
+  const all = (S.allItems && S.allItems.length ? S.allItems : S.items);
+  box.innerHTML = '<h3 style="margin:0 0 4px">Aturan jumlah pengambilan</h3><div class="small mut">Untuk operator (Perawat &amp; PJ Gudang). Setelah scan mereka memilih jumlah. Annisa, Mamat, dan Finance tidak terkena aturan ini. Saat disimpan, semua operator mendapat pemberitahuan di aplikasi (dan WhatsApp / email bila tersedia).</div>' +
+    '<div class="seg" id="amSeg" style="margin-top:12px"><button data-am="request">📨 Lewat request</button><button data-am="langsung">⚡ Langsung</button></div>' +
+    '<div class="small" id="amTxt" style="margin-top:8px"></div>' +
+    '<label style="margin-top:12px">Pengecualian per barang</label><input id="amQ" placeholder="Cari barang…"><div class="accRules" id="amL" style="max-height:300px;overflow:auto"></div>' +
+    '<label>Pesan untuk operator (opsional)</label><input id="amC" placeholder="mis. mulai Senin, ambil lebih dari 1 wajib alasan">' +
+    '<button id="amGo" style="width:100%;margin-top:12px">Simpan &amp; beri tahu semua operator</button>' +
+    (A.log && A.log.length ? '<div class="small mut" style="margin-top:12px"><b>Riwayat aturan</b> (masuk laporan akhir):<br>' + A.log.slice(0, 5).map(e => fmtT(e.at) + ' · ' + esc(e.oleh) + ' · ' + AMB[e.mode] + (e.catatan ? ' · “' + esc(e.catatan) + '”' : '')).join('<br>') + '</div>' : '');
+  el.appendChild(box);
+  const drawSeg = () => { box.querySelectorAll('[data-am]').forEach(b => b.classList.toggle('on', b.dataset.am === mode));
+    box.querySelector('#amTxt').innerHTML = mode === 'request' ? '<b>Lewat request:</b> ambil 1 tetap langsung. Ambil <b>lebih dari 1</b> → operator wajib menulis alasan / izin → masuk ACC Annisa → stok berkurang setelah disetujui. Semua ajuan tercatat di laporan.' : '<b>Langsung:</b> operator boleh mengisi jumlah sendiri; stok langsung berkurang dan tercatat atas nama operator.'; draw(box.querySelector('#amQ').value.toLowerCase()); };
+  const draw = q => { box.querySelector('#amL').innerHTML = all.filter(i => !q || i.nama.toLowerCase().includes(q)).sort((a, b) => (!!(ch[b.kode] !== undefined ? ch[b.kode] : b.modeAmbil) - !!(ch[a.kode] !== undefined ? ch[a.kode] : a.modeAmbil)) || a.nama.localeCompare(b.nama)).slice(0, 150).map(i => { const v = ch[i.kode] !== undefined ? ch[i.kode] : (i.modeAmbil || '');
+    return '<div class="li"><div class="grow"><span class="nm" style="font-size:14px">' + esc(i.nama) + '</span> <span class="meta">' + esc(cabNm(i.cabang)) + ' · stok ' + i.stok + '</span></div><select data-amk="' + esc(i.kode) + '" style="width:auto"><option value=""' + (!v ? ' selected' : '') + '>Ikut aturan umum (' + AMB[mode] + ')</option><option value="request"' + (v === 'request' ? ' selected' : '') + '>Lewat request</option><option value="langsung"' + (v === 'langsung' ? ' selected' : '') + '>Langsung</option></select></div>'; }).join('');
+    box.querySelectorAll('[data-amk]').forEach(x => x.onchange = () => { ch[x.dataset.amk] = x.value; }); };
+  box.querySelectorAll('[data-am]').forEach(b => b.onclick = () => { mode = b.dataset.am; drawSeg(); });
+  box.querySelector('#amQ').oninput = e => draw(e.target.value.toLowerCase());
+  drawSeg();
+  box.querySelector('#amGo').onclick = async () => { const g = box.querySelector('#amGo'); g.disabled = true;
+    try { const r = await call('setAturanAmbil', { mode, items: ch, catatan: box.querySelector('#amC').value }); toast('✓ Aturan disimpan (' + AMB[r.mode] + ') · ' + r.operator + ' operator diberi tahu'); await refresh(); }
+    catch (e) { toast(e.message, true); g.disabled = false; } };
+}
 function accRulesCard(el) {
   const box = document.createElement('div'); box.className = 'card'; box.style.marginTop = '12px';
   const marked = S.items.filter(i => i.perluAcc).length;
@@ -1323,8 +1446,8 @@ function openScanner(title, onCode) {
 }
 
 /* ================= RAPID STOCK · Tentang & tema (crafted by STV) ================= */
-const RP_VERSI = 'v1.3';
-const RP_CATATAN = [['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi. Stock opname → Riwayat opname: Batalkan opname dengan alasan wajib (tetap tercatat).'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
+const RP_VERSI = 'v1.4';
+const RP_CATATAN = [['v1.4', 'Okt 2026', 'Stock opname per minggu (Senin–Minggu) + ekstrak per minggu / bulan / kuartal / tahun. Pilih jumlah setelah scan; aturan Annisa: Langsung atau Lewat request (ajuan > 1 wajib alasan, disetujui Annisa, tercatat di laporan). Operator diberi tahu setiap aturan berubah.'], ['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi. Stock opname → Riwayat opname: Batalkan opname dengan alasan wajib (tetap tercatat).'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
 const RP_HURUF = [['R', 'Reliable', 'Andal', 'Stok di aplikasi sama dengan di rak'], ['A', 'Actual', 'Terkini', 'Semua cabang melihat stok saat ini'], ['P', 'Precise', 'Presisi', 'Tepat barang, jumlah, dan ruangan'],
   ['I', 'Intuitive', 'Mudah', 'Pindai wajah, pindai QR, selesai'], ['D', 'Detectable', 'Terlacak', 'Setiap ambil, masuk, dan opname ada jejaknya']];
 const RP_STV = [['S', 'Standard', 'Satu cara kerja', 'Pindai wajah lalu QR untuk setiap pengambilan; aturan ACC dan batas restock yang sama di Hangtuah dan Pluit.'],
