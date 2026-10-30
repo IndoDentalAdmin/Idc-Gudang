@@ -415,14 +415,49 @@ let pollT = null;
 const can = k => !!(S.me && S.me.can && S.me.can.indexOf(k) >= 0);
 const isOperator = () => !!(S.me && ['Perawat', 'PJ Gudang'].indexOf(S.me.peran) >= 0);
 const AMB = { request: 'Lewat request', langsung: 'Langsung' };
+/* ---- Draf hitung opname: tersimpan otomatis di HP ini + server, supaya refresh / keluar / ganti HP tetap bisa lanjut ---- */
+let draftT = null;
+const DK = () => 'rapid-opname-' + (S.me ? S.me.id : '');
+const canHitung = () => can('hitung') || can('opname');
+const draftN = c => Object.keys(c || {}).filter(k => c[k] !== '' && c[k] !== null && c[k] !== undefined).length;
+function draftSave(now) {
+  if (!S.me || !canHitung()) return;
+  const d = { counts: S.opCounts, catatan: S.opNote || '', cab: curCab(), at: Date.now() }, has = draftN(d.counts) || d.catatan;
+  try { if (has) localStorage.setItem(DK(), JSON.stringify(d)); else localStorage.removeItem(DK()); } catch (e) {}
+  S.draftAt = has ? d.at : 0; S.draftSync = 'menyimpan';
+  clearTimeout(draftT);
+  const send = () => call('saveDraft', { draft: has ? d : null }).then(() => { S.draftSync = 'ok'; draftMark(); }).catch(() => { S.draftSync = 'lokal'; draftMark(); });
+  if (now) send(); else draftT = setTimeout(send, 2500);
+  draftMark();
+}
+function draftClear() { S.opCounts = {}; S.opNote = ''; S.draftAt = 0; clearTimeout(draftT); try { localStorage.removeItem(DK()); } catch (e) {} call('saveDraft', { draft: null }).catch(() => {}); }
+function draftRestore(server) {
+  if (!S.me || !canHitung() || draftN(S.opCounts)) return;
+  let loc = null; try { loc = JSON.parse(localStorage.getItem(DK()) || 'null'); } catch (e) {}
+  const d = [loc, server].filter(x => x && (draftN(x.counts) || x.catatan)).sort((a, b) => (b.at || 0) - (a.at || 0))[0];
+  if (!d) return;
+  S.opCounts = {}; Object.keys(d.counts).forEach(k => S.opCounts[k] = String(d.counts[k])); S.opNote = d.catatan || ''; S.draftAt = d.at || Date.now(); S.draftSync = 'ok';
+}
+function draftMark() { const el = document.getElementById('dSt'); if (!el) return;
+  el.innerHTML = S.draftAt ? (S.draftSync === 'lokal' ? '💾 Tersimpan di HP ini' : S.draftSync === 'menyimpan' ? '💾 Menyimpan…' : '✓ Tersimpan otomatis') + ' · ' + fmtT(new Date(S.draftAt).toISOString()) + ' — aman walau halaman di-refresh atau keluar' : 'Hitungan tersimpan otomatis saat Anda mengetik.'; }
+function draftBanner() {
+  if (!S.me || !canHitung() || !S.draftAt || S.tab === 'opname') return '';
+  const n = draftN(S.opCounts);
+  return '<div class="ambilNote" role="status"><div style="font-size:22px">📝</div><div class="grow"><b>Hitungan opname Anda belum dikirim</b><div class="small">' + n + ' barang sudah diisi · terakhir ' + fmtT(new Date(S.draftAt).toISOString()) + '. Lanjutkan dari yang terakhir.</div></div>' +
+    '<button class="sm" id="dGo">Lanjutkan</button><button class="ghost sm" id="dDel">Buang</button></div>';
+}
 async function enter(r) {
+  if (!S.me || !r.user || S.me.id !== r.user.id) { S.opCounts = {}; S.opNote = ''; S.draftAt = 0; }
   S.token = r.token; S.me = r.user;
   try { sessionStorage.setItem('idcg', S.token); } catch (e) {}
   $('#gate').classList.add('hide'); $('#app').classList.remove('hide');
   $('#whoName').textContent = S.me.nama; $('#whoRole').textContent = (S.me.jabatan || S.me.peran) + (S.me.kuasa ? ' · pemberi ACC' : '') + (r.cara === 'wajah' ? ' · wajah ✓' : '');
   apply(await call('bootstrap'), true);
   $('#whoRole').textContent += ' · ' + (S.me.cabang === 'SEMUA' ? 'semua cabang' : 'Gudang ' + cabNm(S.me.cabang));
-  S.tab = r.mustEnroll ? 'self' : 'home';
+  let last = null; try { last = JSON.parse(sessionStorage.getItem('idcg-tab') || 'null'); } catch (e) {}
+  draftRestore(S.draftServer);
+  S.tab = r.mustEnroll ? 'self' : (r.cara === 'sesi' && last && last.tab) ? last.tab : 'home';
+  if (r.cara === 'sesi' && last && last.sub) OP.sub = last.sub;
   render();
   if (!r.mustEnroll) restockPopup(true);
   clearInterval(pollT); pollT = setInterval(poll, POLL_MS);
@@ -433,7 +468,7 @@ function apply(d, first) {
   const oldPend = new Set((S.pending || []).map(p => p.id)), oldMine = {}; (S.myReqs || []).forEach(r => oldMine[r.id] = r.status);
   const oldH = new Set((S.hitung || []).map(h => h.id)), oldMyH = {}; (S.myHitung || []).forEach(h => oldMyH[h.id] = h.status), oldLR = new Set((S.lapReq || []).map(l => l.periode + l.requestAt));
   S.allItems = d.items; S.restockAll = d.restock || []; S.ruang = d.ruang || []; S.cabangs = d.cabangs || []; filterCab(); S.recent = d.recent || []; S.users = d.users || []; S.ver = d.ver;  S.pending = d.pending || []; S.myReqs = d.myReqs || [];
-  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || []; S.opnames = d.opnames || []; S.ambil = d.ambil || { mode: 'request', last: null, log: [] };
+  S.hitung = d.hitung || []; S.myHitung = d.myHitung || []; S.lapReq = d.lapReq || []; S.opnames = d.opnames || []; S.draftServer = d.draftHitung || null; S.ambil = d.ambil || { mode: 'request', last: null, log: [] };
   S.settings = d.settings || null; S.approvers = d.approvers || []; S.alertQty = d.alertQty || 3; S.accBatas = d.accBatas === undefined ? 5 : d.accBatas;
   if (d.me) S.me = Object.assign(S.me, d.me);
   S.changed = first ? [] : S.items.filter(i => old[i.kode] !== undefined && old[i.kode] !== i.stok).map(i => i.kode);
@@ -472,7 +507,8 @@ async function poll() {
   catch (e) { $('#live').classList.add('off'); $('#liveTxt').textContent = 'Offline'; if (/Sesi/.test(e.message)) logout(); }
 }
 async function refresh() { apply(await call('bootstrap')); render(); }
-function logout() { S.token = null; S.me = null; clearInterval(pollT); try { sessionStorage.removeItem('idcg'); } catch (e) {} closeModal(); $('#app').classList.add('hide'); $('#gate').classList.remove('hide'); resetGate(); }
+function logout() { if (S.me && canHitung() && (draftN(S.opCounts) || S.opNote)) { clearTimeout(draftT); call('saveDraft', { draft: { counts: S.opCounts, catatan: S.opNote || '', cab: curCab(), at: S.draftAt || Date.now() } }).catch(() => {}); }
+  S.opCounts = {}; S.opNote = ''; S.draftAt = 0; S.token = null; S.me = null; clearInterval(pollT); try { sessionStorage.removeItem('idcg'); } catch (e) {} closeModal(); $('#app').classList.add('hide'); $('#gate').classList.remove('hide'); resetGate(); }
 $('#logout').onclick = logout;
 document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
 
@@ -520,7 +556,10 @@ function render() {
   $('#tabs').innerHTML = tabsFor().map(t => '<button data-t="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>').join('');
   $('#tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; render(); });
   const V = { home: vHome, acc: vAcc, scan: vScan, keluar: vKeluar, stok: vStok, mine: vMine, masuk: vMasuk, opname: vOpname, ruang: vRuang, barang: vBarang, laporan: vLaporan, users: vUsers, set: vSet, self: vSelf }[S.tab] || vHome;
-  $('#view').innerHTML = cabBar() + ambilBanner() + restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  $('#view').innerHTML = cabBar() + ambilBanner() + draftBanner() + restockBanner(); V($('#view').appendChild(document.createElement('div')));
+  try { sessionStorage.setItem('idcg-tab', JSON.stringify({ tab: S.tab, sub: OP.sub, cab: S.cab })); } catch (e) {}
+  if ($('#dGo')) $('#dGo').onclick = () => { S.tab = 'opname'; OP.sub = 'hitung'; render(); window.scrollTo(0, 0); };
+  if ($('#dDel')) { let arm = 0; $('#dDel').onclick = e => { if (Date.now() - arm > 3000) { arm = Date.now(); e.currentTarget.textContent = 'Yakin buang? Ketuk lagi'; return; } draftClear(); toast('Draf hitungan dibuang'); render(); }; }
   if ($('#abOk')) $('#abOk').onclick = () => { try { localStorage.setItem('idcg-ambil-' + S.me.id, S.ambil.last.at); } catch (e) {} render(); };
   $('#view').querySelectorAll('[data-cab]').forEach(b => b.onclick = () => setCab(b.dataset.cab));
   const rb = $('#rsBanner'); if (rb) rb.onclick = () => restockPopup(false);
@@ -885,28 +924,31 @@ function opHitung(el) {
     '</div></div><button class="soft" id="oScan">📷 Hitung dengan scan</button></div>' +
     '<input id="oF" placeholder="Saring nama barang…" style="margin-top:10px"><div style="overflow-x:auto;margin-top:6px"><table><thead><tr><th>Barang</th><th>Sistem</th><th>Fisik</th><th>Selisih</th></tr></thead><tbody>' +
     S.items.map(i => '<tr data-k="' + esc(i.kode) + '" data-n="' + esc(i.nama.toLowerCase()) + '"><td><div class="nm" style="font-size:14px">' + esc(i.nama) + '</div><div class="meta">' + esc(i.kode) + (i.lokasi ? ' · ' + esc(i.lokasi) : '') + '</div></td><td><b>' + i.stok + '</b></td><td><input type="number" min="0" inputmode="numeric" data-c="' + esc(i.kode) + '" value="' + (C[i.kode] ?? '') + '"></td><td class="sel"></td></tr>').join('') +
-    '</tbody></table></div><label>Catatan</label><input id="oN" placeholder="mis. opname akhir bulan, rak 1–3">' +
+    '</tbody></table></div><label>Catatan</label><input id="oN" placeholder="mis. opname akhir bulan, rak 1–3" value="' + esc(S.opNote || '') + '">' +
+    '<div class="small mut" id="dSt" style="margin-top:8px"></div>' +
     '<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="ghost" id="oDl">⬇ Download lembar hitung</button><div class="grow"></div>' +
     (boss ? '<button id="oGo">Simpan & terapkan ke stok</button>' : '<button id="oSend">📨 Cocokkan dengan Purchasing</button>') + '</div></div>' +
     '<h3 class="sec">Hitungan saya</h3><div class="card list" id="oMine"></div>';
   const upd = () => el.querySelectorAll('tr[data-k]').forEach(tr => { const k = tr.dataset.k, v = C[k], i = itemBy(k), c = tr.querySelector('.sel');
     if (v === undefined || v === '') { c.innerHTML = '<span class="mut">–</span>'; return; } const d = Number(v) - i.stok;
     c.innerHTML = d === 0 ? '<span class="chip">cocok</span>' : '<span class="chip ' + (d < 0 ? 'bad' : 'blue') + '">' + sgn(d) + '</span>'; });
-  el.querySelectorAll('input[data-c]').forEach(inp => inp.oninput = () => { C[inp.dataset.c] = inp.value; upd(); });
+  el.querySelectorAll('input[data-c]').forEach(inp => inp.oninput = () => { C[inp.dataset.c] = inp.value; upd(); draftSave(); });
+  $('#oN').oninput = e => { S.opNote = e.target.value; draftSave(); };
+  draftMark();
   $('#oF').oninput = e => { const q = e.target.value.toLowerCase(); el.querySelectorAll('tr[data-k]').forEach(tr => tr.style.display = !q || tr.dataset.n.includes(q) ? '' : 'none'); };
   upd();
   $('#oScan').onclick = () => openScanner('Scan tiap barang di rak (1 scan = 1 unit)', qr => { const k = kodeOf(qr); if (!itemBy(k)) return toast('QR tidak dikenal', true);
-    C[k] = String((Number(C[k]) || 0) + 1); const inp = el.querySelector('input[data-c="' + k + '"]'); if (inp) inp.value = C[k]; upd(); toast(itemBy(k).nama + ' · fisik ' + C[k]); return 'keep'; });
+    C[k] = String((Number(C[k]) || 0) + 1); const inp = el.querySelector('input[data-c="' + k + '"]'); if (inp) inp.value = C[k]; upd(); draftSave(); toast(itemBy(k).nama + ' · fisik ' + C[k]); return 'keep'; });
   const counts = () => { const o = {}; Object.keys(C).forEach(k => { if (C[k] !== '' && C[k] !== undefined) o[k] = Number(C[k]); }); return o; };
   $('#oDl').onclick = () => dlCall($('#oDl'), 'exportHitung', { counts: counts(), cabang: curCab() });
   if ($('#oSend')) $('#oSend').onclick = async () => {
     const n = Object.keys(counts()).length; if (!n) return toast('Isi minimal satu jumlah fisik', true);
     $('#oSend').disabled = true;
-    try { const r = await call('submitHitung', { counts: counts(), catatan: $('#oN').value, cabang: curCab() }); S.opCounts = {}; beep(true); toast('📨 Terkirim ke Annisa · ' + r.jumlah + ' barang, ' + r.beda + ' selisih'); await refresh(); }
+    try { const r = await call('submitHitung', { counts: counts(), catatan: $('#oN').value, cabang: curCab() }); draftClear(); beep(true); toast('📨 Terkirim ke Annisa · ' + r.jumlah + ' barang, ' + r.beda + ' selisih'); await refresh(); }
     catch (e) { toast(e.message, true); $('#oSend').disabled = false; }
   };
   if ($('#oGo')) $('#oGo').onclick = async () => {
-    try { const r = await call('opname', { counts: counts(), catatan: $('#oN').value }); S.opCounts = {}; await refresh();
+    try { const r = await call('opname', { counts: counts(), catatan: $('#oN').value }); draftClear(); await refresh();
       toast('✓ Opname diterapkan · ' + r.cocok + ' cocok, ' + r.beda + ' selisih'); } catch (e) { toast(e.message, true); }
   };
   const mine = S.myHitung || [];
@@ -1446,8 +1488,8 @@ function openScanner(title, onCode) {
 }
 
 /* ================= RAPID STOCK · Tentang & tema (crafted by STV) ================= */
-const RP_VERSI = 'v1.4';
-const RP_CATATAN = [['v1.4', 'Okt 2026', 'Stock opname per minggu (Senin–Minggu) + ekstrak per minggu / bulan / kuartal / tahun. Pilih jumlah setelah scan; aturan Annisa: Langsung atau Lewat request (ajuan > 1 wajib alasan, disetujui Annisa, tercatat di laporan). Operator diberi tahu setiap aturan berubah.'], ['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi. Stock opname → Riwayat opname: Batalkan opname dengan alasan wajib (tetap tercatat).'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
+const RP_VERSI = 'v1.5';
+const RP_CATATAN = [['v1.5', 'Okt 2026', 'Hitung fisik opname tersimpan otomatis: refresh, keluar, atau ganti HP tidak menghapus hitungan. Saat masuk lagi muncul tombol Lanjutkan.'], ['v1.4', 'Okt 2026', 'Stock opname per minggu (Senin–Minggu) + ekstrak per minggu / bulan / kuartal / tahun. Pilih jumlah setelah scan; aturan Annisa: Langsung atau Lewat request (ajuan > 1 wajib alasan, disetujui Annisa, tercatat di laporan). Operator diberi tahu setiap aturan berubah.'], ['v1.3', 'Okt 2026', 'Pengguna & wajah: tombol cepat Jadikan PJ / Jadikan Perawat dan Nonaktifkan / Aktifkan lagi. Stock opname → Riwayat opname: Batalkan opname dengan alasan wajib (tetap tercatat).'], ['v1.2', 'Okt 2026', 'Logo RAPID STOCK: R besar, RAPID, STOCK, warna hijau toska gudang tertata.'], ['v1.1', 'Okt 2026', 'Bisa dipasang di HP seperti aplikasi (ikon RAPID Stock di layar utama).'], ['v1.0', 'Okt 2026', 'Tampilan RAPID Stock. Dua cabang & 7 ruangan, biometrik diatur Purchasing, sinkron Sheet cepat, STOCK AKHIR = stock opname, jabatan pengguna.']];
 const RP_HURUF = [['R', 'Reliable', 'Andal', 'Stok di aplikasi sama dengan di rak'], ['A', 'Actual', 'Terkini', 'Semua cabang melihat stok saat ini'], ['P', 'Precise', 'Presisi', 'Tepat barang, jumlah, dan ruangan'],
   ['I', 'Intuitive', 'Mudah', 'Pindai wajah, pindai QR, selesai'], ['D', 'Detectable', 'Terlacak', 'Setiap ambil, masuk, dan opname ada jejaknya']];
 const RP_STV = [['S', 'Standard', 'Satu cara kerja', 'Pindai wajah lalu QR untuk setiap pengambilan; aturan ACC dan batas restock yang sama di Hangtuah dan Pluit.'],
@@ -1504,6 +1546,9 @@ rpInstallBtns();
 document.addEventListener('click', e => { if (e.target.closest('[data-rpabout]')) rpAbout(); if (e.target.closest('[data-rpinstall]')) rpInstall(); });
 ['rpVer1', 'rpVer2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = RP_VERSI; });
 document.getElementById('rpHome').onclick = () => { if (S.me) { S.tab = 'home'; render(); window.scrollTo(0, 0); } };
+
+window.addEventListener('pagehide', () => { if (S.me && canHitung() && S.draftSync === 'menyimpan') { clearTimeout(draftT); draftSave(true); } });
+document.addEventListener('visibilitychange', () => { if (document.hidden && S.me && canHitung() && S.draftSync === 'menyimpan') { clearTimeout(draftT); draftSave(true); } });
 
 /* ================= MULAI ================= */
 (async function init() {
